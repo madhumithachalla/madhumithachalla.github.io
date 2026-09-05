@@ -9,10 +9,13 @@ Each project card now links to a downloadable code file:
 - **BirdTag & ESaver** (team projects) — these are *representative reconstructions* of the specific piece I personally built, written fresh rather than copied from the team submission. I did this deliberately: Monash has strict academic integrity policies on group assignments, and I don't want real assignment code circulating where future students could find it. If you want the exact wording/scope tightened further, just ask.
 - **Spotify analysis, the OCR pipeline, and the IELTS practice tool** (solo projects) — the IELTS tool's `.jsx` is your actual real source file. The Spotify/OCR scripts are realistic placeholders matching the description on the site; swap in your real `.R` and `.py` files (same filenames) whenever you're ready, and the download links will just work.
 
-## Before you publish — 2 things to fix
+## Resume
 
-1. **Add your resume.** Drop a PDF named `resume.pdf` in this same folder (next to `index.html`). The "Download resume" button already points to it.
-2. **Read through every project description once** and confirm it still matches how you'd describe your own contribution — especially BirdTag and ESaver, since those are team projects. Nothing in here quotes or paraphrases assignment briefs; it's all written as "what I built," but you know the details better than I do.
+Your resume is embedded directly inside `index.html` (as a base64 data URI on the "Download resume" button, `#resume-btn`), the same way the photo is — so it always downloads correctly with no separate file to keep in sync. A plain copy also lives at `resume.pdf` in this folder for reference/direct linking. To update it later: replace `resume.pdf`, then ask to have the button's embedded copy refreshed to match (or re-run the same base64-encode-and-swap step yourself).
+
+## Before you publish
+
+**Read through every project description once** and confirm it still matches how you'd describe your own contribution — especially BirdTag and ESaver, since those are team projects. Nothing in here quotes or paraphrases assignment briefs; it's all written as "what I built," but you know the details better than I do.
 
 Your photo is already embedded directly inside `index.html` (as a base64 data URI), so there's no separate `photo.jpg` file to manage — it'll always display correctly, including in previews that can't see sibling files. If you ever want to swap the photo, just ask and I'll re-embed a new one.
 
