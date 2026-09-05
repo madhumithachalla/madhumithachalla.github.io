@@ -15,10 +15,11 @@
     --bg-panel:#1C1729;
     --ink:#1B1130;
     --ink-soft:#C7BEDB;
-    --coral:#C4A6FB;
-    --amber:#A78BFA;
-    --teal:#EDE4FF;
+    --coral:#FF6F5E;
+    --amber:#F5A623;
+    --teal:#2DD4BF;
     --violet:#9B7EDE;
+    --green:#4ADE80;
     --slate:#9E90B8;
     --line:rgba(255,255,255,0.14);
     --line-dark:#4A3968;
@@ -95,7 +96,7 @@
     padding:8px 10px; border-radius:2px; font-size:13px; color:var(--ink-soft) !important;
     border-bottom:none !important;
   }
-  .nav-dropdown-menu a:hover{background:rgba(196,166,251,0.12); color:var(--coral) !important;}
+  .nav-dropdown-menu a:hover{background:rgba(255,111,94,0.12); color:var(--coral) !important;}
   @media(max-width:760px){
     .nav-toggle{display:flex;}
     .nav-links{
@@ -119,8 +120,8 @@
   /* ---------- HERO (console) ---------- */
   .hero{
     background:
-      radial-gradient(circle at 12% 18%, rgba(196,166,251,0.35), transparent 42%),
-      radial-gradient(circle at 88% 12%, rgba(237,228,255,0.20), transparent 45%),
+      radial-gradient(circle at 12% 18%, rgba(255,111,94,0.35), transparent 42%),
+      radial-gradient(circle at 88% 12%, rgba(45,212,191,0.20), transparent 45%),
       radial-gradient(circle at 70% 90%, rgba(155,126,222,0.30), transparent 50%),
       var(--ink);
     color:var(--paper);
@@ -131,15 +132,15 @@
   .status-row{
     display:inline-flex; align-items:center; gap:10px;
     font-family:'IBM Plex Sans'; font-weight:500; font-size:13.5px;
-    background:rgba(196,166,251,0.14); border:1px solid rgba(196,166,251,0.35);
+    background:rgba(255,111,94,0.14); border:1px solid rgba(255,111,94,0.35);
     padding:7px 14px 7px 12px; border-radius:20px;
     color:#E7DFF7; margin-bottom:28px;
   }
-  .dot{width:8px; height:8px; border-radius:50%; background:var(--coral); box-shadow:0 0 0 3px rgba(196,166,251,0.3); flex:none;}
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--coral); box-shadow:0 0 0 3px rgba(255,111,94,0.3); flex:none;}
   .dot.pulse{animation:pulse 2.2s ease-in-out infinite;}
   @keyframes pulse{
-    0%,100%{box-shadow:0 0 0 3px rgba(196,166,251,0.3);}
-    50%{box-shadow:0 0 0 6px rgba(196,166,251,0.08);}
+    0%,100%{box-shadow:0 0 0 3px rgba(255,111,94,0.3);}
+    50%{box-shadow:0 0 0 6px rgba(255,111,94,0.08);}
   }
   .hero-grid{
     display:grid; grid-template-columns:1fr 220px; gap:44px; align-items:start;
@@ -224,7 +225,7 @@
   .stats-inner > div:nth-child(1) .stat-num{color:var(--coral);}
   .stats-inner > div:nth-child(2) .stat-num{color:var(--teal);}
   .stats-inner > div:nth-child(3) .stat-num{color:var(--amber);}
-  .stats-inner > div:nth-child(4) .stat-num{color:#B9A3FF;}
+  .stats-inner > div:nth-child(4) .stat-num{color:#9B7EDE;}
   .stat-label{font-family:'IBM Plex Sans'; font-size:12px; color:var(--slate); margin-top:4px;}
   @media(max-width:720px){ .stats-inner{grid-template-columns:repeat(2,1fr);} }
 
@@ -286,7 +287,7 @@
   .juggle-card:nth-child(2){border-top-color:var(--teal);}
   .juggle-card:nth-child(3){border-top-color:var(--amber);}
   .juggle-card:nth-child(4){border-top-color:var(--violet);}
-  .juggle-card:nth-child(5){border-top-color:var(--teal);}
+  .juggle-card:nth-child(5){border-top-color:var(--green);}
   .juggle-card:nth-child(6){border-top-color:var(--coral);}
   .jc-role{display:block; font-weight:600; font-size:14px; color:var(--paper); margin-bottom:3px;}
   .jc-org{display:block; font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--slate);}
@@ -309,8 +310,8 @@
     font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em;
     padding:3px 9px; border-radius:20px; border:1px solid var(--line);
   }
-  .pill.team{color:#EDE4FF; border-color:var(--teal); background:rgba(255,255,255,0.08);}
-  .pill.solo{color:#C4A6FB; border-color:var(--coral); background:rgba(196,166,251,0.12);}
+  .pill.team{color:#2DD4BF; border-color:var(--teal); background:rgba(255,255,255,0.08);}
+  .pill.solo{color:#FF6F5E; border-color:var(--coral); background:rgba(255,111,94,0.12);}
   .pill.indie{color:#9B7EDE; border-color:var(--violet); background:rgba(155,126,222,0.14);}
   .project h3{font-size:20px; margin-bottom:6px;}
   .project .role{font-family:'IBM Plex Sans'; font-weight:500; font-size:13.5px; color:var(--slate); margin-bottom:14px;}
@@ -319,8 +320,8 @@
   .project ul li{margin-bottom:6px;}
   .tags{display:flex; flex-wrap:wrap; gap:7px;}
   .tag{font-family:'IBM Plex Mono'; font-size:11px; background:var(--bg); border:1px solid var(--line); padding:3px 8px; border-radius:20px; color:var(--slate);}
-  .tag:nth-child(3n+1){border-color:var(--coral); color:#C4A6FB;}
-  .tag:nth-child(3n+2){border-color:var(--teal); color:#EDE4FF;}
+  .tag:nth-child(3n+1){border-color:var(--coral); color:#FF6F5E;}
+  .tag:nth-child(3n+2){border-color:var(--teal); color:#2DD4BF;}
   .tag:nth-child(3n+3){border-color:var(--violet); color:#9B7EDE;}
   .project-side{border-left:1px solid var(--line); padding-left:24px; display:flex; flex-direction:column; gap:16px;}
   .metric{font-family:'IBM Plex Mono';}
@@ -411,11 +412,11 @@
   .skills-tag-row{display:flex; flex-wrap:wrap; gap:9px;}
   .tag-mini{font-family:'IBM Plex Mono'; font-size:12.5px; padding:7px 13px; border-radius:20px; border:1px solid var(--line); color:var(--ink-soft); background:var(--bg-panel);}
   .cat-coral .skills-cat-dot{background:var(--coral);}
-  .cat-coral .tag-mini{border-color:rgba(196,166,251,0.4); color:#C4A6FB;}
+  .cat-coral .tag-mini{border-color:rgba(255,111,94,0.4); color:#FF6F5E;}
   .cat-teal .skills-cat-dot{background:var(--teal);}
-  .cat-teal .tag-mini{border-color:rgba(237,228,255,0.4); color:#EDE4FF;}
+  .cat-teal .tag-mini{border-color:rgba(45,212,191,0.4); color:#2DD4BF;}
   .cat-amber .skills-cat-dot{background:var(--amber);}
-  .cat-amber .tag-mini{border-color:rgba(167,139,250,0.4); color:#C9B8FE;}
+  .cat-amber .tag-mini{border-color:rgba(245,166,35,0.4); color:#FFCB73;}
   .cat-violet .skills-cat-dot{background:var(--violet);}
   .cat-violet .tag-mini{border-color:rgba(155,126,222,0.4); color:#9B7EDE;}
 
@@ -446,7 +447,7 @@
   .chat-head{
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 16px; border-bottom:1px solid var(--line);
-    background:linear-gradient(120deg, rgba(196,166,251,0.14), rgba(155,126,222,0.1));
+    background:linear-gradient(120deg, rgba(255,111,94,0.14), rgba(155,126,222,0.1));
   }
   .chat-head-title{font-family:'Space Grotesk'; font-weight:600; font-size:14px;}
   .chat-head-sub{display:flex; align-items:center; gap:6px; font-size:11px; color:var(--slate); margin-top:2px;}
@@ -458,7 +459,7 @@
   .chat-msg.bot{align-self:flex-start; background:var(--bg); border:1px solid var(--line); color:var(--ink-soft); border-bottom-left-radius:3px;}
   .chat-msg.user{align-self:flex-end; background:linear-gradient(120deg, var(--amber), var(--coral)); color:var(--ink); font-weight:500; border-bottom-right-radius:3px;}
   .chat-chips{display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 12px;}
-  .chat-chip{font-family:'IBM Plex Mono'; font-size:11px; border:1px solid rgba(196,166,251,0.4); color:#C4A6FB; background:rgba(196,166,251,0.08); padding:6px 10px; border-radius:20px; cursor:pointer; text-align:left;}
+  .chat-chip{font-family:'IBM Plex Mono'; font-size:11px; border:1px solid rgba(255,111,94,0.4); color:#FF6F5E; background:rgba(255,111,94,0.08); padding:6px 10px; border-radius:20px; cursor:pointer; text-align:left;}
   .chat-chip:hover{border-color:var(--coral); color:var(--paper);}
   .chat-input-row{display:flex; gap:8px; padding:12px 14px; border-top:1px solid var(--line);}
   .chat-input-row input{
@@ -478,8 +479,8 @@
   /* footer / contact */
   footer{
     background:
-      radial-gradient(circle at 85% 10%, rgba(237,228,255,0.16), transparent 45%),
-      radial-gradient(circle at 10% 90%, rgba(196,166,251,0.22), transparent 45%),
+      radial-gradient(circle at 85% 10%, rgba(45,212,191,0.16), transparent 45%),
+      radial-gradient(circle at 10% 90%, rgba(255,111,94,0.22), transparent 45%),
       var(--ink);
     color:var(--paper); padding:64px 0 40px;
   }
@@ -557,9 +558,9 @@
       <div class="stats-label mono">Impact so far</div>
       <div class="stats-inner">
         <div><div class="stat-num">3+</div><div class="stat-label">years in enterprise IT</div></div>
+        <div><div class="stat-num">$700K</div><div class="stat-label">saved via an Oracle Cloud migration</div></div>
         <div><div class="stat-num">3.2M</div><div class="stat-label">members on platforms I supported</div></div>
         <div><div class="stat-num">95%+</div><div class="stat-label">audit score, sustained 2yrs</div></div>
-        <div><div class="stat-num">114K</div><div class="stat-label">rows in my solo data analysis</div></div>
       </div>
     </div>
   </div>
@@ -567,7 +568,7 @@
 
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
-    <span>DIRECT</span><span>·</span><span>HUSTLE</span><span>·</span><span>NO FLUFF</span><span>·</span><span>MENTORS 20 STUDENTS</span><span>·</span><span>SHIPS THINGS</span><span>·</span><span>ASTRONOMY NERD</span><span>·</span><span>INTEGRITY FIRST</span><span>·</span><span>DIRECT</span><span>·</span><span>HUSTLE</span><span>·</span><span>NO FLUFF</span><span>·</span><span>MENTORS 20 STUDENTS</span><span>·</span><span>SHIPS THINGS</span><span>·</span><span>ASTRONOMY NERD</span><span>·</span><span>INTEGRITY FIRST</span><span>·</span>
+    <span>DIRECT</span><span>·</span><span>3+ YEARS ENTERPRISE IT</span><span>·</span><span>NO FLUFF</span><span>·</span><span>$700K SAVED</span><span>·</span><span>AWS CERTIFIED</span><span>·</span><span>HUSTLE</span><span>·</span><span>3.2M MEMBERS SUPPORTED</span><span>·</span><span>ASTRONOMY NERD</span><span>·</span><span>65+ STUDENTS MENTORED</span><span>·</span><span>INTEGRITY FIRST</span><span>·</span><span>SHIPS THINGS</span><span>·</span><span>DIRECT</span><span>·</span><span>3+ YEARS ENTERPRISE IT</span><span>·</span><span>NO FLUFF</span><span>·</span><span>$700K SAVED</span><span>·</span><span>AWS CERTIFIED</span><span>·</span><span>HUSTLE</span><span>·</span><span>3.2M MEMBERS SUPPORTED</span><span>·</span><span>ASTRONOMY NERD</span><span>·</span><span>65+ STUDENTS MENTORED</span><span>·</span><span>INTEGRITY FIRST</span><span>·</span><span>SHIPS THINGS</span><span>·</span>
   </div>
 </div>
 
@@ -1012,7 +1013,7 @@
   <div class="chat-head">
     <div>
       <div class="chat-head-title">Ask about Madhumitha</div>
-      <div class="chat-head-sub"><span class="dot" style="background:#4ADE80;"></span> Instant answers, no waiting</div>
+      <div class="chat-head-sub"><span class="dot" style="background:var(--green);"></span> Instant answers, no waiting</div>
     </div>
     <button id="chat-close" aria-label="Close chat">✕</button>
   </div>
@@ -1226,7 +1227,7 @@
     resize();
     window.addEventListener('resize', resize);
 
-    const colors = ['196,166,251', '155,126,222', '237,228,255', '167,139,250'];
+    const colors = ['255,111,94', '155,126,222', '45,212,191', '245,166,35'];
     let meteors = [];
     let bursts = [];
 
