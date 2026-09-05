@@ -413,9 +413,12 @@
     background:linear-gradient(135deg, var(--coral), var(--violet));
     color:var(--ink); display:flex; align-items:center; justify-content:center;
     box-shadow:0 10px 24px -8px rgba(155,126,222,0.6);
-    transition:transform .15s ease;
+    transition:transform .15s ease, opacity .2s ease;
   }
   #chat-toggle:hover{transform:translateY(-2px);}
+  /* Fades out near the coffee scheduler / footer so it never sits on top of
+     form fields or links — reappears once those sections scroll out of view. */
+  #chat-toggle.chat-hide{opacity:0; pointer-events:none; transform:scale(0.85);}
   #chat-toggle svg{width:24px; height:24px;}
   #chat-panel{
     position:fixed; right:22px; bottom:88px; z-index:80;
@@ -1299,6 +1302,21 @@
     chips.querySelectorAll('.chat-chip').forEach(chip => {
       chip.addEventListener('click', () => ask(chip.textContent));
     });
+
+    // Hide the floating button (and close the panel) while the coffee scheduler
+    // or footer are on screen, so it never covers their form fields or links.
+    const avoidEls = [document.getElementById('coffee'), document.getElementById('contact')].filter(Boolean);
+    if (avoidEls.length){
+      const io = new IntersectionObserver(() => {
+        const anyVisible = avoidEls.some(el => {
+          const r = el.getBoundingClientRect();
+          return r.top < window.innerHeight && r.bottom > 0;
+        });
+        toggle.classList.toggle('chat-hide', anyVisible);
+        if (anyVisible) closePanel();
+      }, { threshold: 0 });
+      avoidEls.forEach(el => io.observe(el));
+    }
   })();
 </script>
 
