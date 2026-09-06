@@ -370,7 +370,7 @@
   }
   .coffee-note-small{font-size:12px; color:var(--slate); margin-top:10px;}
   @media(max-width:640px){ .coffee-row{grid-template-columns:1fr;} }
-  .format-toggle{display:flex; gap:8px;}
+  .format-toggle, .cal-tabs{display:flex; gap:8px;}
   .format-btn{
     flex:1; font-family:'IBM Plex Mono'; font-size:12px; text-transform:uppercase; letter-spacing:0.04em;
     padding:10px 12px; border-radius:6px; border:1px solid var(--line); background:var(--bg); color:var(--slate);
@@ -967,42 +967,22 @@
 
       <div class="coffee-card">
         <h3 class="connect-card-title">Grab a coffee</h3>
-        <div class="format-toggle" role="group" aria-label="Meeting format">
-          <button type="button" class="format-btn active" id="format-person" aria-pressed="true">In person</button>
-          <button type="button" class="format-btn" id="format-virtual" aria-pressed="false">Virtual</button>
+        <p class="virtual-note">My real open slots, in person (Melbourne CBD) or virtual — pick whichever calendar you use, see if I'm free, and book straight onto my calendar. No back-and-forth.</p>
+
+        <div class="cal-tabs" role="tablist" aria-label="Choose calendar">
+          <button type="button" class="format-btn active" id="cal-tab-calendly" role="tab" aria-selected="true">Calendly</button>
+          <button type="button" class="format-btn" id="cal-tab-gcal" role="tab" aria-selected="false">Google Calendar</button>
         </div>
 
-        <div id="coffee-person-fields" style="margin-top:16px;">
-          <div class="coffee-row" style="grid-template-columns:1fr 1fr;">
-            <div class="coffee-field">
-              <label for="coffee-day">Preferred day</label>
-              <input type="date" id="coffee-day">
-            </div>
-            <div class="coffee-field">
-              <label for="coffee-time">Rough time</label>
-              <select id="coffee-time">
-                <option value="Morning (9–11am)">Morning (9–11am)</option>
-                <option value="Midday (11am–1pm)">Midday (11am–1pm)</option>
-                <option value="Afternoon (1–4pm)">Afternoon (1–4pm)</option>
-                <option value="Evening (4–6pm)">Evening (4–6pm)</option>
-              </select>
-            </div>
-          </div>
-          <div class="coffee-field" style="margin-top:14px;">
-            <label for="coffee-note">What would you like to chat about? (optional)</label>
-            <textarea id="coffee-note" rows="3" placeholder="e.g. a graduate opportunity, a project you saw here, or just tech chat"></textarea>
-          </div>
-          <button class="btn btn-primary" id="coffee-send" style="margin-top:16px; border:none; cursor:pointer;">Send the invite ↗</button>
-          <p class="coffee-note-small">In Melbourne CBD by default — opens your email app with everything filled in, nothing is submitted or stored here.</p>
+        <div id="calendly-embed-wrap" style="margin-top:14px;">
+          <div class="calendly-inline-widget" data-url="https://calendly.com/madhumithachalla" style="min-width:280px; height:640px;"></div>
+        </div>
+        <div id="gcal-embed-wrap" style="margin-top:14px;" hidden>
+          <p class="coffee-note-small" id="gcal-fallback-note">Google Calendar booking isn't set up yet — use the Calendly tab above, or <a href="#" id="gcal-mailto-link" style="color:var(--coral);">email me directly</a> instead.</p>
+          <iframe id="gcal-iframe" style="display:none; width:100%; height:640px; border:1px solid var(--line); border-radius:6px;" frameborder="0"></iframe>
         </div>
 
-        <div id="coffee-virtual-fields" style="margin-top:16px;" hidden>
-          <p class="virtual-note">Pick whichever calendar you use — both show my real open slots and book straight onto my calendar, no email back-and-forth needed.</p>
-          <div class="virtual-links">
-            <a class="btn btn-ghost" id="gcal-link" href="javascript:void(0)" rel="noopener">Book via Google Calendar ↗</a>
-            <a class="btn btn-ghost" id="calendly-link" href="javascript:void(0)" rel="noopener">Book via Calendly ↗</a>
-          </div>
-        </div>
+        <p class="coffee-note-small" style="margin-top:12px;">Prefer email? <a href="mailto:rchmadhumitha@gmail.com?subject=Coffee%20catch-up" style="color:var(--coral);">Just send me one directly</a>.</p>
       </div>
     </div>
   </div>
@@ -1052,6 +1032,9 @@
   </div>
 </div>
 
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
 <script>
   // Smooth-scroll all internal anchor links via JS rather than relying purely on
   // native hash navigation, which some sandboxed/embedded preview contexts block.
@@ -1068,37 +1051,6 @@
         window.scrollTo({ top, behavior: 'smooth' });
         history.pushState(null, '', `#${id}`);
       });
-    });
-  })();
-
-  // Coffee catch-up scheduler — builds a pre-filled mailto invite, no backend needed
-  (function(){
-    const btn = document.getElementById('coffee-send');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const day = document.getElementById('coffee-day').value;
-      const time = document.getElementById('coffee-time').value;
-      const note = document.getElementById('coffee-note').value.trim();
-
-      const dayText = day
-        ? new Date(day + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-        : '(no specific date picked — happy to find one together)';
-
-      const subject = `Coffee catch-up request — ${dayText}`;
-      const bodyLines = [
-        `Hi Madhumitha,`,
-        ``,
-        `I came across your portfolio and would love to grab a coffee.`,
-        ``,
-        `Preferred day: ${dayText}`,
-        `Rough time: ${time}`,
-        `Format: In person, Melbourne CBD`,
-      ];
-      if (note) { bodyLines.push('', `A bit about what I'd like to chat about:`, note); }
-      bodyLines.push('', `Looking forward to hearing from you!`);
-
-      const mailto = `mailto:rchmadhumitha@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
-      window.location.href = mailto;
     });
   })();
 
@@ -1125,59 +1077,45 @@
     });
   })();
 
-  // Coffee format toggle — swaps between the in-person invite fields and the
-  // virtual scheduling links
+  // Coffee calendar tabs — switches between the inline Calendly widget and
+  // Google Calendar's Appointment Schedule iframe (once GOOGLE_CALENDAR_LINK
+  // is set below). Both show real, live availability — no guessing a day/time.
   (function(){
-    const personBtn = document.getElementById('format-person');
-    const virtualBtn = document.getElementById('format-virtual');
-    const personFields = document.getElementById('coffee-person-fields');
-    const virtualFields = document.getElementById('coffee-virtual-fields');
-    if (!personBtn || !virtualBtn) return;
+    const GOOGLE_CALENDAR_LINK = ''; // e.g. 'https://calendar.google.com/calendar/appointments/schedules/...'
+
+    const calendlyTab = document.getElementById('cal-tab-calendly');
+    const gcalTab = document.getElementById('cal-tab-gcal');
+    const calendlyWrap = document.getElementById('calendly-embed-wrap');
+    const gcalWrap = document.getElementById('gcal-embed-wrap');
+    const gcalIframe = document.getElementById('gcal-iframe');
+    const gcalFallbackNote = document.getElementById('gcal-fallback-note');
+    const gcalMailtoLink = document.getElementById('gcal-mailto-link');
+    if (!calendlyTab || !gcalTab) return;
+
+    if (GOOGLE_CALENDAR_LINK) {
+      gcalIframe.src = GOOGLE_CALENDAR_LINK;
+      gcalIframe.style.display = 'block';
+      gcalFallbackNote.hidden = true;
+    } else if (gcalMailtoLink) {
+      gcalMailtoLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const subject = 'Coffee catch-up request';
+        const body = `Hi Madhumitha,\n\nI'd like to grab a coffee (in person or virtual, happy to find a time). Your Google Calendar booking link isn't live on the site yet, so sending this instead!`;
+        window.location.href = `mailto:rchmadhumitha@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      });
+    }
 
     function show(mode){
-      const isPerson = mode === 'person';
-      personBtn.classList.toggle('active', isPerson);
-      virtualBtn.classList.toggle('active', !isPerson);
-      personBtn.setAttribute('aria-pressed', String(isPerson));
-      virtualBtn.setAttribute('aria-pressed', String(!isPerson));
-      personFields.hidden = !isPerson;
-      virtualFields.hidden = isPerson;
+      const isCalendly = mode === 'calendly';
+      calendlyTab.classList.toggle('active', isCalendly);
+      gcalTab.classList.toggle('active', !isCalendly);
+      calendlyTab.setAttribute('aria-selected', String(isCalendly));
+      gcalTab.setAttribute('aria-selected', String(!isCalendly));
+      calendlyWrap.hidden = !isCalendly;
+      gcalWrap.hidden = isCalendly;
     }
-    personBtn.addEventListener('click', () => show('person'));
-    virtualBtn.addEventListener('click', () => show('virtual'));
-  })();
-
-  // Virtual coffee — real scheduling links. Paste your own booking-page URLs
-  // here once set up (Google Calendar's free "Appointment schedules" feature,
-  // and/or a free Calendly link); until then, both fall back to a pre-filled
-  // email so nothing on the page is a dead link.
-  (function(){
-    const SCHEDULING_LINKS = {
-      googleCalendar: '', // e.g. 'https://calendar.google.com/calendar/appointments/schedules/...'
-      calendly: 'https://calendly.com/madhumithachalla'
-    };
-
-    function wireScheduleLink(id, url, label){
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (url) {
-        el.href = url;
-        el.target = '_blank';
-      } else {
-        el.addEventListener('click', (e) => {
-          e.preventDefault();
-          const subject = `Virtual coffee chat — via ${label}`;
-          const bodyLines = [
-            `Hi Madhumitha,`,
-            ``,
-            `I'd like to grab a virtual coffee chat. Your ${label} link isn't live on the site yet, so sending this instead — let me know a time that works!`
-          ];
-          window.location.href = `mailto:rchmadhumitha@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
-        });
-      }
-    }
-    wireScheduleLink('gcal-link', SCHEDULING_LINKS.googleCalendar, 'Google Calendar');
-    wireScheduleLink('calendly-link', SCHEDULING_LINKS.calendly, 'Calendly');
+    calendlyTab.addEventListener('click', () => show('calendly'));
+    gcalTab.addEventListener('click', () => show('gcal'));
   })();
 
   // Mobile nav toggle + click-based dropdown (fixes touch devices where :hover doesn't fire)
