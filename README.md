@@ -11,7 +11,7 @@ Each project card now links to a downloadable code file:
 
 ## Resume
 
-Your resume is embedded directly inside `index.html` (as a base64 data URI on the "Download resume" button, `#resume-btn`), the same way the photo is — so it always downloads correctly with no separate file to keep in sync. A plain copy also lives at `resume.pdf` in this folder for reference/direct linking. To update it later: replace `resume.pdf`, then ask to have the button's embedded copy refreshed to match (or re-run the same base64-encode-and-swap step yourself).
+Two plain files at the repo root — `Madhumitha_Challa_Intern_Graduate.pdf` and `Madhumitha_Challa_Intern_Graduate.docx` — are linked directly from the hero buttons (no base64 embedding). To update the resume, just replace both files, keeping the same names, and the download links keep working automatically.
 
 ## Before you publish
 
