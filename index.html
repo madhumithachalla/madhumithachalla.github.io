@@ -408,17 +408,25 @@
   .rec-who span{color:var(--slate);}
   @media(max-width:800px){ .rec-grid{grid-template-columns:1fr;} }
 
-  /* experience log */
-  .log{border-top:1px solid var(--line);}
-  .log-row{
-    display:grid; grid-template-columns:175px 1fr; gap:24px;
-    padding:22px 0; border-bottom:1px solid var(--line);
+  /* experience tiles */
+  .exp-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  .exp-tile{
+    background:var(--bg-panel); border:1px solid var(--line); border-top:3px solid var(--coral);
+    border-radius:var(--radius); padding:18px 20px;
   }
-  .log-time{font-family:'IBM Plex Mono'; font-size:12.5px; color:var(--teal); padding-top:2px;}
-  .log-role{font-weight:600; font-size:16px; margin-bottom:4px;}
-  .log-org{font-family:'IBM Plex Sans'; font-size:13px; color:var(--slate); margin-bottom:10px;}
-  .log-row p{margin:0; color:var(--ink-soft); font-size:14.5px;}
-  @media(max-width:600px){ .log-row{grid-template-columns:1fr; gap:6px;} }
+  .exp-tile:nth-child(5n+2){border-top-color:var(--teal);}
+  .exp-tile:nth-child(5n+3){border-top-color:var(--amber);}
+  .exp-tile:nth-child(5n+4){border-top-color:var(--violet);}
+  .exp-tile:nth-child(5n+5){border-top-color:var(--green);}
+  .exp-time{font-family:'IBM Plex Mono'; font-size:11px; color:var(--coral); text-transform:uppercase; letter-spacing:0.04em;}
+  .exp-tile:nth-child(5n+2) .exp-time{color:var(--teal);}
+  .exp-tile:nth-child(5n+3) .exp-time{color:var(--amber);}
+  .exp-tile:nth-child(5n+4) .exp-time{color:var(--violet);}
+  .exp-tile:nth-child(5n+5) .exp-time{color:var(--green);}
+  .exp-role{font-weight:600; font-size:15.5px; margin:6px 0 3px;}
+  .exp-org{font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--slate); margin-bottom:9px;}
+  .exp-tile p{margin:0; color:var(--ink-soft); font-size:13.5px; line-height:1.45;}
+  @media(max-width:760px){ .exp-grid{grid-template-columns:1fr;} }
 
   /* ambient starfield backdrop */
   #starfield{position:fixed; inset:0; width:100vw; height:100vh; z-index:-1; pointer-events:none;}
@@ -429,16 +437,19 @@
   .skills-cat-dot{width:8px; height:8px; border-radius:50%; flex:none;}
   .skills-cat-label{font-family:'IBM Plex Mono'; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--slate);}
   .skills-cat-line{flex:1; height:1px; background:var(--line);}
-  .skills-tag-row{display:flex; flex-wrap:wrap; gap:9px;}
-  .tag-mini{font-family:'IBM Plex Mono'; font-size:12.5px; padding:7px 13px; border-radius:20px; border:1px solid var(--line); color:var(--ink-soft); background:var(--bg-panel);}
+  .skills-tag-row{display:flex; flex-wrap:wrap; gap:10px;}
+  .skill-item{display:flex; flex-direction:column; gap:6px; padding:9px 13px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); min-width:122px;}
+  .skill-name{font-family:'IBM Plex Mono'; font-size:11.5px; color:var(--ink-soft);}
+  .skill-dashes{display:flex; gap:3px;}
+  .dash{width:13px; height:3px; border-radius:2px; background:var(--line);}
   .cat-coral .skills-cat-dot{background:var(--coral);}
-  .cat-coral .tag-mini{border-color:rgba(255,111,94,0.4); color:#FF6F5E;}
+  .cat-coral .dash.on{background:#FF6F5E;}
   .cat-teal .skills-cat-dot{background:var(--teal);}
-  .cat-teal .tag-mini{border-color:rgba(45,212,191,0.4); color:#2DD4BF;}
+  .cat-teal .dash.on{background:#2DD4BF;}
   .cat-amber .skills-cat-dot{background:var(--amber);}
-  .cat-amber .tag-mini{border-color:rgba(245,166,35,0.4); color:#FFCB73;}
+  .cat-amber .dash.on{background:#FFCB73;}
   .cat-violet .skills-cat-dot{background:var(--violet);}
-  .cat-violet .tag-mini{border-color:rgba(155,126,222,0.4); color:#9B7EDE;}
+  .cat-violet .dash.on{background:#9B7EDE;}
 
   /* chat widget */
   #chat-toggle{
@@ -642,31 +653,31 @@
     <div class="section-head">
       <span class="eyebrow c-violet">Toolkit</span>
       <h2>Skills &amp; stack</h2>
-      <p>Grouped the way I actually use them — enterprise cloud and IT operations first, since that's three years of paid production experience; the programming underneath it is what makes the rest possible.</p>
+      <p>Grouped the way I actually use them — enterprise cloud and IT operations first, since that's three years of paid production experience. The dashes show how much I actually use each one, not a self-rated score.</p>
     </div>
     <div class="skills-groups">
       <div class="cat-coral">
         <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">Enterprise Systems &amp; Cloud</span><span class="skills-cat-line"></span></div>
         <div class="skills-tag-row">
-          <span class="tag-mini">Oracle Cloud HCM</span><span class="tag-mini">Genesys Cloud CX</span><span class="tag-mini">Microsoft 365</span><span class="tag-mini">Google Cloud</span><span class="tag-mini">AWS</span>
+          <div class="skill-item"><span class="skill-name">Oracle Cloud HCM</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div><div class="skill-item"><span class="skill-name">Genesys Cloud CX</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Microsoft 365</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div><div class="skill-item"><span class="skill-name">Google Cloud</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">AWS</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div>
         </div>
       </div>
       <div class="cat-teal">
         <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">IT Operations &amp; Service Management</span><span class="skills-cat-line"></span></div>
         <div class="skills-tag-row">
-          <span class="tag-mini">Incident &amp; SLA Management</span><span class="tag-mini">Root Cause Analysis</span><span class="tag-mini">Change Management</span><span class="tag-mini">ITSM Principles</span><span class="tag-mini">Performance Monitoring</span><span class="tag-mini">Netcool</span>
+          <div class="skill-item"><span class="skill-name">Incident &amp; SLA Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div><div class="skill-item"><span class="skill-name">Root Cause Analysis</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Change Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">ITSM Principles</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Performance Monitoring</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Netcool</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div>
         </div>
       </div>
       <div class="cat-amber">
         <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">Infrastructure &amp; Administration</span><span class="skills-cat-line"></span></div>
         <div class="skills-tag-row">
-          <span class="tag-mini">Windows/Linux Servers</span><span class="tag-mini">SCCM</span><span class="tag-mini">Active Directory</span><span class="tag-mini">Azure MFA</span><span class="tag-mini">IAM</span><span class="tag-mini">CyberArk</span><span class="tag-mini">SailPoint</span>
+          <div class="skill-item"><span class="skill-name">Windows/Linux Servers</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SCCM</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Active Directory</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Azure MFA</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">IAM</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">CyberArk</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SailPoint</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div>
         </div>
       </div>
       <div class="cat-violet">
         <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">Technical &amp; Programming</span><span class="skills-cat-line"></span></div>
         <div class="skills-tag-row">
-          <span class="tag-mini">COBOL</span><span class="tag-mini">JCL</span><span class="tag-mini">C/C++</span><span class="tag-mini">Java</span><span class="tag-mini">SQL</span><span class="tag-mini">DB2</span><span class="tag-mini">Kotlin</span><span class="tag-mini">Firebase</span><span class="tag-mini">API Integration</span>
+          <div class="skill-item"><span class="skill-name">COBOL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">JCL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">C/C++</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Java</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SQL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">DB2</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Kotlin</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Firebase</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">API Integration</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div>
         </div>
       </div>
     </div>
@@ -680,94 +691,72 @@
       <span class="eyebrow c-violet">Experience</span>
       <h2>Where the hours actually went</h2>
     </div>
-    <div class="log">
-      <div class="log-row">
-        <div class="log-time mono">Aug 2026 — Oct 2026</div>
-        <div>
-          <div class="log-role">HR Administrative Officer</div>
-          <div class="log-org">Monash University · HR Projects, Office of the COO &amp; Senior VP · Clayton Campus</div>
-          <p>Casual HR Administrative Officer role (HEW 4, ~10 hrs/week) within the HR Projects team.</p>
-        </div>
+    <div class="exp-grid">
+      <div class="exp-tile">
+        <div class="exp-time mono">Aug 2026 — Oct 2026</div>
+        <div class="exp-role">HR Administrative Officer</div>
+        <div class="exp-org">Monash University · HR Projects, Office of the COO &amp; Senior VP</div>
+        <p>Casual role (HEW 4, ~10 hrs/week) supporting the HR Projects team at Clayton Campus.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Sep 2026 — present</div>
-        <div>
-          <div class="log-role">Technology &amp; Digital Innovation Intern</div>
-          <div class="log-org">Baazar (Fund'ex venture)</div>
-          <p>Selected to work on emerging technology integration for a fintech platform, with exposure to cloud infrastructure scaling and real-time transaction monitoring systems. Contributing to architecture decisions and the digital innovation pipeline for a growing fintech venture.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Sep 2026 — present</div>
+        <div class="exp-role">Technology &amp; Digital Innovation Intern</div>
+        <div class="exp-org">Baazar (Fund'ex venture)</div>
+        <p>Working on emerging tech integration for a fintech platform — cloud infrastructure scaling, real-time transaction monitoring, and architecture decisions.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Jul 2026</div>
-        <div>
-          <div class="log-role">TeaMWork Virtual Internship — AI Strategy &amp; Market Expansion</div>
-          <div class="log-org">Monash–Warwick Alliance</div>
-          <p>Co-led (7-person cross-university team) market expansion strategy for Retragreen, an Australian AI-powered smart HVAC company, targeting the Singapore market. Built a 6-criterion segment prioritisation matrix (FM 54/60, commercial buildings 47/60, universities 44/60) and financial ROI models — FM segment SGD 4.35M/yr (6–12 month payback), Commercial SGD 261K/yr, Universities SGD 696K/yr. Identified 15 target companies, created a 5-criterion pilot site framework, and presented a SGD 2M+ revenue pipeline to Retragreen's leadership team.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Jul 2026</div>
+        <div class="exp-role">TeaMWork Virtual Internship — AI Strategy &amp; Market Expansion</div>
+        <div class="exp-org">Monash–Warwick Alliance</div>
+        <p>Co-led a 7-person cross-university team on market expansion strategy for an AI-powered HVAC company entering Singapore — ROI models projecting a SGD 2M+ revenue pipeline across 15 target companies.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Feb 2026 — Sep 2026</div>
-        <div>
-          <div class="log-role">Customer Service Representative</div>
-          <div class="log-org">Viva Energy Retail · Melbourne, VIC</div>
-          <p>Front-line customer service handling POS transactions and digital payments, troubleshooting service issues in real time, and supporting store operations and inventory.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Feb 2026 — Sep 2026</div>
+        <div class="exp-role">Customer Service Representative</div>
+        <div class="exp-org">Viva Energy Retail · Melbourne, VIC</div>
+        <p>Front-line customer service — POS transactions, digital payments, real-time issue troubleshooting, store operations.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Jul 2026 — Aug 2026</div>
-        <div>
-          <div class="log-role">T&amp;A FLEX Data Entry Assistant (HEW 4)</div>
-          <div class="log-org">Monash University · School of Primary and Allied Health Care, Peninsula Campus</div>
-          <p>Supported the Nimbus time &amp; attendance system rollout across Peninsula Campus (500+ staff), processing and verifying data entries to a high accuracy standard. Identified a critical go-live dependency and escalated it to stakeholders before it caused operational disruption.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Jul 2026 — Aug 2026</div>
+        <div class="exp-role">T&amp;A FLEX Data Entry Assistant (HEW 4)</div>
+        <div class="exp-org">Monash University · Peninsula Campus</div>
+        <p>Supported a time &amp; attendance system rollout across 500+ staff, and flagged a critical go-live risk before it caused disruption.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Jan 2026 — present</div>
-        <div>
-          <div class="log-role">IT Postgraduate Peer Mentor</div>
-          <div class="log-org">Monash University</div>
-          <p>Mentor 20+ postgraduate IT students (30+ volunteer hours) through structured sessions and workshops, providing technical guidance, career development support, and help navigating university resources.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Jan 2026 — present</div>
+        <div class="exp-role">IT Postgraduate Peer Mentor</div>
+        <div class="exp-org">Monash University</div>
+        <p>Mentor 20+ postgraduate IT students through structured sessions — technical guidance, career development, university resources.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Oct 2025 — Aug 2026</div>
-        <div>
-          <div class="log-role">IT &amp; Infrastructure Officer</div>
-          <div class="log-org">Monash Data &amp; AI Society</div>
-          <p>Manage IT infrastructure for the Monash Data &amp; AI Society (1,600+ members) — web and database integrations (AirTable, Firebase, NodeJS) and user-facing components in ReactJS.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Oct 2025 — Aug 2026</div>
+        <div class="exp-role">IT &amp; Infrastructure Officer</div>
+        <div class="exp-org">Monash Data &amp; AI Society</div>
+        <p>Managed IT infrastructure for a 1,600+ member society — database integrations and user-facing components.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Oct 2025 — present</div>
-        <div>
-          <div class="log-role">Microsoft 365 Administrator (Volunteer)</div>
-          <div class="log-org">Basava Samiti of Asia Pacific</div>
-          <p>Manage M365 infrastructure across 8 APAC chapters (AU/NZ regions). Authored 3 SOPs (password reset, user provisioning, access management) that reduced ticket volume by 30–40%, and eliminated password-reset redundancy with personalised onboarding communication templates.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Oct 2025 — present</div>
+        <div class="exp-role">Microsoft 365 Administrator (Volunteer)</div>
+        <div class="exp-org">Basava Samiti of Asia Pacific</div>
+        <p>Manage M365 infrastructure across 8 APAC chapters — authored 3 SOPs that cut ticket volume by 30–40%.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Nov 2023 — Jul 2024</div>
-        <div>
-          <div class="log-role">Programmer</div>
-          <div class="log-org">Cognizant Technology Solutions · Chennai, India · client: EmblemHealth &amp; ConnectiCare</div>
-          <p>Managed 50–80+ Netcool alerts per shift while maintaining a 95%+ audit dashboard score. Contributed to a Genesys Cloud CX migration covering 30,000+ associates across 8 lines of business, improving patient engagement by 5%, cutting manual interventions by 20%, and reducing average handling time by 2%. Administered Active Directory, Azure MFA, M365, CyberArk, and SailPoint, and designed a real-time Event Alert Dashboard for critical operations.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Nov 2023 — Jul 2024</div>
+        <div class="exp-role">Programmer</div>
+        <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare</div>
+        <p>Managed 50–80+ Netcool alerts/shift at a 95%+ audit score; contributed to a Genesys Cloud CX migration (30K+ associates) lifting patient engagement 5% and cutting manual work 20%.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">Apr 2022 — Nov 2023</div>
-        <div>
-          <div class="log-role">Programmer Analyst</div>
-          <div class="log-org">Cognizant Technology Solutions · Chennai, India · client: EmblemHealth &amp; ConnectiCare (3.2M members)</div>
-          <p>Resolved 100+ incidents a month within SLA, sustaining a 100 CSAT score and 95%+ audit dashboard score. Drove an Oracle Cloud HCM migration across 17 modules over 11 months, delivering USD 700K in annual savings and a 30% IT cost reduction. Authored SOPs that cut onboarding time by 50%+; recognised as CSAT Champion and with Cognizant Cheers Awards.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">Apr 2022 — Nov 2023</div>
+        <div class="exp-role">Programmer Analyst</div>
+        <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare (3.2M members)</div>
+        <p>Drove a 17-module Oracle Cloud HCM migration delivering USD 700K in annual savings and a 30% IT cost reduction; sustained 100 CSAT and 95%+ audit scores.</p>
       </div>
-      <div class="log-row">
-        <div class="log-time mono">May 2021 — Mar 2022</div>
-        <div>
-          <div class="log-role">Programmer Analyst Trainee</div>
-          <div class="log-org">Cognizant Technology Solutions · Chennai, India · client: EmblemHealth &amp; ConnectiCare</div>
-          <p>Where it started — completed structured onboarding in COBOL, JCL, DB2, and incident management, progressing to independent SLA ownership.</p>
-        </div>
+      <div class="exp-tile">
+        <div class="exp-time mono">May 2021 — Mar 2022</div>
+        <div class="exp-role">Programmer Analyst Trainee</div>
+        <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare</div>
+        <p>Where it started — structured onboarding in COBOL, JCL, DB2, and incident management, progressing to independent SLA ownership.</p>
       </div>
     </div>
   </div>
