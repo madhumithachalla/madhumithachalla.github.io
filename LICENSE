@@ -1,0 +1,24 @@
+Copyright (c) 2026 Madhumitha Challa. All rights reserved.
+
+This repository is public so that its contents — the portfolio site, its
+source code, and the accompanying documentation (including IMPLEMENTATION.md)
+— can be viewed, read, and learned from. Being publicly visible on GitHub
+does not grant any license to copy, reproduce, redistribute, publish,
+modify, or create derivative works from this code, its design, or its
+written content, in whole or in part, for any purpose, without prior
+written permission from the copyright holder.
+
+In short:
+  - You may VIEW this code and read how it was built.
+  - You may NOT copy, fork-and-republish, redistribute, or reuse this
+    code, its content, or its design elsewhere without asking first.
+
+If you'd like to use any part of this project (design patterns, code
+structure, or the approach documented in IMPLEMENTATION.md) as a basis for
+your own work, reach out first: rchmadhumitha@gmail.com. Reasonable
+requests (e.g. students learning from the approach, attributed reuse) are
+likely to be welcomed — this notice exists to require asking, not to
+refuse by default.
+
+This notice applies to every file in this repository unless that specific
+file states otherwise.

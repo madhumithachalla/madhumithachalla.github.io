@@ -520,6 +520,10 @@
   .footer-links{display:flex; flex-direction:column; gap:10px; font-family:'IBM Plex Sans'; font-weight:500; font-size:14.5px;}
   .footer-links a{text-decoration:none; color:#E7DFF7; border-bottom:1px solid transparent;}
   .footer-links a:hover{color:var(--amber); border-color:var(--amber);}
+  .footer-nav-label{font-family:'IBM Plex Mono'; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--slate); margin-bottom:2px;}
+  .footer-nav{display:flex; flex-wrap:wrap; gap:8px 18px; font-family:'IBM Plex Sans'; font-weight:500; font-size:14px; max-width:460px;}
+  .footer-nav a{text-decoration:none; color:#E7DFF7; border-bottom:1px solid transparent;}
+  .footer-nav a:hover{color:var(--teal); border-color:var(--teal);}
   .foot-bottom{
     margin-top:56px; padding-top:20px; border-top:1px solid var(--line);
     font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--slate);
@@ -1061,11 +1065,24 @@
 
 <footer id="contact">
   <div class="wrap footer-inner">
-    <h2>Let's talk about what you're building.</h2>
+    <div>
+      <h2>Let's talk about what you're building.</h2>
+      <div class="footer-nav-label" style="margin-top:26px;">Jump to</div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#leadership">Leadership</a>
+        <a href="#coffee">Coffee</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
     <div class="footer-links">
       <a href="mailto:rchmadhumitha@gmail.com">rchmadhumitha@gmail.com</a>
       <a href="https://www.linkedin.com/in/madhumitha-challa" target="_blank" rel="noopener">linkedin.com/in/madhumitha-challa</a>
       <a href="https://github.com/MadhumithaChalla" target="_blank" rel="noopener">github.com/MadhumithaChalla</a>
+      <a href="https://madhumithachalla.github.io" target="_blank" rel="noopener">madhumithachalla.github.io</a>
     </div>
   </div>
   <div class="wrap foot-bottom">
