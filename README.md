@@ -3,7 +3,7 @@
 A single-file, no-build-step portfolio site. Everything (HTML, CSS, JS) lives in `index.html`, so it's easy to edit yourself or hand to any AI coding tool.
 
 **Live:** [madhumithachalla.github.io](https://madhumithachalla.github.io)
-**Full build documentation:** see [`IMPLEMENTATION.md`](./IMPLEMENTATION.md) for a detailed breakdown of the design system, every section, and how each feature works.
+**Full build documentation:** see [`docs/`](./docs/README.md) for a detailed, categorized breakdown of the tech stack, design system, every section, and how each feature works.
 **License:** see [`LICENSE`](./LICENSE) — public to view, not licensed for reuse without permission.
 
 ## Tech stack
@@ -18,7 +18,7 @@ A single-file, no-build-step portfolio site. Everything (HTML, CSS, JS) lives in
 | Scheduling | Calendly inline widget + Google Calendar Appointment Schedule (iframe) |
 | Hosting | GitHub Pages, static, no CI/CD |
 
-Full rationale for each choice is in `IMPLEMENTATION.md`.
+Full rationale for each choice is in [`docs/01-philosophy-and-stack.md`](./docs/01-philosophy-and-stack.md).
 
 ## What's implemented
 
@@ -82,6 +82,6 @@ Everything is in one file on purpose — no build tools, no dependencies beyond 
 - **Stats strip** — edit the `data-target` / `data-prefix` / `data-suffix` attributes on `.stat-num` elements.
 - **Skill proficiency** — edit how many `<span class="dash on">` vs `<span class="dash">` each `.skill-item` has (5 total).
 
-See `IMPLEMENTATION.md` for the full breakdown of how each section and script works before making structural changes.
+See [`docs/`](./docs/README.md) for the full breakdown of how each section and script works before making structural changes.
 
 You can also just paste this whole file into Claude (or any AI tool) and ask for changes in plain English — it's structured so that works cleanly.
