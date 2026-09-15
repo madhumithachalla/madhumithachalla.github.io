@@ -53,6 +53,11 @@
     background:rgba(237,228,255,0.08); border:1px solid rgba(237,228,255,0.25); padding:4px 10px; border-radius:20px;
   }
   .foot{font-size:12px; color:var(--slate); margin-top:24px; line-height:1.5;}
+  .sim-badge{
+    display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;
+    background:rgba(255,193,7,0.15); color:#FFC107; border:1px solid rgba(255,193,7,0.4);
+    padding:3px 9px; border-radius:20px; margin-bottom:8px;
+  }
 </style>
 </head>
 <body>
@@ -89,7 +94,7 @@
       <div class="step-body">
         <h3>Species tagging (simulated)</h3>
         <p class="desc">Real flow: an ML model tags the species server-side. This demo picks a plausible result from a fixed list to demonstrate the UI, not a real detection.</p>
-        <button id="tagBtn" disabled>Analyze upload</button>
+        <button id="tagBtn" disabled>Analyze upload (simulated)</button>
         <div id="tagResult"></div>
       </div>
     </div>
@@ -143,8 +148,9 @@ tagBtn.addEventListener('click', () => {
   document.getElementById('num3').textContent = '✓';
   document.getElementById('tagResult').innerHTML = `
     <div class="result">
+      <span class="sim-badge">🎲 Randomly simulated, not real detection</span>
       <b>Tagged: ${pick.name}</b>
-      <span>Confidence: ${(pick.confidence * 100).toFixed(0)}% (simulated result — real tagging runs server-side)</span>
+      <span>Confidence: ${(pick.confidence * 100).toFixed(0)}% — this is picked at random from a fixed list to show the UI, not analyzed from your actual photo. Real species detection runs server-side against deployed AWS infrastructure (see the notice at the top of this page).</span>
     </div>`;
 });
 </script>

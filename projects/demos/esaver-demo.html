@@ -39,6 +39,40 @@
   .tip b{display:block; font-size:14.5px; margin-bottom:3px;}
   .tip span{font-size:13.5px; color:var(--slate); line-height:1.4;}
   .foot{font-size:12px; color:var(--slate); margin-top:24px; line-height:1.5;}
+  .notice{
+    background:rgba(196,166,251,0.1); border:1px solid rgba(196,166,251,0.3); border-radius:6px;
+    padding:12px 16px; font-size:13px; color:var(--paper); margin-bottom:16px; line-height:1.5;
+  }
+  h2.section{font-size:19px; margin:32px 0 4px;}
+  textarea{
+    width:100%; min-height:64px; background:var(--bg); border:1px solid var(--line); color:var(--paper);
+    padding:11px 14px; border-radius:4px; font-size:14px; font-family:inherit; resize:vertical;
+  }
+  select{
+    background:var(--bg); border:1px solid var(--line); color:var(--paper);
+    padding:10px 12px; border-radius:4px; font-size:13.5px;
+  }
+  .post-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:6px; padding:16px 18px; margin-bottom:10px;
+  }
+  .post-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .post-cat{
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
+    background:rgba(155,126,222,0.15); color:var(--violet); padding:3px 9px; border-radius:20px;
+  }
+  .post-time{font-size:11.5px; color:var(--slate);}
+  .post-body{font-size:14px; line-height:1.45; margin-bottom:10px;}
+  .post-actions{display:flex; align-items:center; gap:14px;}
+  .upvote{
+    background:transparent; border:1px solid var(--line); color:var(--paper);
+    padding:5px 12px; border-radius:20px; font-size:12.5px; font-weight:600; margin:0; display:flex; align-items:center; gap:6px;
+  }
+  .upvote:hover{border-color:var(--coral);}
+  .upvote.voted{border-color:var(--coral); color:var(--coral);}
+  .delete-own{background:none; border:none; color:var(--slate); font-size:12px; padding:0; cursor:pointer; text-decoration:underline;}
+  .empty-note{color:var(--slate); font-size:13px; padding:8px 0;}
+  select#sortTips{margin-left:auto;}
+  .board-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -67,7 +101,36 @@
     <div id="tipsOut"></div>
   </div>
 
-  <p class="foot">Weather data: Open-Meteo (free, no key required). Recommendation logic mirrors <code>esaver_weather_integration_demo.kt</code> — the actual piece I built for the team project.</p>
+  <h2 class="section">Community Tips Board</h2>
+  <p class="lead" style="margin-bottom:12px;">The real ESaver app has a Firestore-backed real-time chat where users share their own energy-saving tips as they discover them. This demo is a genuinely working local version of that idea, scoped honestly to what a static page can do without a backend.</p>
+  <div class="notice">ℹ This board is <b>local to your browser</b> (saved in localStorage) — it's not synced with anyone else's, unlike the real app's Firestore-backed real-time chat across all users. Renamed from "chat" to "board" here since nothing is actually live/shared in this demo.</div>
+
+  <div class="card">
+    <label for="tipText">Share a tip with the community</label>
+    <textarea id="tipText" placeholder="e.g. Running the dishwasher on eco mode after 9pm cut our bill noticeably…" maxlength="240"></textarea>
+    <div class="row" style="margin-top:10px; align-items:center;">
+      <select id="tipCategory">
+        <option value="Cooling">Cooling</option>
+        <option value="Heating">Heating</option>
+        <option value="Appliances">Appliances</option>
+        <option value="Lighting">Lighting</option>
+        <option value="General">General</option>
+      </select>
+      <button id="postTipBtn">Post tip</button>
+    </div>
+    <div class="status" id="postStatus"></div>
+  </div>
+
+  <div class="board-head">
+    <label style="margin:0;">Sorted by</label>
+    <select id="sortTips">
+      <option value="top">Most upvoted</option>
+      <option value="new">Newest first</option>
+    </select>
+  </div>
+  <div id="tipsBoard"></div>
+
+  <p class="foot">Weather data: Open-Meteo (free, no key required). Recommendation logic mirrors <code>esaver_weather_integration_demo.kt</code> — the actual piece I built for the team project. Community Tips Board is a local, single-browser recreation of the real app's Firestore-backed community chat.</p>
 </div>
 
 <script>
@@ -168,6 +231,138 @@ document.getElementById('geoBtn').addEventListener('click', () => {
     () => { statusEl.textContent = "Location access denied — try searching a city instead."; }
   );
 });
+
+// ---- Community Tips Board (local-only recreation of the real app's Firestore chat) ----
+const TIPS_KEY = 'esaver_demo_tips_v1';
+const VOTED_KEY = 'esaver_demo_voted_v1';
+const OWN_KEY = 'esaver_demo_own_v1';
+
+const SEED_TIPS = [
+  { id: 'seed1', text: "Running the dishwasher on eco mode after 9pm cut our bill more than I expected — off-peak rates plus lower heat cycle.", category: "Appliances", votes: 14, ts: Date.now() - 1000*60*60*24*6 },
+  { id: 'seed2', text: "Closing blinds on the west-facing windows by 2pm in summer keeps the whole unit noticeably cooler before the aircon even kicks in.", category: "Cooling", votes: 11, ts: Date.now() - 1000*60*60*24*3 },
+  { id: 'seed3', text: "Swapped five downlights to LED and the difference showed up on the very next bill — small change, easiest win on this list.", category: "Lighting", votes: 9, ts: Date.now() - 1000*60*60*24 },
+];
+
+function loadTips() {
+  try {
+    const raw = localStorage.getItem(TIPS_KEY);
+    return raw ? JSON.parse(raw) : SEED_TIPS.slice();
+  } catch { return SEED_TIPS.slice(); }
+}
+function saveTips(tips) {
+  try { localStorage.setItem(TIPS_KEY, JSON.stringify(tips)); } catch {}
+}
+function loadVoted() {
+  try { return new Set(JSON.parse(localStorage.getItem(VOTED_KEY) || '[]')); } catch { return new Set(); }
+}
+function saveVoted(set) {
+  try { localStorage.setItem(VOTED_KEY, JSON.stringify([...set])); } catch {}
+}
+function loadOwn() {
+  try { return new Set(JSON.parse(localStorage.getItem(OWN_KEY) || '[]')); } catch { return new Set(); }
+}
+function saveOwn(set) {
+  try { localStorage.setItem(OWN_KEY, JSON.stringify([...set])); } catch {}
+}
+
+function timeAgo(ts) {
+  const diffMin = Math.round((Date.now() - ts) / 60000);
+  if (diffMin < 1) return "just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  return `${Math.round(diffHr / 24)}d ago`;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderBoard() {
+  const tips = loadTips();
+  const voted = loadVoted();
+  const own = loadOwn();
+  const sortMode = document.getElementById('sortTips').value;
+  const sorted = tips.slice().sort((a, b) => sortMode === 'new' ? b.ts - a.ts : b.votes - a.votes);
+
+  const board = document.getElementById('tipsBoard');
+  if (!sorted.length) {
+    board.innerHTML = '<div class="empty-note">No tips yet — be the first to share one above.</div>';
+    return;
+  }
+  board.innerHTML = sorted.map(t => `
+    <div class="post-card">
+      <div class="post-top">
+        <span class="post-cat">${escapeHtml(t.category)}</span>
+        <span class="post-time">${timeAgo(t.ts)}</span>
+      </div>
+      <div class="post-body">${escapeHtml(t.text)}</div>
+      <div class="post-actions">
+        <button class="upvote${voted.has(t.id) ? ' voted' : ''}" data-id="${t.id}">▲ ${t.votes}</button>
+        ${own.has(t.id) ? `<button class="delete-own" data-id="${t.id}">Delete</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  board.querySelectorAll('.upvote').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const tips = loadTips();
+      const voted = loadVoted();
+      const tip = tips.find(t => t.id === id);
+      if (!tip) return;
+      if (voted.has(id)) {
+        tip.votes -= 1;
+        voted.delete(id);
+      } else {
+        tip.votes += 1;
+        voted.add(id);
+      }
+      saveTips(tips);
+      saveVoted(voted);
+      renderBoard();
+    });
+  });
+
+  board.querySelectorAll('.delete-own').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      saveTips(loadTips().filter(t => t.id !== id));
+      const own = loadOwn();
+      own.delete(id);
+      saveOwn(own);
+      renderBoard();
+    });
+  });
+}
+
+document.getElementById('postTipBtn').addEventListener('click', () => {
+  const textEl = document.getElementById('tipText');
+  const text = textEl.value.trim();
+  const postStatus = document.getElementById('postStatus');
+  if (!text) { postStatus.textContent = "Write a tip first."; return; }
+  if (text.length < 10) { postStatus.textContent = "A little more detail helps — try a few more words."; return; }
+
+  const id = 'tip_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  const category = document.getElementById('tipCategory').value;
+  const tips = loadTips();
+  tips.push({ id, text, category, votes: 0, ts: Date.now() });
+  saveTips(tips);
+
+  const own = loadOwn();
+  own.add(id);
+  saveOwn(own);
+
+  textEl.value = '';
+  postStatus.textContent = "Posted ✓ (saved to this browser only)";
+  renderBoard();
+});
+
+document.getElementById('sortTips').addEventListener('change', renderBoard);
+
+renderBoard();
 </script>
 </body>
 </html>
