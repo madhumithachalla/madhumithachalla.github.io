@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document Extraction — Live OCR Demo</title>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
   :root{
     --bg:#100D18; --bg-panel:#1C1729; --paper:#F3EEFA; --slate:#9E90B8; --line:rgba(255,255,255,0.14);
@@ -12,7 +14,7 @@
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--bg); color:var(--paper); font-family:'Segoe UI', -apple-system, sans-serif; padding:32px 20px 60px;}
-  .wrap{max-width:620px; margin:0 auto;}
+  .wrap{max-width:680px; margin:0 auto;}
   a.back{color:var(--slate); text-decoration:none; font-size:13px;}
   h1{font-size:26px; margin:18px 0 6px;}
   p.lead{color:var(--slate); font-size:14.5px; margin:0 0 24px; line-height:1.5;}
@@ -23,12 +25,23 @@
   }
   .dropzone:hover, .dropzone.drag{border-color:var(--coral); color:var(--paper);}
   input[type="file"]{display:none;}
+  input[type="text"]{
+    width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper);
+    padding:10px 13px; border-radius:4px; font-size:14px; font-family:monospace;
+  }
+  label{display:block; font-size:12.5px; color:var(--slate); margin-bottom:6px;}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+  .checkbox-row{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--slate); margin-top:8px;}
   button{
     background:var(--coral); color:#1B1130; border:none; padding:11px 18px; border-radius:4px;
     font-weight:600; font-size:14px; cursor:pointer; margin-top:14px;
   }
   button:disabled{opacity:0.5; cursor:default;}
-  .preview{max-width:100%; border-radius:4px; margin-top:14px; border:1px solid var(--line);}
+  .file-badge{
+    display:inline-block; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
+    background:rgba(196,166,251,0.15); color:var(--coral); padding:3px 9px; border-radius:20px; margin-top:10px;
+  }
+  .preview{max-width:100%; border-radius:4px; margin-top:14px; border:1px solid var(--line); display:block;}
   .progress-wrap{margin-top:14px; background:var(--bg); border-radius:20px; height:8px; overflow:hidden; display:none;}
   .progress-bar{height:100%; background:var(--coral); width:0%; transition:width .2s;}
   .progress-label{font-size:12.5px; color:var(--slate); margin-top:6px;}
@@ -36,10 +49,14 @@
     width:100%; min-height:140px; background:var(--bg); border:1px solid var(--line); color:var(--paper);
     border-radius:4px; padding:12px; font-family:monospace; font-size:13px; margin-top:10px; resize:vertical;
   }
-  .match{
-    border-left:3px solid var(--violet); background:rgba(155,126,222,0.08);
-    padding:8px 12px; border-radius:2px; margin-bottom:6px; font-family:monospace; font-size:13px;
+  .highlight-box{
+    background:var(--bg); border:1px solid var(--line); border-radius:4px; padding:12px;
+    font-family:monospace; font-size:13px; line-height:1.6; white-space:pre-wrap; word-break:break-word;
+    max-height:280px; overflow-y:auto; margin-top:10px;
   }
+  mark{background:var(--violet); color:#100D18; border-radius:2px; padding:0 2px;}
+  .match-count{font-size:13px; color:var(--slate); margin-top:6px;}
+  .match-count b{color:var(--paper);}
   .foot{font-size:12px; color:var(--slate); margin-top:24px; line-height:1.5;}
   h3{font-size:14px; text-transform:uppercase; letter-spacing:0.04em; color:var(--slate); margin:20px 0 8px;}
 </style>
@@ -48,33 +65,49 @@
 <div class="wrap">
   <a class="back" href="../../index.html">← Back to portfolio</a>
   <h1>Document extraction — live OCR demo</h1>
-  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser via Tesseract.js (WASM OCR — no server, no upload to anywhere). Upload a photo or scan of a document with an ID-like code (e.g. "AB123456") and it'll extract the text and flag any matching rows, same pattern-matching approach as the original Python script.</p>
+  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, then type whatever text or pattern you want highlighted (defaults to an ID-style example: two letters + six digits, like "AB123456").</p>
 
   <div class="card">
     <div class="dropzone" id="dropzone">
-      Click to choose an image, or drag one here<br>
-      <span style="font-size:12px;">JPG or PNG works best — a clear photo of a printed page</span>
+      Click to choose a file, or drag one here<br>
+      <span style="font-size:12px;">Image (JPG/PNG), PDF, or .docx — image and PDF work best</span>
     </div>
-    <input type="file" id="fileInput" accept="image/*">
+    <input type="file" id="fileInput" accept="image/*,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+    <div id="fileBadge"></div>
     <img id="preview" class="preview" style="display:none;">
     <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
     <div class="progress-label" id="progressLabel"></div>
-    <button id="runBtn" disabled>Run OCR</button>
+    <button id="runBtn" disabled>Extract text</button>
+  </div>
+
+  <div class="card">
+    <label for="searchPattern">Search / highlight — type exactly what you want to find</label>
+    <input type="text" id="searchPattern" value="\b[A-Z]{2}\d{6}\b" placeholder="e.g. invoice, AB123456, or your own text">
+    <div class="checkbox-row">
+      <input type="checkbox" id="useRegex" checked>
+      <label for="useRegex" style="margin:0;">Treat as a regular expression (uncheck to search for the exact text/phrase instead)</label>
+    </div>
   </div>
 
   <div class="card" id="resultsCard" style="display:none;">
-    <h3>Extracted text</h3>
+    <h3>Highlighted preview</h3>
+    <div class="highlight-box" id="highlightBox"></div>
+    <div class="match-count" id="matchCount"></div>
+    <h3>Raw extracted text</h3>
     <textarea id="rawText" readonly></textarea>
-    <h3>Matched rows (pattern: two letters + six digits, e.g. AB123456)</h3>
-    <div id="matches"></div>
   </div>
 
-  <p class="foot">OCR engine: Tesseract.js, running entirely client-side — your image never leaves your device. Matching logic mirrors <code>document_extraction_pipeline.py</code>, the actual Python script I built for this project.</p>
+  <p class="foot">Image/PDF OCR: Tesseract.js. PDF page rendering: pdf.js. Word (.docx) text extraction: Mammoth.js — all running entirely client-side, your file never leaves your device. Matching logic mirrors <code>document_extraction_pipeline.py</code>, the actual Python script I built for this project, extended here with a user-editable search pattern instead of one fixed pattern.</p>
 </div>
 
 <script>
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
+const fileBadge = document.getElementById('fileBadge');
 const preview = document.getElementById('preview');
 const runBtn = document.getElementById('runBtn');
 const progressWrap = document.getElementById('progressWrap');
@@ -82,10 +115,20 @@ const progressBar = document.getElementById('progressBar');
 const progressLabel = document.getElementById('progressLabel');
 const resultsCard = document.getElementById('resultsCard');
 const rawText = document.getElementById('rawText');
-const matchesEl = document.getElementById('matches');
+const highlightBox = document.getElementById('highlightBox');
+const matchCount = document.getElementById('matchCount');
+const searchPattern = document.getElementById('searchPattern');
+const useRegex = document.getElementById('useRegex');
 
 let currentFile = null;
-const TARGET_PATTERN = /\b[A-Z]{2}\d{6}\b/g;
+let currentKind = null; // 'image' | 'pdf' | 'docx'
+
+function kindOf(file) {
+  if (file.type.startsWith('image/')) return 'image';
+  if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) return 'pdf';
+  if (file.name.toLowerCase().endsWith('.docx')) return 'docx';
+  return null;
+}
 
 dropzone.addEventListener('click', () => fileInput.click());
 dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
@@ -97,41 +140,141 @@ dropzone.addEventListener('drop', (e) => {
 fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
 
 function handleFile(file) {
-  if (!file.type.startsWith('image/')) return;
+  const kind = kindOf(file);
+  if (!kind) {
+    fileBadge.innerHTML = '<span class="file-badge" style="color:#FF6F5E; background:rgba(255,111,94,0.15);">Unsupported file — use an image, PDF, or .docx</span>';
+    runBtn.disabled = true;
+    return;
+  }
   currentFile = file;
-  preview.src = URL.createObjectURL(file);
-  preview.style.display = 'block';
+  currentKind = kind;
+  fileBadge.innerHTML = `<span class="file-badge">${kind.toUpperCase()} selected: ${file.name}</span>`;
+
+  if (kind === 'image') {
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
   runBtn.disabled = false;
   resultsCard.style.display = 'none';
+}
+
+async function extractFromImageFile(file) {
+  const { data } = await Tesseract.recognize(file, 'eng', {
+    logger: (m) => {
+      if (m.status && typeof m.progress === 'number') {
+        progressBar.style.width = `${Math.round(m.progress * 100)}%`;
+        progressLabel.textContent = `${m.status} — ${Math.round(m.progress * 100)}%`;
+      }
+    }
+  });
+  return data.text;
+}
+
+async function extractFromPdf(file) {
+  progressLabel.textContent = "Loading PDF…";
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    progressLabel.textContent = `Rendering page ${i} of ${pdf.numPages}…`;
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+
+    const { data } = await Tesseract.recognize(canvas, 'eng', {
+      logger: (m) => {
+        if (m.status && typeof m.progress === 'number') {
+          progressBar.style.width = `${Math.round(m.progress * 100)}%`;
+          progressLabel.textContent = `Page ${i}/${pdf.numPages}: ${m.status} — ${Math.round(m.progress * 100)}%`;
+        }
+      }
+    });
+    fullText += (fullText ? '\n\n' : '') + data.text;
+  }
+  return fullText;
+}
+
+async function extractFromDocx(file) {
+  progressLabel.textContent = "Reading Word document…";
+  progressBar.style.width = '50%';
+  const buf = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer: buf });
+  progressBar.style.width = '100%';
+  return result.value;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function renderHighlighted(text, pattern, isRegex) {
+  if (!pattern) {
+    highlightBox.innerHTML = escapeHtml(text) || '<span style="color:var(--slate);">(no text extracted)</span>';
+    matchCount.innerHTML = '';
+    return;
+  }
+  let re;
+  try {
+    re = new RegExp(isRegex ? pattern : escapeRegex(pattern), 'gi');
+  } catch (err) {
+    matchCount.innerHTML = `<span style="color:#FF6F5E;">Invalid regular expression — check your pattern.</span>`;
+    highlightBox.innerHTML = escapeHtml(text);
+    return;
+  }
+
+  let count = 0;
+  const escaped = escapeHtml(text);
+  // Run the match against the raw text (for counting) and against escaped text for rendering,
+  // since escaping doesn't change match positions for the plain-text characters typically searched.
+  const highlighted = escaped.replace(re, (m) => { count++; return `<mark>${m}</mark>`; });
+
+  highlightBox.innerHTML = highlighted || '<span style="color:var(--slate);">(no text extracted)</span>';
+  matchCount.innerHTML = count
+    ? `<b>${count}</b> match${count === 1 ? '' : 'es'} highlighted above.`
+    : `No matches found for that pattern in this document.`;
 }
 
 runBtn.addEventListener('click', async () => {
   if (!currentFile) return;
   runBtn.disabled = true;
   progressWrap.style.display = 'block';
-  progressLabel.textContent = "Loading OCR engine…";
+  progressBar.style.width = '0%';
+  progressLabel.textContent = "Starting…";
 
   try {
-    const { data } = await Tesseract.recognize(currentFile, 'eng', {
-      logger: (m) => {
-        if (m.status && typeof m.progress === 'number') {
-          progressBar.style.width = `${Math.round(m.progress * 100)}%`;
-          progressLabel.textContent = `${m.status} — ${Math.round(m.progress * 100)}%`;
-        }
-      }
-    });
+    let text;
+    if (currentKind === 'image') text = await extractFromImageFile(currentFile);
+    else if (currentKind === 'pdf') text = await extractFromPdf(currentFile);
+    else if (currentKind === 'docx') text = await extractFromDocx(currentFile);
 
-    rawText.value = data.text;
-    const found = [...data.text.matchAll(TARGET_PATTERN)].map(m => m[0]);
-    matchesEl.innerHTML = found.length
-      ? found.map(f => `<div class="match">Match found: ${f}</div>`).join('')
-      : `<div style="color:var(--slate); font-size:13px;">No matches found for the target pattern in this image.</div>`;
+    rawText.value = text;
+    renderHighlighted(text, searchPattern.value.trim(), useRegex.checked);
     resultsCard.style.display = 'block';
+    progressLabel.textContent = "Done ✓";
   } catch (err) {
-    progressLabel.textContent = "OCR failed — try a clearer image.";
+    console.error(err);
+    progressLabel.textContent = "Extraction failed — try a clearer file, or a different format.";
   } finally {
     runBtn.disabled = false;
   }
+});
+
+// Re-highlight instantly when the search pattern changes, without re-running OCR
+searchPattern.addEventListener('input', () => {
+  if (rawText.value) renderHighlighted(rawText.value, searchPattern.value.trim(), useRegex.checked);
+});
+useRegex.addEventListener('change', () => {
+  if (rawText.value) renderHighlighted(rawText.value, searchPattern.value.trim(), useRegex.checked);
 });
 </script>
 </body>
