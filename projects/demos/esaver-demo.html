@@ -7,133 +7,283 @@
 <style>
   :root{
     --bg:#100D18; --bg-panel:#1C1729; --paper:#F3EEFA; --slate:#9E90B8; --line:rgba(255,255,255,0.14);
-    --coral:#C4A6FB; --teal:#EDE4FF; --violet:#9B7EDE;
+    --coral:#FF6F5E; --amber:#FFCB73; --teal:#2DD4BF; --violet:#9B7EDE; --green:#4ADE80;
   }
   *{box-sizing:border-box;}
-  body{margin:0; background:var(--bg); color:var(--paper); font-family:'Segoe UI', -apple-system, sans-serif; padding:32px 20px 60px;}
-  .wrap{max-width:560px; margin:0 auto;}
-  a.back{color:var(--slate); text-decoration:none; font-size:13px;}
-  h1{font-size:26px; margin:18px 0 6px; color:var(--paper);}
-  p.lead{color:var(--slate); font-size:14.5px; margin:0 0 24px; line-height:1.5;}
-  .card{background:var(--bg-panel); border:1px solid var(--line); border-radius:6px; padding:22px; margin-bottom:16px;}
-  label{display:block; font-size:13px; color:var(--slate); margin-bottom:8px;}
-  .row{display:flex; gap:10px; flex-wrap:wrap;}
+  body{
+    margin:0; background:var(--bg); color:var(--paper); font-family:'Segoe UI', -apple-system, sans-serif;
+    padding:28px 16px 60px; display:flex; flex-direction:column; align-items:center;
+  }
+  a.back{color:var(--slate); text-decoration:none; font-size:13px; align-self:flex-start; max-width:420px; width:100%; margin:0 auto 14px;}
+  .intro{max-width:420px; width:100%; margin:0 auto 18px;}
+  .intro h1{font-size:22px; margin:6px 0 6px;}
+  .intro p{color:var(--slate); font-size:13.5px; line-height:1.5; margin:0;}
+
+  /* ---- phone-app shell ---- */
+  .phone{
+    width:100%; max-width:420px; background:linear-gradient(180deg, #17121F, #100D18);
+    border:1px solid var(--line); border-radius:28px; overflow:hidden;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.6); display:flex; flex-direction:column;
+  }
+  .app-bar{
+    padding:20px 20px 14px; display:flex; align-items:center; gap:12px;
+    background:radial-gradient(circle at 15% 0%, rgba(45,212,191,0.18), transparent 60%), radial-gradient(circle at 90% 10%, rgba(255,111,94,0.18), transparent 55%);
+  }
+  .app-icon{
+    width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, var(--teal), var(--violet));
+    display:flex; align-items:center; justify-content:center; font-size:19px; flex:none;
+  }
+  .app-title{font-weight:700; font-size:17px;}
+  .app-sub{font-size:11.5px; color:var(--slate);}
+
+  .tabs{display:flex; gap:4px; padding:0 16px 12px;}
+  .tab-btn{
+    flex:1; background:transparent; border:none; color:var(--slate); font-size:12.5px; font-weight:600;
+    padding:8px 6px; border-radius:20px; cursor:pointer; text-align:center;
+  }
+  .tab-btn.active{background:var(--bg-panel); color:var(--paper);}
+
+  .tab-panel{display:none; padding:4px 18px 18px; min-height:340px;}
+  .tab-panel.active{display:block;}
+
+  .card{background:var(--bg-panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px;}
+  label{display:block; font-size:12px; color:var(--slate); margin-bottom:7px;}
+  .row{display:flex; gap:8px; flex-wrap:wrap;}
   input[type="text"]{
-    flex:1; min-width:180px; background:var(--bg); border:1px solid var(--line); color:var(--paper);
-    padding:11px 14px; border-radius:4px; font-size:15px;
+    flex:1; min-width:120px; background:var(--bg); border:1px solid var(--line); color:var(--paper);
+    padding:10px 13px; border-radius:10px; font-size:14px;
   }
   button{
-    background:var(--coral); color:#1B1130; border:none; padding:11px 18px; border-radius:4px;
-    font-weight:600; font-size:14px; cursor:pointer;
+    background:var(--coral); color:#1B1130; border:none; padding:10px 15px; border-radius:10px;
+    font-weight:700; font-size:13px; cursor:pointer;
   }
   button.secondary{background:transparent; border:1px solid var(--line); color:var(--paper);}
   button:disabled{opacity:0.5; cursor:default;}
-  .status{font-size:13px; color:var(--slate); margin-top:10px; min-height:18px;}
-  .weather-now{display:flex; align-items:baseline; gap:14px; margin:6px 0 4px;}
-  .weather-now .temp{font-size:44px; font-weight:700; color:var(--coral);}
-  .weather-now .cond{font-size:15px; color:var(--slate);}
+  .status{font-size:12.5px; color:var(--slate); margin-top:8px; min-height:16px;}
+
+  /* eco score gauge */
+  .score-row{display:flex; align-items:center; gap:16px; margin-bottom:4px;}
+  .gauge{position:relative; width:74px; height:74px; flex:none;}
+  .gauge svg{transform:rotate(-90deg);}
+  .gauge .track{fill:none; stroke:var(--line); stroke-width:8;}
+  .gauge .fill{fill:none; stroke:var(--teal); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset .5s ease;}
+  .gauge .num{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px;}
+  .score-label{font-size:12px; color:var(--slate); line-height:1.4;}
+  .score-label b{color:var(--paper);}
+
+  .weather-now{display:flex; align-items:baseline; gap:12px; margin:8px 0 4px;}
+  .weather-now .temp{font-size:38px; font-weight:800; color:var(--coral);}
+  .weather-now .cond{font-size:13.5px; color:var(--slate);}
+  .place{color:var(--slate); font-size:12px; margin-bottom:2px;}
+  .humid{font-size:12.5px; color:var(--slate); margin-bottom:12px;}
+
   .tip{
     border-left:3px solid var(--violet); background:rgba(155,126,222,0.08);
-    padding:12px 16px; border-radius:2px; margin-bottom:10px;
+    padding:10px 13px; border-radius:2px; margin-bottom:8px;
   }
-  .tip b{display:block; font-size:14.5px; margin-bottom:3px;}
-  .tip span{font-size:13.5px; color:var(--slate); line-height:1.4;}
-  .foot{font-size:12px; color:var(--slate); margin-top:24px; line-height:1.5;}
+  .tip b{display:block; font-size:13.5px; margin-bottom:2px;}
+  .tip span{font-size:12.5px; color:var(--slate); line-height:1.4;}
+  .tip.standby{border-left-color:var(--amber); background:rgba(255,203,115,0.08);}
+  .tip.timeofday{border-left-color:var(--teal); background:rgba(45,212,191,0.08);}
+
   .notice{
-    background:rgba(196,166,251,0.1); border:1px solid rgba(196,166,251,0.3); border-radius:6px;
-    padding:12px 16px; font-size:13px; color:var(--paper); margin-bottom:16px; line-height:1.5;
+    background:rgba(155,126,222,0.1); border:1px solid rgba(155,126,222,0.3); border-radius:10px;
+    padding:10px 13px; font-size:12px; color:var(--paper); margin-bottom:12px; line-height:1.5;
   }
-  h2.section{font-size:19px; margin:32px 0 4px;}
+
+  /* challenge tab */
+  .streak-banner{
+    display:flex; align-items:center; gap:12px; background:linear-gradient(100deg, rgba(255,111,94,0.18), rgba(255,203,115,0.14));
+    border:1px solid rgba(255,203,115,0.35); border-radius:14px; padding:14px 16px; margin-bottom:14px;
+  }
+  .streak-flame{font-size:26px;}
+  .streak-num{font-size:22px; font-weight:800;}
+  .streak-note{font-size:11.5px; color:var(--slate);}
+  .progress-track{background:var(--bg); border-radius:20px; height:7px; overflow:hidden; margin:10px 0 14px;}
+  .progress-fill{height:100%; background:var(--green); border-radius:20px; transition:width .3s ease;}
+  .challenge-item{
+    display:flex; align-items:center; gap:11px; padding:11px 4px; border-bottom:1px solid var(--line);
+    cursor:pointer; user-select:none;
+  }
+  .challenge-item:last-child{border-bottom:none;}
+  .chk{
+    width:22px; height:22px; border-radius:7px; border:2px solid var(--line); flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:13px; color:transparent;
+  }
+  .challenge-item.done .chk{background:var(--green); border-color:var(--green); color:#0D0A16;}
+  .challenge-item.done .ctext{color:var(--slate); text-decoration:line-through;}
+  .ctext{font-size:13.5px;}
+
+  /* community tab */
   textarea{
-    width:100%; min-height:64px; background:var(--bg); border:1px solid var(--line); color:var(--paper);
-    padding:11px 14px; border-radius:4px; font-size:14px; font-family:inherit; resize:vertical;
+    width:100%; min-height:60px; background:var(--bg); border:1px solid var(--line); color:var(--paper);
+    padding:10px 13px; border-radius:10px; font-size:13.5px; font-family:inherit; resize:vertical;
   }
   select{
     background:var(--bg); border:1px solid var(--line); color:var(--paper);
-    padding:10px 12px; border-radius:4px; font-size:13.5px;
+    padding:9px 11px; border-radius:10px; font-size:13px;
   }
-  .post-card{
-    background:var(--bg-panel); border:1px solid var(--line); border-radius:6px; padding:16px 18px; margin-bottom:10px;
-  }
-  .post-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .post-card{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:13px 15px; margin-bottom:9px;}
+  .post-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;}
   .post-cat{
-    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
-    background:rgba(155,126,222,0.15); color:var(--violet); padding:3px 9px; border-radius:20px;
+    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;
+    background:rgba(155,126,222,0.18); color:var(--violet); padding:3px 8px; border-radius:20px;
   }
-  .post-time{font-size:11.5px; color:var(--slate);}
-  .post-body{font-size:14px; line-height:1.45; margin-bottom:10px;}
-  .post-actions{display:flex; align-items:center; gap:14px;}
+  .post-time{font-size:11px; color:var(--slate);}
+  .post-body{font-size:13.5px; line-height:1.45; margin-bottom:9px;}
+  .post-actions{display:flex; align-items:center; gap:12px;}
   .upvote{
     background:transparent; border:1px solid var(--line); color:var(--paper);
-    padding:5px 12px; border-radius:20px; font-size:12.5px; font-weight:600; margin:0; display:flex; align-items:center; gap:6px;
+    padding:5px 11px; border-radius:20px; font-size:12px; font-weight:600; margin:0; display:flex; align-items:center; gap:5px;
   }
   .upvote:hover{border-color:var(--coral);}
   .upvote.voted{border-color:var(--coral); color:var(--coral);}
-  .delete-own{background:none; border:none; color:var(--slate); font-size:12px; padding:0; cursor:pointer; text-decoration:underline;}
+  .delete-own{background:none; border:none; color:var(--slate); font-size:11.5px; padding:0; cursor:pointer; text-decoration:underline;}
   .empty-note{color:var(--slate); font-size:13px; padding:8px 0;}
+  .board-head{display:flex; align-items:center; gap:10px; margin:14px 0 8px;}
+  .board-head label{margin:0; white-space:nowrap;}
   select#sortTips{margin-left:auto;}
-  .board-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+
+  /* bottom nav */
+  .bottom-nav{display:flex; border-top:1px solid var(--line); background:#0D0A16;}
+  .nav-btn{
+    flex:1; background:none; border:none; color:var(--slate); padding:12px 4px 14px; font-size:10.5px;
+    display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; border-radius:0;
+  }
+  .nav-btn .icon{font-size:18px;}
+  .nav-btn.active{color:var(--teal);}
+
+  .foot{font-size:11.5px; color:var(--slate); margin-top:20px; line-height:1.5; max-width:420px; text-align:center;}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <a class="back" href="../../index.html">← Back to portfolio</a>
-  <h1>ESaver — live weather-to-tips demo</h1>
-  <p class="lead">A working recreation of the piece I personally built for ESaver: live weather in, energy-saving tips out. This pulls real current weather (via Open-Meteo, no API key needed) and runs the same recommendation logic from my Kotlin code, ported to JavaScript.</p>
-
-  <div class="card">
-    <label for="city">Enter a city, or use your location</label>
-    <div class="row">
-      <input type="text" id="city" placeholder="e.g. Melbourne" />
-      <button id="searchBtn">Get weather</button>
-      <button id="geoBtn" class="secondary">Use my location</button>
-    </div>
-    <div class="status" id="status"></div>
-  </div>
-
-  <div class="card" id="resultCard" style="display:none;">
-    <div id="placeName" style="color:var(--slate); font-size:13px;"></div>
-    <div class="weather-now">
-      <span class="temp" id="tempOut">--°</span>
-      <span class="cond" id="condOut"></span>
-    </div>
-    <div style="font-size:13px; color:var(--slate); margin-bottom:16px;" id="humidityOut"></div>
-    <div id="tipsOut"></div>
-  </div>
-
-  <h2 class="section">Community Tips Board</h2>
-  <p class="lead" style="margin-bottom:12px;">The real ESaver app has a Firestore-backed real-time chat where users share their own energy-saving tips as they discover them. This demo is a genuinely working local version of that idea, scoped honestly to what a static page can do without a backend.</p>
-  <div class="notice">ℹ This board is <b>local to your browser</b> (saved in localStorage) — it's not synced with anyone else's, unlike the real app's Firestore-backed real-time chat across all users. Renamed from "chat" to "board" here since nothing is actually live/shared in this demo.</div>
-
-  <div class="card">
-    <label for="tipText">Share a tip with the community</label>
-    <textarea id="tipText" placeholder="e.g. Running the dishwasher on eco mode after 9pm cut our bill noticeably…" maxlength="240"></textarea>
-    <div class="row" style="margin-top:10px; align-items:center;">
-      <select id="tipCategory">
-        <option value="Cooling">Cooling</option>
-        <option value="Heating">Heating</option>
-        <option value="Appliances">Appliances</option>
-        <option value="Lighting">Lighting</option>
-        <option value="General">General</option>
-      </select>
-      <button id="postTipBtn">Post tip</button>
-    </div>
-    <div class="status" id="postStatus"></div>
-  </div>
-
-  <div class="board-head">
-    <label style="margin:0;">Sorted by</label>
-    <select id="sortTips">
-      <option value="top">Most upvoted</option>
-      <option value="new">Newest first</option>
-    </select>
-  </div>
-  <div id="tipsBoard"></div>
-
-  <p class="foot">Weather data: Open-Meteo (free, no key required). Recommendation logic mirrors <code>esaver_weather_integration_demo.kt</code> — the actual piece I built for the team project. Community Tips Board is a local, single-browser recreation of the real app's Firestore-backed community chat.</p>
+<a class="back" href="../../index.html">← Back to portfolio</a>
+<div class="intro">
+  <h1>ESaver — live app demo</h1>
+  <p>A working recreation of the piece I personally built for ESaver, restyled as an app-shell to match how it actually feels to use on a phone. Real live weather (Open-Meteo, no key needed), the same Kotlin recommendation logic ported to JS, plus two additions of my own: a Weekly Eco Challenge with a streak, and an Eco Score.</p>
 </div>
 
+<div class="phone">
+  <div class="app-bar">
+    <div class="app-icon">⚡</div>
+    <div>
+      <div class="app-title">ESaver</div>
+      <div class="app-sub">Energy dashboard</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="challenge">Challenge</button>
+    <button class="tab-btn" data-tab="community">Community</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="tab-panel active" id="panel-dashboard">
+    <div class="card">
+      <div class="score-row">
+        <div class="gauge">
+          <svg width="74" height="74" viewBox="0 0 74 74">
+            <circle class="track" cx="37" cy="37" r="31"></circle>
+            <circle class="fill" id="scoreRing" cx="37" cy="37" r="31" stroke-dasharray="194.8" stroke-dashoffset="194.8"></circle>
+          </svg>
+          <div class="num" id="scoreNum">0</div>
+        </div>
+        <div class="score-label">
+          <b>Eco Score</b> — a playful engagement score I added, not a real utility metric. Rises with your challenge streak and community activity.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="city">Enter a city, or use your location</label>
+      <div class="row">
+        <input type="text" id="city" placeholder="e.g. Melbourne" />
+        <button id="searchBtn">Get weather</button>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <button id="geoBtn" class="secondary" style="width:100%;">📍 Use my location</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="card" id="resultCard" style="display:none;">
+      <div class="place" id="placeName"></div>
+      <div class="weather-now">
+        <span class="temp" id="tempOut">--°</span>
+        <span class="cond" id="condOut"></span>
+      </div>
+      <div class="humid" id="humidityOut"></div>
+      <div id="tipsOut"></div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="tab-panel" id="panel-challenge">
+    <div class="streak-banner">
+      <div class="streak-flame">🔥</div>
+      <div>
+        <div class="streak-num"><span id="streakNum">0</span>-day streak</div>
+        <div class="streak-note">Complete at least 3 of 5 actions a day to keep it going</div>
+      </div>
+    </div>
+    <div class="notice">My own addition — not part of the original ESaver app. A daily checklist to turn the tips into habits, with a streak so it's not just a one-off list.</div>
+    <div class="progress-track"><div class="progress-fill" id="challengeProgress" style="width:0%;"></div></div>
+    <div id="challengeList"></div>
+  </div>
+
+  <!-- COMMUNITY -->
+  <div class="tab-panel" id="panel-community">
+    <div class="notice">ℹ The real app syncs this across all users in real time via Firestore. This demo's board is <b>local to your browser</b> (localStorage) — a genuinely working, honestly-scoped recreation, not a live shared chat.</div>
+    <div class="card">
+      <label for="tipText">Share a tip with the community</label>
+      <textarea id="tipText" placeholder="e.g. Running the dishwasher on eco mode after 9pm cut our bill noticeably…" maxlength="240"></textarea>
+      <div class="row" style="margin-top:9px; align-items:center;">
+        <select id="tipCategory">
+          <option>Cooling</option>
+          <option>Heating</option>
+          <option>Water heating</option>
+          <option>Standby power</option>
+          <option>Smart habits</option>
+          <option>Lighting</option>
+          <option>Appliances</option>
+          <option>General</option>
+        </select>
+        <button id="postTipBtn">Post tip</button>
+      </div>
+      <div class="status" id="postStatus"></div>
+    </div>
+    <div class="board-head">
+      <label>Sorted by</label>
+      <select id="sortTips">
+        <option value="top">Most upvoted</option>
+        <option value="new">Newest first</option>
+      </select>
+    </div>
+    <div id="tipsBoard"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" data-tab="dashboard"><span class="icon">🏠</span>Dashboard</button>
+    <button class="nav-btn" data-tab="challenge"><span class="icon">✅</span>Challenge</button>
+    <button class="nav-btn" data-tab="community"><span class="icon">💬</span>Community</button>
+  </div>
+</div>
+
+<p class="foot">Weather data: Open-Meteo (free, no key required). Core recommendation logic mirrors <code>esaver_weather_integration_demo.kt</code>, the actual piece I built for the team project. The Weekly Eco Challenge, streak, Eco Score, and Community Tips Board are my own additions on top of that, built for this demo.</p>
+
 <script>
+/* ---------------- Tab switching (top tabs + bottom nav stay in sync) ---------------- */
+function setTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${name}`));
+}
+document.querySelectorAll('.tab-btn, .nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => setTab(btn.dataset.tab));
+});
+
+/* ---------------- Weather + tips (core, ported from the Kotlin recommendation engine) ---------------- */
 const statusEl = document.getElementById('status');
 const resultCard = document.getElementById('resultCard');
 const placeName = document.getElementById('placeName');
@@ -142,7 +292,8 @@ const condOut = document.getElementById('condOut');
 const humidityOut = document.getElementById('humidityOut');
 const tipsOut = document.getElementById('tipsOut');
 
-// WMO weather code -> simple condition label
+let lastWeatherFetched = false;
+
 function weatherCodeToCondition(code) {
   if ([0].includes(code)) return "Clear";
   if ([1,2,3].includes(code)) return "Partly cloudy";
@@ -154,26 +305,35 @@ function weatherCodeToCondition(code) {
   return "Unknown";
 }
 
-// This is the same logic as RecommendationEngine.tipsFor() in the Kotlin source,
-// ported to JavaScript so it can run live in the browser.
+// Same core logic as RecommendationEngine.tipsFor() in the Kotlin source, ported to JS,
+// extended here with a standby-power tip (always relevant) and a time-of-day tip (new).
 function tipsFor(tempC, humidity, condition) {
   const tips = [];
 
   if (tempC >= 28) {
-    tips.push({ title: "Cool smart, not hard", detail: "Set aircon to 24–25°C instead of full blast — each extra degree saves roughly 5–8% on cooling energy." });
+    tips.push({ title: "Cool smart, not hard", detail: "Set aircon to 24–25°C instead of full blast — each extra degree saves roughly 5–8% on cooling energy.", cls: "" });
   } else if (tempC <= 12) {
-    tips.push({ title: "Layer before you heat", detail: "It's cold enough that a jumper + closed curtains often beats reaching for the heater." });
+    tips.push({ title: "Layer before you heat", detail: "It's cold enough that a jumper + closed curtains often beats reaching for the heater.", cls: "" });
   } else {
-    tips.push({ title: "Good day to go natural", detail: "Mild weather today — open windows for airflow instead of running AC or heating." });
+    tips.push({ title: "Good day to go natural", detail: "Mild weather today — open windows for airflow instead of running AC or heating.", cls: "" });
   }
 
   if (humidity >= 70) {
-    tips.push({ title: "Watch the humidity", detail: "High humidity makes rooms feel hotter than the thermometer says — a fan often beats extra aircon." });
+    tips.push({ title: "Watch the humidity", detail: "High humidity makes rooms feel hotter than the thermometer says — a fan often beats extra aircon.", cls: "" });
   }
 
   if (condition.toLowerCase().includes("clear")) {
-    tips.push({ title: "Free daylight", detail: "Clear skies — a good day to skip the lights and rely on natural light where you can." });
+    tips.push({ title: "Free daylight", detail: "Clear skies — a good day to skip the lights and rely on natural light where you can.", cls: "" });
   }
+
+  const hour = new Date().getHours();
+  if (hour >= 22 || hour < 6) {
+    tips.push({ title: "Off-peak window", detail: "Late night is usually the cheapest electricity window — a good time for the dishwasher or a laundry load if it can wait.", cls: "timeofday" });
+  } else if (hour >= 14 && hour <= 20) {
+    tips.push({ title: "Peak-hours heads up", detail: "This is typically peak-demand time — delaying one big appliance run by a few hours can make a real difference.", cls: "timeofday" });
+  }
+
+  tips.push({ title: "Standby power adds up", detail: "Devices left on standby can be 5–10% of a household's electricity use — a power board with a switch makes this a one-click habit.", cls: "standby" });
 
   return tips;
 }
@@ -185,8 +345,10 @@ function renderResult(place, tempC, humidity, condition) {
   humidityOut.textContent = `Humidity: ${humidity}%`;
 
   const tips = tipsFor(tempC, humidity, condition);
-  tipsOut.innerHTML = tips.map(t => `<div class="tip"><b>${t.title}</b><span>${t.detail}</span></div>`).join('');
+  tipsOut.innerHTML = tips.map(t => `<div class="tip ${t.cls}"><b>${t.title}</b><span>${t.detail}</span></div>`).join('');
   resultCard.style.display = 'block';
+  lastWeatherFetched = true;
+  updateEcoScore();
 }
 
 async function fetchWeatherByCoords(lat, lon, label) {
@@ -232,15 +394,107 @@ document.getElementById('geoBtn').addEventListener('click', () => {
   );
 });
 
-// ---- Community Tips Board (local-only recreation of the real app's Firestore chat) ----
-const TIPS_KEY = 'esaver_demo_tips_v1';
-const VOTED_KEY = 'esaver_demo_voted_v1';
-const OWN_KEY = 'esaver_demo_own_v1';
+/* ---------------- Weekly Eco Challenge (new — daily checklist + streak) ---------------- */
+const CHALLENGE_ITEMS = [
+  "Air-dry one load of laundry instead of the dryer",
+  "Unplug or power-board-off idle chargers and devices",
+  "Cook with lids on to cut stovetop time",
+  "Run the dishwasher/washer only on a full load",
+  "Cut one shower short by a couple of minutes",
+];
+const CHALLENGE_KEY = 'esaver_demo_challenge_v1'; // { "2026-09-15": [0,1,3], ... }
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+function loadChallengeHistory() {
+  try { return JSON.parse(localStorage.getItem(CHALLENGE_KEY) || '{}'); } catch { return {}; }
+}
+function saveChallengeHistory(h) {
+  try { localStorage.setItem(CHALLENGE_KEY, JSON.stringify(h)); } catch {}
+}
+
+function computeStreak(history) {
+  let streak = 0;
+  let cursor = new Date();
+  // If today doesn't yet meet the threshold, start counting from yesterday so an
+  // in-progress day doesn't break an existing streak while it's still being worked on.
+  const todayDone = (history[todayStr()] || []).length;
+  if (todayDone < 3) cursor.setDate(cursor.getDate() - 1);
+  while (true) {
+    const key = cursor.toISOString().slice(0, 10);
+    const done = (history[key] || []).length;
+    if (done >= 3) { streak++; cursor.setDate(cursor.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+function renderChallenge() {
+  const history = loadChallengeHistory();
+  const today = todayStr();
+  const doneToday = new Set(history[today] || []);
+
+  const list = document.getElementById('challengeList');
+  list.innerHTML = CHALLENGE_ITEMS.map((text, i) => `
+    <div class="challenge-item${doneToday.has(i) ? ' done' : ''}" data-i="${i}">
+      <div class="chk">✓</div>
+      <div class="ctext">${text}</div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.challenge-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = Number(el.dataset.i);
+      const history = loadChallengeHistory();
+      const set = new Set(history[today] || []);
+      if (set.has(i)) set.delete(i); else set.add(i);
+      history[today] = [...set];
+      saveChallengeHistory(history);
+      renderChallenge();
+      updateEcoScore();
+    });
+  });
+
+  const pct = Math.round((doneToday.size / CHALLENGE_ITEMS.length) * 100);
+  document.getElementById('challengeProgress').style.width = `${pct}%`;
+  document.getElementById('streakNum').textContent = computeStreak(history);
+}
+
+/* ---------------- Eco Score (new — playful composite of streak + community activity) ---------------- */
+function updateEcoScore() {
+  const history = loadChallengeHistory();
+  const todayDone = (history[todayStr()] || []).length;
+  const streak = computeStreak(history);
+
+  const ownPosts = loadOwn ? loadOwn().size : 0;
+  const votesCast = loadVoted ? loadVoted().size : 0;
+
+  let score = 20;
+  if (lastWeatherFetched) score += 10;
+  score += Math.min(streak * 4, 24);
+  score += (todayDone / CHALLENGE_ITEMS.length) * 26;
+  score += Math.min(ownPosts * 6 + votesCast * 3, 20);
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  const circumference = 2 * Math.PI * 31;
+  const ring = document.getElementById('scoreRing');
+  ring.setAttribute('stroke-dasharray', circumference.toFixed(1));
+  ring.setAttribute('stroke-dashoffset', (circumference * (1 - score / 100)).toFixed(1));
+  document.getElementById('scoreNum').textContent = score;
+}
+
+/* ---------------- Community Tips Board (local-only recreation of the real app's Firestore chat) ---------------- */
+const TIPS_KEY = 'esaver_demo_tips_v2';
+const VOTED_KEY = 'esaver_demo_voted_v2';
+const OWN_KEY = 'esaver_demo_own_v2';
 
 const SEED_TIPS = [
   { id: 'seed1', text: "Running the dishwasher on eco mode after 9pm cut our bill more than I expected — off-peak rates plus lower heat cycle.", category: "Appliances", votes: 14, ts: Date.now() - 1000*60*60*24*6 },
   { id: 'seed2', text: "Closing blinds on the west-facing windows by 2pm in summer keeps the whole unit noticeably cooler before the aircon even kicks in.", category: "Cooling", votes: 11, ts: Date.now() - 1000*60*60*24*3 },
   { id: 'seed3', text: "Swapped five downlights to LED and the difference showed up on the very next bill — small change, easiest win on this list.", category: "Lighting", votes: 9, ts: Date.now() - 1000*60*60*24 },
+  { id: 'seed4', text: "Set the hot water system timer to skip the 2-4pm peak window — didn't notice any difference except the bill.", category: "Water heating", votes: 7, ts: Date.now() - 1000*60*60*30 },
+  { id: 'seed5', text: "Put the TV, console and modem on one power board with a physical switch — one flick before bed instead of hunting down chargers.", category: "Standby power", votes: 5, ts: Date.now() - 1000*60*60*10 },
 ];
 
 function loadTips() {
@@ -323,6 +577,7 @@ function renderBoard() {
       saveTips(tips);
       saveVoted(voted);
       renderBoard();
+      updateEcoScore();
     });
   });
 
@@ -334,6 +589,7 @@ function renderBoard() {
       own.delete(id);
       saveOwn(own);
       renderBoard();
+      updateEcoScore();
     });
   });
 }
@@ -358,11 +614,15 @@ document.getElementById('postTipBtn').addEventListener('click', () => {
   textEl.value = '';
   postStatus.textContent = "Posted ✓ (saved to this browser only)";
   renderBoard();
+  updateEcoScore();
 });
 
 document.getElementById('sortTips').addEventListener('change', renderBoard);
 
+/* ---------------- init ---------------- */
 renderBoard();
+renderChallenge();
+updateEcoScore();
 </script>
 </body>
 </html>
