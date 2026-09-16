@@ -57,6 +57,10 @@
     max-height:280px; overflow-y:auto; margin-top:10px;
   }
   mark{background:var(--violet); color:#100D18; border-radius:2px; padding:0 2px;}
+  .preview-note{font-size:12.5px; color:var(--slate); margin:0 0 8px; line-height:1.5;}
+  .preview-canvases{display:flex; flex-direction:column; gap:16px; margin-top:10px;}
+  .preview-canvases canvas{width:100%; height:auto; border:1px solid var(--line); border-radius:4px; background:#000; display:block;}
+  .page-label{font-size:11px; color:var(--slate); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;}
   .match-count{font-size:13px; color:var(--slate); margin-top:6px;}
   .match-count b{color:var(--paper);}
   .download-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
@@ -71,7 +75,7 @@
 <div class="wrap">
   <a class="back" href="../../index.html">← Back to portfolio</a>
   <h1>Document extraction — live OCR demo</h1>
-  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, type whatever text or pattern you want highlighted (defaults to an ID-style example: two letters + six digits, like "AB123456"), then download the highlighted result as an <b>image</b> or a <b>PDF</b>.</p>
+  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, type whatever text or pattern you want found, and for images/PDFs the matches get boxed <b>directly on your original document</b> (not just pulled out as plain text) — then download the result as an <b>image</b> or a <b>PDF</b>.</p>
 
   <div class="card">
     <div class="dropzone" id="dropzone">
@@ -97,7 +101,9 @@
 
   <div class="card" id="resultsCard" style="display:none;">
     <h3>Highlighted preview</h3>
-    <div class="highlight-box" id="highlightBox"></div>
+    <p class="preview-note" id="previewNote" style="display:none;"></p>
+    <div class="preview-canvases" id="previewCanvases"></div>
+    <div class="highlight-box" id="highlightBox" style="display:none;"></div>
     <div class="match-count" id="matchCount"></div>
     <div class="download-row">
       <button id="dlImageBtn">Download highlighted image</button>
@@ -108,7 +114,7 @@
     <textarea id="rawText" readonly></textarea>
   </div>
 
-  <p class="foot">Image/PDF OCR: Tesseract.js. PDF page rendering: pdf.js. Word (.docx) text extraction: Mammoth.js — all running entirely client-side, your file never leaves your device. Matching logic mirrors <code>document_extraction_pipeline.py</code>, the actual Python script I built for this project, extended here with a user-editable search pattern instead of one fixed pattern.</p>
+  <p class="foot">Image/PDF OCR: Tesseract.js. PDF page rendering: pdf.js. Word (.docx) text extraction: Mammoth.js — all running entirely client-side, your file never leaves your device. Row-matching logic mirrors <code>document_extraction_pipeline.py</code>, the actual Python script I built for this project (group OCR words into rows, test each row against the pattern, box the whole row) — extended here with a user-editable search pattern instead of one fixed pattern, and rendered live in the browser instead of saved to disk.</p>
 </div>
 
 <script>
@@ -126,6 +132,8 @@ const progressBar = document.getElementById('progressBar');
 const progressLabel = document.getElementById('progressLabel');
 const resultsCard = document.getElementById('resultsCard');
 const rawText = document.getElementById('rawText');
+const previewNote = document.getElementById('previewNote');
+const previewCanvases = document.getElementById('previewCanvases');
 const highlightBox = document.getElementById('highlightBox');
 const matchCount = document.getElementById('matchCount');
 const searchPattern = document.getElementById('searchPattern');
@@ -133,6 +141,10 @@ const useRegex = document.getElementById('useRegex');
 
 let currentFile = null;
 let currentKind = null; // 'image' | 'pdf' | 'docx'
+// For 'image'/'pdf': one entry per page, holding the pristine rendered page/image
+// (so we can redraw boxes fresh each time the search pattern changes) plus the
+// OCR'd rows for that page. Row grouping mirrors document_extraction_pipeline.py.
+let pageEntries = [];
 
 function kindOf(file) {
   if (file.type.startsWith('image/')) return 'image';
@@ -159,6 +171,7 @@ function handleFile(file) {
   }
   currentFile = file;
   currentKind = kind;
+  pageEntries = [];
   fileBadge.innerHTML = `<span class="file-badge">${kind.toUpperCase()} selected: ${file.name}</span>`;
 
   if (kind === 'image') {
@@ -171,8 +184,55 @@ function handleFile(file) {
   resultsCard.style.display = 'none';
 }
 
+function loadImageToCanvas(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      URL.revokeObjectURL(img.src);
+      resolve(canvas);
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// Group OCR words into rows by vertical position (same idea as ROW_HEIGHT_PX
+// in document_extraction_pipeline.py), so multi-word patterns and whole-row
+// context match the way the real pipeline does. Falls back from data.lines
+// (when the Tesseract build provides it) to building rows from data.words.
+function getRowsFromTesseractData(data) {
+  if (Array.isArray(data.lines) && data.lines.length) {
+    return data.lines
+      .filter(l => l.text && l.text.trim())
+      .map(l => ({ text: l.text.trim(), bbox: l.bbox }));
+  }
+  const words = data.words || [];
+  const rowHeight = 32;
+  const rows = new Map();
+  words.forEach(w => {
+    if (!w.text || !w.text.trim() || !w.bbox) return;
+    const key = Math.floor(w.bbox.y0 / rowHeight);
+    if (!rows.has(key)) rows.set(key, []);
+    rows.get(key).push(w);
+  });
+  return Array.from(rows.values()).map(ws => ({
+    text: ws.map(w => w.text).join(' '),
+    bbox: {
+      x0: Math.min(...ws.map(w => w.bbox.x0)),
+      y0: Math.min(...ws.map(w => w.bbox.y0)),
+      x1: Math.max(...ws.map(w => w.bbox.x1)),
+      y1: Math.max(...ws.map(w => w.bbox.y1)),
+    },
+  }));
+}
+
 async function extractFromImageFile(file) {
-  const { data } = await Tesseract.recognize(file, 'eng', {
+  const canvas = await loadImageToCanvas(file);
+  const { data } = await Tesseract.recognize(canvas, 'eng', {
     logger: (m) => {
       if (m.status && typeof m.progress === 'number') {
         progressBar.style.width = `${Math.round(m.progress * 100)}%`;
@@ -180,6 +240,7 @@ async function extractFromImageFile(file) {
       }
     }
   });
+  pageEntries = [{ canvas, rows: getRowsFromTesseractData(data) }];
   return data.text;
 }
 
@@ -188,6 +249,7 @@ async function extractFromPdf(file) {
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
   let fullText = '';
+  pageEntries = [];
   for (let i = 1; i <= pdf.numPages; i++) {
     progressLabel.textContent = `Rendering page ${i} of ${pdf.numPages}…`;
     const page = await pdf.getPage(i);
@@ -205,6 +267,7 @@ async function extractFromPdf(file) {
         }
       }
     });
+    pageEntries.push({ canvas, rows: getRowsFromTesseractData(data) });
     fullText += (fullText ? '\n\n' : '') + data.text;
   }
   return fullText;
@@ -216,6 +279,7 @@ async function extractFromDocx(file) {
   const buf = await file.arrayBuffer();
   const result = await mammoth.extractRawText({ arrayBuffer: buf });
   progressBar.style.width = '100%';
+  pageEntries = [];
   return result.value;
 }
 
@@ -228,7 +292,16 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function renderHighlighted(text, pattern, isRegex) {
+// Builds the matcher used against a whole row/line of text at a time (hence
+// no 'g' flag — .test() just needs to know whether this row matches at all).
+function buildRowRegex(pattern, isRegex) {
+  if (!pattern) return null;
+  return new RegExp(isRegex ? pattern : escapeRegex(pattern), 'i');
+}
+
+// docx has no visual page to draw on, so it keeps the original plain-text
+// highlighting behavior (whole document rendered with <mark> around matches).
+function renderHighlightedText(text, pattern, isRegex) {
   if (!pattern) {
     highlightBox.innerHTML = escapeHtml(text) || '<span style="color:var(--slate);">(no text extracted)</span>';
     matchCount.innerHTML = '';
@@ -242,17 +315,92 @@ function renderHighlighted(text, pattern, isRegex) {
     highlightBox.innerHTML = escapeHtml(text);
     return;
   }
-
   let count = 0;
   const escaped = escapeHtml(text);
-  // Run the match against the raw text (for counting) and against escaped text for rendering,
-  // since escaping doesn't change match positions for the plain-text characters typically searched.
   const highlighted = escaped.replace(re, (m) => { count++; return `<mark>${m}</mark>`; });
-
   highlightBox.innerHTML = highlighted || '<span style="color:var(--slate);">(no text extracted)</span>';
   matchCount.innerHTML = count
     ? `<b>${count}</b> match${count === 1 ? '' : 'es'} highlighted above.`
     : `No matches found for that pattern in this document.`;
+}
+
+// Draws a fresh copy of a page's pristine canvas with a box around every row
+// that matches, so re-running this after a pattern change never compounds
+// old boxes onto the same canvas.
+function drawAnnotatedPage(baseCanvas, rows, re) {
+  const out = document.createElement('canvas');
+  out.width = baseCanvas.width;
+  out.height = baseCanvas.height;
+  const ctx = out.getContext('2d');
+  ctx.drawImage(baseCanvas, 0, 0);
+
+  let matches = 0;
+  if (re) {
+    const pad = 4;
+    rows.forEach(row => {
+      if (re.test(row.text)) {
+        matches++;
+        const { x0, y0, x1, y1 } = row.bbox;
+        ctx.strokeStyle = '#9B7EDE';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x0 - pad, y0 - pad, (x1 - x0) + pad * 2, (y1 - y0) + pad * 2);
+        ctx.fillStyle = 'rgba(155,126,222,0.22)';
+        ctx.fillRect(x0 - pad, y0 - pad, (x1 - x0) + pad * 2, (y1 - y0) + pad * 2);
+      }
+    });
+  }
+  return { canvas: out, matches };
+}
+
+// Renders whatever was last extracted using the current search pattern —
+// called right after extraction, and again live whenever the pattern or the
+// regex checkbox changes, without ever re-running OCR.
+function renderPreview() {
+  const pattern = searchPattern.value.trim();
+  const isRegex = useRegex.checked;
+
+  if (currentKind === 'docx') {
+    previewCanvases.style.display = 'none';
+    previewCanvases.innerHTML = '';
+    highlightBox.style.display = 'block';
+    previewNote.style.display = 'block';
+    previewNote.textContent = "Word documents have no visual page to draw boxes on, so matches are marked directly in the extracted text instead.";
+    renderHighlightedText(rawText.value, pattern, isRegex);
+    return;
+  }
+
+  previewNote.style.display = 'none';
+  highlightBox.style.display = 'none';
+  previewCanvases.style.display = 'flex';
+  previewCanvases.innerHTML = '';
+
+  let re;
+  try {
+    re = buildRowRegex(pattern, isRegex);
+  } catch (err) {
+    matchCount.innerHTML = `<span style="color:#FF6F5E;">Invalid regular expression — check your pattern.</span>`;
+    pageEntries.forEach(entry => previewCanvases.appendChild(drawAnnotatedPage(entry.canvas, entry.rows, null).canvas));
+    return;
+  }
+
+  let totalMatches = 0;
+  pageEntries.forEach((entry, idx) => {
+    const { canvas: annotated, matches } = drawAnnotatedPage(entry.canvas, entry.rows, re);
+    totalMatches += matches;
+    if (pageEntries.length > 1) {
+      const label = document.createElement('div');
+      label.className = 'page-label';
+      label.textContent = `Page ${idx + 1} of ${pageEntries.length}`;
+      previewCanvases.appendChild(label);
+    }
+    previewCanvases.appendChild(annotated);
+  });
+
+  matchCount.innerHTML = !pattern
+    ? ''
+    : totalMatches
+      ? `<b>${totalMatches}</b> matching row${totalMatches === 1 ? '' : 's'} boxed above.`
+      : 'No matches found for that pattern in this document.';
 }
 
 runBtn.addEventListener('click', async () => {
@@ -269,8 +417,8 @@ runBtn.addEventListener('click', async () => {
     else if (currentKind === 'docx') text = await extractFromDocx(currentFile);
 
     rawText.value = text;
-    renderHighlighted(text, searchPattern.value.trim(), useRegex.checked);
     resultsCard.style.display = 'block';
+    renderPreview();
     progressLabel.textContent = "Done ✓";
   } catch (err) {
     console.error(err);
@@ -282,36 +430,57 @@ runBtn.addEventListener('click', async () => {
 
 // Re-highlight instantly when the search pattern changes, without re-running OCR
 searchPattern.addEventListener('input', () => {
-  if (rawText.value) renderHighlighted(rawText.value, searchPattern.value.trim(), useRegex.checked);
+  if (rawText.value) renderPreview();
 });
 useRegex.addEventListener('change', () => {
-  if (rawText.value) renderHighlighted(rawText.value, searchPattern.value.trim(), useRegex.checked);
+  if (rawText.value) renderPreview();
 });
 
-/* ---------------- Export the highlighted preview as an image or PDF ---------------- */
+/* ---------------- Export the highlighted result as an image or PDF ---------------- */
 const downloadStatus = document.getElementById('downloadStatus');
 const dlImageBtn = document.getElementById('dlImageBtn');
 const dlPdfBtn = document.getElementById('dlPdfBtn');
 
+// docx-only fallback: captures the rendered highlight-box text as an image,
+// since there's no original page image to export for that format.
 async function captureHighlightBox() {
-  // Temporarily expand the box to its full content height so the capture isn't
-  // cropped to the scrollable viewport — then restore the original constraints.
   const prevMaxHeight = highlightBox.style.maxHeight;
   const prevOverflow = highlightBox.style.overflowY;
   highlightBox.style.maxHeight = 'none';
   highlightBox.style.overflowY = 'visible';
-
   try {
-    const canvas = await html2canvas(highlightBox, {
-      backgroundColor: '#100D18',
-      scale: 2,
-      useCORS: true
-    });
-    return canvas;
+    return await html2canvas(highlightBox, { backgroundColor: '#100D18', scale: 2, useCORS: true });
   } finally {
     highlightBox.style.maxHeight = prevMaxHeight;
     highlightBox.style.overflowY = prevOverflow;
   }
+}
+
+// Recomputes the currently-annotated page canvases fresh from the pristine
+// pages + the live search pattern, so downloads always match what's on screen.
+function currentAnnotatedCanvases() {
+  const pattern = searchPattern.value.trim();
+  let re = null;
+  try { re = buildRowRegex(pattern, useRegex.checked); } catch (err) { re = null; }
+  return pageEntries.map(entry => drawAnnotatedPage(entry.canvas, entry.rows, re).canvas);
+}
+
+// Stacks multiple pages into one tall image for the single-image download;
+// a single page is returned as-is.
+function stitchCanvases(canvases) {
+  if (canvases.length <= 1) return canvases[0];
+  const gap = 20;
+  const width = Math.max(...canvases.map(c => c.width));
+  const height = canvases.reduce((sum, c) => sum + c.height, 0) + gap * (canvases.length - 1);
+  const out = document.createElement('canvas');
+  out.width = width;
+  out.height = height;
+  const ctx = out.getContext('2d');
+  ctx.fillStyle = '#100D18';
+  ctx.fillRect(0, 0, width, height);
+  let y = 0;
+  canvases.forEach(c => { ctx.drawImage(c, 0, y); y += c.height + gap; });
+  return out;
 }
 
 function download(dataUrl, filename) {
@@ -336,21 +505,42 @@ async function withDownloadStatus(btn, fn) {
 }
 
 dlImageBtn.addEventListener('click', () => withDownloadStatus(dlImageBtn, async () => {
-  const canvas = await captureHighlightBox();
-  download(canvas.toDataURL('image/png'), 'highlighted-extract.png');
+  if (currentKind === 'docx') {
+    const canvas = await captureHighlightBox();
+    download(canvas.toDataURL('image/png'), 'highlighted-extract.png');
+    return;
+  }
+  const canvases = currentAnnotatedCanvases();
+  if (!canvases.length) throw new Error('Nothing to export yet.');
+  const out = stitchCanvases(canvases);
+  download(out.toDataURL('image/png'), 'highlighted-extract.png');
 }));
 
 dlPdfBtn.addEventListener('click', () => withDownloadStatus(dlPdfBtn, async () => {
-  const canvas = await captureHighlightBox();
   const { jsPDF } = window.jspdf;
-  // Page sized to match the captured content exactly, so nothing gets cropped or
-  // rescaled oddly regardless of how long the extracted text turns out to be.
-  const pdf = new jsPDF({
-    orientation: canvas.width >= canvas.height ? 'landscape' : 'portrait',
-    unit: 'px',
-    format: [canvas.width, canvas.height]
+  if (currentKind === 'docx') {
+    const canvas = await captureHighlightBox();
+    const pdf = new jsPDF({
+      orientation: canvas.width >= canvas.height ? 'landscape' : 'portrait',
+      unit: 'px',
+      format: [canvas.width, canvas.height]
+    });
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
+    pdf.save('highlighted-extract.pdf');
+    return;
+  }
+  const canvases = currentAnnotatedCanvases();
+  if (!canvases.length) throw new Error('Nothing to export yet.');
+  let pdf;
+  canvases.forEach((canvas, i) => {
+    const orientation = canvas.width >= canvas.height ? 'landscape' : 'portrait';
+    if (i === 0) {
+      pdf = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height] });
+    } else {
+      pdf.addPage([canvas.width, canvas.height], orientation);
+    }
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
   });
-  pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
   pdf.save('highlighted-extract.pdf');
 }));
 </script>
