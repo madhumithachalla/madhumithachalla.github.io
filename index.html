@@ -333,6 +333,15 @@
   @media(max-width:700px){ .juggle-grid{grid-template-columns:1fr 1fr;} }
   @media(max-width:460px){ .juggle-grid{grid-template-columns:1fr;} }
 
+  /* shared card liveliness: a small hover lift everywhere, plus a scroll-in
+     fade for the cards further down the page (kept off fact-tile, which
+     usually sits above the fold already) */
+  .fact-tile, .leader-card, .rec-card, .juggle-card{transition:transform .2s ease, box-shadow .2s ease, opacity .5s ease;}
+  .fact-tile:hover{transform:translateY(-3px); box-shadow:0 14px 28px -16px rgba(0,0,0,0.5);}
+  .leader-card, .rec-card, .juggle-card{opacity:0; transform:translateY(14px);}
+  .leader-card.in, .rec-card.in, .juggle-card.in{opacity:1; transform:translateY(0);}
+  .leader-card.in:hover, .rec-card.in:hover, .juggle-card.in:hover{transform:translateY(-3px); box-shadow:0 14px 28px -16px rgba(0,0,0,0.5);}
+
   /* projects */
   .project-list{display:flex; flex-direction:column; gap:18px;}
   .project{
@@ -350,6 +359,7 @@
   .pill.solo{color:#FF6F5E; border-color:var(--coral); background:rgba(255,111,94,0.12);}
   .pill.indie{color:#9B7EDE; border-color:var(--violet); background:rgba(155,126,222,0.14);}
   .pill.upcoming{color:var(--slate); border-color:var(--line); border-style:dashed; background:transparent;}
+  .pill.new-sync{color:var(--teal); border-color:var(--teal); background:rgba(45,212,191,0.12);}
   .project.upcoming{opacity:0.88; border-style:dashed; grid-template-columns:1fr;}
   .project h3{font-size:20px; margin-bottom:6px;}
   .project .role{font-family:'IBM Plex Sans'; font-weight:500; font-size:13.5px; color:var(--slate); margin-bottom:14px;}
@@ -405,6 +415,13 @@
     outline:none; border-color:var(--coral);
   }
   .coffee-note-small{font-size:12px; color:var(--slate); margin-top:10px;}
+  .msg-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;}
+  .msg-chip{
+    font-family:'IBM Plex Mono'; font-size:11px; border:1px solid rgba(255,111,94,0.4); color:#FF6F5E;
+    background:rgba(255,111,94,0.08); padding:5px 10px; border-radius:20px; cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .msg-chip:hover, .msg-chip:focus-visible{border-color:var(--coral); color:var(--paper);}
   @media(max-width:640px){ .coffee-row{grid-template-columns:1fr;} }
   .format-toggle, .cal-tabs{display:flex; gap:8px;}
   .format-btn{
@@ -430,8 +447,13 @@
   .exp-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
   .exp-tile{
     background:var(--bg-panel); border:1px solid var(--line); border-top:3px solid var(--coral);
-    border-radius:var(--radius); padding:18px 20px;
+    border-radius:var(--radius); padding:18px 20px 16px; cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    opacity:0; transform:translateY(14px);
   }
+  .exp-tile.in{opacity:1; transform:translateY(0);}
+  .exp-tile.in:hover, .exp-tile.in:focus-visible{transform:translateY(-3px); box-shadow:0 14px 28px -16px rgba(0,0,0,0.55);}
+  .exp-tile:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
   .exp-tile:nth-child(5n+2){border-top-color:var(--teal);}
   .exp-tile:nth-child(5n+3){border-top-color:var(--amber);}
   .exp-tile:nth-child(5n+4){border-top-color:var(--violet);}
@@ -444,6 +466,17 @@
   .exp-role{font-weight:600; font-size:15.5px; margin:6px 0 3px;}
   .exp-org{font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--slate); margin-bottom:9px;}
   .exp-tile p{margin:0; color:var(--ink-soft); font-size:13.5px; line-height:1.45;}
+  .exp-detail-wrap{display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s ease;}
+  .exp-detail-wrap > div{overflow:hidden;}
+  .exp-tile.expanded .exp-detail-wrap{grid-template-rows:1fr;}
+  .exp-detail{padding-top:9px;}
+  .exp-toggle-label{
+    display:inline-flex; align-items:center; gap:4px; margin-top:10px;
+    font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em;
+    color:var(--slate);
+  }
+  .exp-toggle-label svg{width:9px; height:9px; transition:transform .2s ease;}
+  .exp-tile.expanded .exp-toggle-label svg{transform:rotate(180deg);}
   @media(max-width:760px){ .exp-grid{grid-template-columns:1fr;} }
 
   /* ambient starfield backdrop */
@@ -471,20 +504,25 @@
 
   /* chat widget */
   #chat-toggle{
-    position:fixed; right:22px; bottom:22px; z-index:80;
-    width:56px; height:56px; border-radius:50%; border:none; cursor:pointer;
-    background:linear-gradient(135deg, var(--coral), var(--violet));
+    position:fixed; right:24px; bottom:24px; z-index:80;
+    width:68px; height:68px; border-radius:50%; border:none; cursor:pointer;
+    background:linear-gradient(135deg, var(--coral), var(--amber));
     color:var(--ink); display:flex; align-items:center; justify-content:center;
-    box-shadow:0 10px 24px -8px rgba(155,126,222,0.6);
-    transition:transform .15s ease, opacity .2s ease;
+    box-shadow:0 16px 34px -10px rgba(255,111,94,0.7);
+    transition:transform .15s ease, opacity .2s ease, box-shadow .2s ease;
+    animation:chatPulse 2.6s ease-in-out infinite;
   }
-  #chat-toggle:hover{transform:translateY(-2px);}
+  #chat-toggle:hover{transform:translateY(-3px) scale(1.05); box-shadow:0 18px 38px -8px rgba(255,111,94,0.85);}
   /* Fades out near the coffee scheduler / footer so it never sits on top of
      form fields or links — reappears once those sections scroll out of view. */
-  #chat-toggle.chat-hide{opacity:0; pointer-events:none; transform:scale(0.85);}
-  #chat-toggle svg{width:24px; height:24px;}
+  #chat-toggle.chat-hide{opacity:0; pointer-events:none; transform:scale(0.85); animation:none;}
+  #chat-toggle svg{width:30px; height:30px;}
+  @keyframes chatPulse{
+    0%, 100%{box-shadow:0 16px 34px -10px rgba(255,111,94,0.7), 0 0 0 0 rgba(255,111,94,0.45);}
+    50%{box-shadow:0 16px 34px -10px rgba(255,111,94,0.7), 0 0 0 14px rgba(255,111,94,0);}
+  }
   #chat-panel{
-    position:fixed; right:22px; bottom:88px; z-index:80;
+    position:fixed; right:24px; bottom:102px; z-index:80;
     width:340px; max-width:calc(100vw - 32px); max-height:min(520px, 70vh);
     background:var(--bg-panel); border:1px solid var(--line); border-radius:10px;
     box-shadow:0 24px 50px -18px rgba(0,0,0,0.6);
@@ -521,8 +559,9 @@
     cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;
   }
   @media(max-width:460px){
-    #chat-panel{right:12px; left:12px; width:auto; bottom:82px;}
-    #chat-toggle{right:16px; bottom:16px;}
+    #chat-panel{right:12px; left:12px; width:auto; bottom:88px;}
+    #chat-toggle{right:16px; bottom:16px; width:60px; height:60px;}
+    #chat-toggle svg{width:26px; height:26px;}
   }
 
   /* footer / contact */
@@ -715,71 +754,93 @@
       <h2>Where the hours actually went</h2>
     </div>
     <div class="exp-grid">
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Aug 2026 — Oct 2026</div>
         <div class="exp-role">HR Administrative Officer</div>
         <div class="exp-org">Monash University · HR Projects, Office of the COO &amp; Senior VP</div>
         <p>Casual role (HEW 4, ~10 hrs/week) supporting the HR Projects team at Clayton Campus.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">A casual position at HEW 4 classification, roughly 10 hours a week, with the HR Projects team inside the Office of the COO and Senior Vice-President, based at Clayton Campus. Runs alongside a full-time Master's and the rest of the list on this page, contributing administrative and project support wherever the team's current initiatives need it.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Sep 2026 — present</div>
         <div class="exp-role">Technology &amp; Digital Innovation Intern</div>
         <div class="exp-org">Baazar (Fund'ex venture)</div>
         <p>Working on emerging tech integration for a fintech platform: cloud infrastructure scaling, real-time transaction monitoring, and architecture decisions.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">An ongoing internship with Baazar, a Fund'ex venture, focused on emerging technology integration for a fintech platform that's still actively taking shape. Involved in cloud infrastructure scaling decisions as the platform grows, building out real-time transaction monitoring so issues surface as they happen rather than after the fact, and weighing in on the broader architecture choices that will shape how the platform scales.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Jul 2026</div>
         <div class="exp-role">TeaMWork Virtual Internship: AI Strategy &amp; Market Expansion</div>
         <div class="exp-org">Monash–Warwick Alliance</div>
         <p>Co-led a 7-person cross-university team on market expansion strategy for an AI-powered HVAC company entering Singapore. Built ROI models projecting a SGD 2M+ revenue pipeline across 15 target companies.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">A short, intensive virtual internship run jointly by Monash and Warwick, pairing students from both universities on a real client brief. Co-led a 7-person cross-university team through the research, strategy, and financial modelling needed to plan a Singapore market entry for an AI-powered HVAC company, coordinating across time zones and two university systems to land on a single strategy deliverable. Built the ROI models underpinning that strategy, projecting a SGD 2M+ revenue pipeline across a shortlist of 15 target companies identified through the team's own market research.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Feb 2026 — Sep 2026</div>
         <div class="exp-role">Customer Service Representative</div>
         <div class="exp-org">Viva Energy Retail · Melbourne, VIC</div>
         <p>Front-line customer service: POS transactions, digital payments, real-time issue troubleshooting, store operations.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">A front-line retail role at a busy Melbourne service station: handling point-of-sale transactions and digital payments for a steady stream of customers, troubleshooting issues as they came up in real time, and pitching in on general store operations. A fast-paced, people-facing counterpoint to the more desk-based IT and admin work elsewhere on this list.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Jul 2026 — Aug 2026</div>
         <div class="exp-role">T&amp;A FLEX Data Entry Assistant (HEW 4)</div>
         <div class="exp-org">Monash University · Peninsula Campus</div>
         <p>Supported a time &amp; attendance system rollout across 500+ staff, and flagged a critical go-live risk before it caused disruption.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">A short-term HEW 4 role supporting the rollout of a new time &amp; attendance (T&amp;A FLEX) system across more than 500 staff at Peninsula Campus: entering and checking data ahead of go-live, and working closely with the project team through the cutover itself. Flagged a critical go-live risk early enough for the team to address it before it caused any disruption to staff.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Jan 2026 — present</div>
         <div class="exp-role">IT Postgraduate Peer Mentor</div>
         <div class="exp-org">Monash University</div>
         <p>Mentor 20+ postgraduate IT students through structured sessions: technical guidance, career development, university resources.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Mentor 20+ postgraduate IT students through structured one-on-one sessions and small-group workshops, logging 30+ volunteer hours so far on coursework problem-solving, career development conversations, and helping students find their way around university resources and support services.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Oct 2025 — Aug 2026</div>
         <div class="exp-role">IT &amp; Infrastructure Officer</div>
         <div class="exp-org">Monash Data &amp; AI Society</div>
         <p>Managed IT infrastructure for a 1,600+ member society: database integrations and user-facing components.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Managed IT infrastructure for Monash Data &amp; AI Society, a 1,600+ member student society, for the length of the committee term. Work spanned backend database integrations that kept society data consistent across tools, plus the user-facing components members and fellow committee members relied on day to day.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Oct 2025 — present</div>
         <div class="exp-role">Microsoft 365 Administrator (Volunteer)</div>
         <div class="exp-org">Basava Samiti of Asia Pacific</div>
         <p>Manage M365 infrastructure across 8 APAC chapters. Authored 3 SOPs that cut ticket volume by 30–40%.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">A volunteer role managing Microsoft 365 infrastructure across 8 chapters of the Basava Samiti of Asia Pacific: user and license administration, access management, and day-to-day troubleshooting across chapters spread over multiple countries. Authored 3 standard operating procedures giving chapter admins a self-serve path for common issues, which cut ticket volume by 30–40%.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Nov 2023 — Jul 2024</div>
         <div class="exp-role">Programmer</div>
         <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare</div>
         <p>Managed 50–80+ Netcool alerts/shift at a 95%+ audit score; contributed to a Genesys Cloud CX migration (30K+ associates) lifting patient engagement 5% and cutting manual work 20%.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Handled 50–80+ Netcool alerts per shift for EmblemHealth and ConnectiCare, triaging and resolving incidents while sustaining a 95%+ audit score. Also contributed to a Genesys Cloud CX migration covering 30,000+ associates, work that ultimately lifted patient engagement by 5% and cut manual work by 20% once the new platform was in place.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Apr 2022 — Nov 2023</div>
         <div class="exp-role">Programmer Analyst</div>
         <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare (3.2M members)</div>
         <p>Drove a 17-module Oracle Cloud HCM migration delivering USD 700K in annual savings and a 30% IT cost reduction; sustained 100 CSAT and 95%+ audit scores.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Drove a 17-module Oracle Cloud HCM migration for EmblemHealth and ConnectiCare, a health insurer serving 3.2 million members, delivering USD 700K in annual savings and a 30% reduction in IT costs once complete. Sustained a 100 CSAT score and 95%+ audit scores throughout, in a step up from the Trainee role before it.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">May 2021 — Mar 2022</div>
         <div class="exp-role">Programmer Analyst Trainee</div>
         <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare</div>
         <p>Where it started: structured onboarding in COBOL, JCL, DB2, and incident management, progressing to independent SLA ownership.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">The entry point into the Cognizant / EmblemHealth-ConnectiCare engagement: a structured onboarding program covering COBOL, JCL, DB2, and incident management fundamentals, before progressing to independent ownership of SLA commitments. The foundation the Programmer and Programmer Analyst roles that followed were built on.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
     </div>
   </div>
@@ -791,7 +852,6 @@
     <h2 style="font-size:22px; margin-bottom:22px;">What "hustle" actually looks like on a Tuesday</h2>
     <div class="juggle-grid">
       <div class="juggle-card"><span class="jc-role">IT Postgraduate Peer Mentor, 20 mentees</span><span class="jc-org">Monash University</span><span class="jc-since">since Jan 2026</span></div>
-      <div class="juggle-card"><span class="jc-role">IT &amp; Infrastructure Officer</span><span class="jc-org">Monash Data &amp; AI Society</span><span class="jc-since">Oct 2025 – Aug 2026</span></div>
       <div class="juggle-card"><span class="jc-role">Microsoft 365 Administrator</span><span class="jc-org">Basava Samiti of Asia Pacific</span><span class="jc-since">since Oct 2025</span></div>
       <div class="juggle-card"><span class="jc-role">Student Adviser, 45+ mentees</span><span class="jc-org">Monash Student Communities</span><span class="jc-since">since Jul 2024</span></div>
     </div>
@@ -1049,10 +1109,25 @@
         </div>
         <div class="coffee-field" style="margin-top:14px;">
           <label for="msg-subject">Subject</label>
-          <input type="text" id="msg-subject" placeholder="What's this about?">
+          <select id="msg-subject">
+            <option value="" selected disabled>What's this about?</option>
+            <option value="Job opportunity">Job opportunity</option>
+            <option value="Collaboration">Collaboration</option>
+            <option value="Question about a project">Question about a project</option>
+            <option value="Mentorship or advice">Mentorship or advice</option>
+            <option value="Just saying hi">Just saying hi</option>
+            <option value="Other">Other</option>
+          </select>
+          <input type="text" id="msg-subject-other" placeholder="Type your own subject" style="margin-top:8px; display:none;">
         </div>
         <div class="coffee-field" style="margin-top:14px;">
           <label for="msg-body">Message</label>
+          <div class="msg-chips">
+            <button type="button" class="msg-chip" data-fill="I'd like to connect — ">I'd like to connect</button>
+            <button type="button" class="msg-chip" data-fill="I have a job opportunity I think could be a good fit — ">Job opportunity</button>
+            <button type="button" class="msg-chip" data-fill="I'd love to collaborate on a project — ">Collaborate on a project</button>
+            <button type="button" class="msg-chip" data-fill="I had a question about one of your projects — ">Question about a project</button>
+          </div>
           <textarea id="msg-body" rows="4" placeholder="Say hello, ask a question, or pitch an opportunity"></textarea>
         </div>
         <button class="btn btn-primary" id="msg-send" style="margin-top:16px; border:none; cursor:pointer;">Send message ↗</button>
@@ -1202,6 +1277,32 @@
     });
   })();
 
+  // Subject dropdown — "Other" reveals a free-text input in its place
+  (function(){
+    const select = document.getElementById('msg-subject');
+    const other = document.getElementById('msg-subject-other');
+    if (!select || !other) return;
+    select.addEventListener('change', () => {
+      const isOther = select.value === 'Other';
+      other.style.display = isOther ? 'block' : 'none';
+      if (isOther) other.focus();
+    });
+  })();
+
+  // Message template chips — quick-fill starter sentences, since a static
+  // site has no backend to power real autocomplete. Editable after filling.
+  (function(){
+    const body = document.getElementById('msg-body');
+    if (!body) return;
+    document.querySelectorAll('.msg-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        body.value = chip.dataset.fill;
+        body.focus();
+        body.setSelectionRange(body.value.length, body.value.length);
+      });
+    });
+  })();
+
   // "Send a message" form — same no-backend mailto approach as the coffee scheduler
   (function(){
     const btn = document.getElementById('msg-send');
@@ -1209,7 +1310,9 @@
     btn.addEventListener('click', () => {
       const name = document.getElementById('msg-name').value.trim();
       const email = document.getElementById('msg-email').value.trim();
-      const subjectInput = document.getElementById('msg-subject').value.trim();
+      const subjectSelect = document.getElementById('msg-subject').value;
+      const subjectOther = document.getElementById('msg-subject-other').value.trim();
+      const subjectInput = subjectSelect === 'Other' ? subjectOther : subjectSelect;
       const message = document.getElementById('msg-body').value.trim();
 
       const subject = subjectInput || 'Message from your portfolio';
@@ -1223,6 +1326,93 @@
       const mailto = `mailto:rchmadhumitha@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
       window.location.href = mailto;
     });
+  })();
+
+  // "Right now" juggle cards self-expire — add data-end="YYYY-MM" to any
+  // card with a known end date and it fades out on its own once that month
+  // has passed, so this section never needs manual pruning again. Cards
+  // with no data-end (ongoing "since ..." roles) are left alone.
+  (function(){
+    const cards = document.querySelectorAll('.juggle-card[data-end]');
+    if (!cards.length) return;
+    const now = new Date();
+    const currentYm = now.getFullYear() * 12 + now.getMonth();
+    cards.forEach(card => {
+      const [y, m] = card.dataset.end.split('-').map(Number);
+      if (!y || !m) return;
+      const endYm = y * 12 + (m - 1);
+      if (endYm < currentYm) {
+        card.style.transition = 'opacity .4s ease, transform .4s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.96)';
+        setTimeout(() => card.remove(), 400);
+      }
+    });
+  })();
+
+  // Live sync with the madhumitha/projects GitHub repo — the hand-written
+  // cards above stay the primary content, but on load we check the repo's
+  // real top-level folders and surface a small fallback card for anything
+  // that doesn't have a hand-written card yet, so a new project can never
+  // silently go unlisted again. Uses the public unauthenticated GitHub
+  // Contents API (~60 req/hour/IP) and fails completely silently on error,
+  // rate-limit, or offline — visitors just see the existing cards.
+  (function(){
+    const list = document.querySelector('.project-list');
+    if (!list) return;
+
+    const knownSlugs = new Set();
+    list.querySelectorAll('a.project-link[href*="github.com/madhumithachalla/projects/tree/main/"]').forEach(a => {
+      const m = a.getAttribute('href').match(/tree\/main\/([^/?#]+)/);
+      if (m) knownSlugs.add(m[1]);
+    });
+    if (!knownSlugs.size) return;
+
+    fetch('https://api.github.com/repos/madhumithachalla/projects/contents/')
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(entries => {
+        if (!Array.isArray(entries)) return;
+        const newDirs = entries.filter(e => e.type === 'dir' && !e.name.startsWith('.') && !knownSlugs.has(e.name));
+        if (!newDirs.length) return;
+
+        const upcoming = list.querySelector('.project.upcoming');
+        newDirs.forEach(dir => {
+          const card = document.createElement('div');
+          card.className = 'project project-sync-fallback in';
+
+          const main = document.createElement('div');
+          const top = document.createElement('div');
+          top.className = 'project-top';
+          const pill = document.createElement('span');
+          pill.className = 'pill new-sync';
+          pill.textContent = 'New in the projects repo';
+          top.appendChild(pill);
+          main.appendChild(top);
+
+          const h3 = document.createElement('h3');
+          h3.textContent = dir.name.replace(/[-_]/g, ' ');
+          main.appendChild(h3);
+
+          const p = document.createElement('p');
+          p.textContent = "This folder just landed in the projects repo and doesn't have a full writeup here yet — check it out on GitHub in the meantime.";
+          main.appendChild(p);
+
+          const side = document.createElement('div');
+          side.className = 'project-side';
+          const link = document.createElement('a');
+          link.className = 'project-link';
+          link.href = `https://github.com/madhumithachalla/projects/tree/main/${encodeURIComponent(dir.name)}`;
+          link.target = '_blank';
+          link.rel = 'noopener';
+          link.textContent = 'View on GitHub ↗';
+          side.appendChild(link);
+
+          card.appendChild(main);
+          card.appendChild(side);
+          list.insertBefore(card, upcoming || null);
+        });
+      })
+      .catch(() => { /* rate-limited or offline — existing hand-written cards still show */ });
   })();
 
   // Coffee calendar tabs — switches between the inline Calendly widget and
@@ -1398,15 +1588,36 @@
     tick();
   })();
 
-  // Scroll reveal for project cards
+  // Scroll reveal for project cards, experience tiles, and a few other card grids
   (function(){
-    const items = document.querySelectorAll('.project');
+    const items = document.querySelectorAll('.project, .exp-tile, .leader-card, .rec-card, .juggle-card');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { items.forEach(i => i.classList.add('in')); return; }
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { threshold: 0.15 });
     items.forEach(i => io.observe(i));
+  })();
+
+  // Click-to-expand experience tiles — condensed summary stays visible,
+  // clicking (or Enter/Space) reveals the fuller detail paragraph beneath it.
+  (function(){
+    const tiles = document.querySelectorAll('.exp-tile');
+    tiles.forEach(tile => {
+      const label = tile.querySelector('.exp-toggle-label');
+      function setExpanded(expanded){
+        tile.classList.toggle('expanded', expanded);
+        tile.setAttribute('aria-expanded', String(expanded));
+        if (label) label.firstChild.textContent = expanded ? 'Show less ' : 'Read more ';
+      }
+      tile.addEventListener('click', () => setExpanded(!tile.classList.contains('expanded')));
+      tile.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setExpanded(!tile.classList.contains('expanded'));
+        }
+      });
+    });
   })();
 
   // Ambient starfield — sits behind the whole page (visible wherever a section
