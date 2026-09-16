@@ -7,6 +7,8 @@
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
     --bg:#100D18; --bg-panel:#1C1729; --paper:#F3EEFA; --slate:#9E90B8; --line:rgba(255,255,255,0.14);
@@ -57,6 +59,10 @@
   mark{background:var(--violet); color:#100D18; border-radius:2px; padding:0 2px;}
   .match-count{font-size:13px; color:var(--slate); margin-top:6px;}
   .match-count b{color:var(--paper);}
+  .download-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  .download-row button{margin-top:0; background:var(--violet); color:#fff;}
+  .download-row button:disabled{opacity:0.4;}
+  .download-status{font-size:12.5px; color:var(--slate); margin-top:8px; min-height:16px;}
   .foot{font-size:12px; color:var(--slate); margin-top:24px; line-height:1.5;}
   h3{font-size:14px; text-transform:uppercase; letter-spacing:0.04em; color:var(--slate); margin:20px 0 8px;}
 </style>
@@ -65,7 +71,7 @@
 <div class="wrap">
   <a class="back" href="../../index.html">← Back to portfolio</a>
   <h1>Document extraction — live OCR demo</h1>
-  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, then type whatever text or pattern you want highlighted (defaults to an ID-style example: two letters + six digits, like "AB123456").</p>
+  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, type whatever text or pattern you want highlighted (defaults to an ID-style example: two letters + six digits, like "AB123456"), then download the highlighted result as an <b>image</b> or a <b>PDF</b>.</p>
 
   <div class="card">
     <div class="dropzone" id="dropzone">
@@ -93,6 +99,11 @@
     <h3>Highlighted preview</h3>
     <div class="highlight-box" id="highlightBox"></div>
     <div class="match-count" id="matchCount"></div>
+    <div class="download-row">
+      <button id="dlImageBtn">Download highlighted image</button>
+      <button id="dlPdfBtn">Download highlighted PDF</button>
+    </div>
+    <div class="download-status" id="downloadStatus"></div>
     <h3>Raw extracted text</h3>
     <textarea id="rawText" readonly></textarea>
   </div>
@@ -276,6 +287,72 @@ searchPattern.addEventListener('input', () => {
 useRegex.addEventListener('change', () => {
   if (rawText.value) renderHighlighted(rawText.value, searchPattern.value.trim(), useRegex.checked);
 });
+
+/* ---------------- Export the highlighted preview as an image or PDF ---------------- */
+const downloadStatus = document.getElementById('downloadStatus');
+const dlImageBtn = document.getElementById('dlImageBtn');
+const dlPdfBtn = document.getElementById('dlPdfBtn');
+
+async function captureHighlightBox() {
+  // Temporarily expand the box to its full content height so the capture isn't
+  // cropped to the scrollable viewport — then restore the original constraints.
+  const prevMaxHeight = highlightBox.style.maxHeight;
+  const prevOverflow = highlightBox.style.overflowY;
+  highlightBox.style.maxHeight = 'none';
+  highlightBox.style.overflowY = 'visible';
+
+  try {
+    const canvas = await html2canvas(highlightBox, {
+      backgroundColor: '#100D18',
+      scale: 2,
+      useCORS: true
+    });
+    return canvas;
+  } finally {
+    highlightBox.style.maxHeight = prevMaxHeight;
+    highlightBox.style.overflowY = prevOverflow;
+  }
+}
+
+function download(dataUrl, filename) {
+  const a = document.createElement('a');
+  a.href = dataUrl; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+async function withDownloadStatus(btn, fn) {
+  if (!rawText.value) { downloadStatus.textContent = "Extract some text first."; return; }
+  btn.disabled = true;
+  downloadStatus.textContent = "Rendering…";
+  try {
+    await fn();
+    downloadStatus.textContent = "Downloaded ✓";
+  } catch (err) {
+    console.error(err);
+    downloadStatus.textContent = "Something went wrong generating the file — see console.";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+dlImageBtn.addEventListener('click', () => withDownloadStatus(dlImageBtn, async () => {
+  const canvas = await captureHighlightBox();
+  download(canvas.toDataURL('image/png'), 'highlighted-extract.png');
+}));
+
+dlPdfBtn.addEventListener('click', () => withDownloadStatus(dlPdfBtn, async () => {
+  const canvas = await captureHighlightBox();
+  const { jsPDF } = window.jspdf;
+  // Page sized to match the captured content exactly, so nothing gets cropped or
+  // rescaled oddly regardless of how long the extracted text turns out to be.
+  const pdf = new jsPDF({
+    orientation: canvas.width >= canvas.height ? 'landscape' : 'portrait',
+    unit: 'px',
+    format: [canvas.width, canvas.height]
+  });
+  pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
+  pdf.save('highlighted-extract.pdf');
+}));
 </script>
 </body>
 </html>
