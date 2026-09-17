@@ -58,11 +58,23 @@
   }
   mark{background:var(--violet); color:#100D18; border-radius:2px; padding:0 2px;}
   .preview-note{font-size:12.5px; color:var(--slate); margin:0 0 8px; line-height:1.5;}
+  .highlighter-toolbar{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:12px;}
+  .toolbar-btn{
+    margin-top:0; padding:7px 14px; font-size:12.5px; font-weight:600; background:var(--bg); color:var(--paper);
+    border:1px solid var(--line); border-radius:20px; cursor:pointer;
+  }
+  .toolbar-btn.active{background:#F5C453; color:#1B1130; border-color:#F5C453;}
+  .toolbar-hint{font-size:11.5px; color:var(--slate); flex-basis:100%; line-height:1.4;}
   .preview-canvases{display:flex; flex-direction:column; gap:16px; margin-top:10px;}
-  .preview-canvases canvas{width:100%; height:auto; border:1px solid var(--line); border-radius:4px; background:#000; display:block;}
+  .preview-canvases canvas{width:100%; height:auto; border:1px solid var(--line); border-radius:4px; background:#000; display:block; touch-action:none;}
+  .preview-canvases canvas.highlighter-on{cursor:crosshair;}
   .page-label{font-size:11px; color:var(--slate); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;}
   .match-count{font-size:13px; color:var(--slate); margin-top:6px;}
   .match-count b{color:var(--paper);}
+  .highlight-legend{display:flex; flex-wrap:wrap; gap:14px; font-size:11.5px; color:var(--slate); margin-top:6px;}
+  .swatch{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle;}
+  .swatch-auto{background:rgba(155,126,222,0.35); border:1.5px solid #9B7EDE;}
+  .swatch-manual{background:rgba(245,196,66,0.55); border:1.5px solid rgba(245,196,66,0.9);}
   .download-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
   .download-row button{margin-top:0; background:var(--violet); color:#fff;}
   .download-row button:disabled{opacity:0.4;}
@@ -75,7 +87,7 @@
 <div class="wrap">
   <a class="back" href="../../index.html">← Back to portfolio</a>
   <h1>Document extraction — live OCR demo</h1>
-  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, type whatever text or pattern you want found, and for images/PDFs the matches get boxed <b>directly on your original document</b> (not just pulled out as plain text) — then download the result as an <b>image</b> or a <b>PDF</b>.</p>
+  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, type whatever text or pattern you want found, and for images/PDFs the matches get boxed <b>directly on your original document</b> (not just pulled out as plain text). You can also switch on the <b>highlighter</b> and mark anything by hand — click and drag over the document, just like a real highlighter pen — then download the result as an <b>image</b> or a <b>PDF</b>.</p>
 
   <div class="card">
     <div class="dropzone" id="dropzone">
@@ -102,7 +114,16 @@
   <div class="card" id="resultsCard" style="display:none;">
     <h3>Highlighted preview</h3>
     <p class="preview-note" id="previewNote" style="display:none;"></p>
+    <div class="highlighter-toolbar" id="highlighterToolbar" style="display:none;">
+      <button type="button" id="highlighterToggle" class="toolbar-btn">🖊️ Highlighter: off</button>
+      <button type="button" id="clearManualBtn" class="toolbar-btn" style="display:none;">Clear my highlights</button>
+      <span class="toolbar-hint">Turn the highlighter on, then click-drag directly on the document below to mark anything by hand — on top of (or instead of) the auto-detected matches.</span>
+    </div>
     <div class="preview-canvases" id="previewCanvases"></div>
+    <div class="highlight-legend" id="highlightLegend" style="display:none;">
+      <span><i class="swatch swatch-auto"></i>auto-detected match</span>
+      <span><i class="swatch swatch-manual"></i>your highlight</span>
+    </div>
     <div class="highlight-box" id="highlightBox" style="display:none;"></div>
     <div class="match-count" id="matchCount"></div>
     <div class="download-row">
@@ -138,13 +159,20 @@ const highlightBox = document.getElementById('highlightBox');
 const matchCount = document.getElementById('matchCount');
 const searchPattern = document.getElementById('searchPattern');
 const useRegex = document.getElementById('useRegex');
+const highlighterToolbar = document.getElementById('highlighterToolbar');
+const highlighterToggle = document.getElementById('highlighterToggle');
+const clearManualBtn = document.getElementById('clearManualBtn');
+const highlightLegend = document.getElementById('highlightLegend');
 
 let currentFile = null;
 let currentKind = null; // 'image' | 'pdf' | 'docx'
 // For 'image'/'pdf': one entry per page, holding the pristine rendered page/image
 // (so we can redraw boxes fresh each time the search pattern changes) plus the
-// OCR'd rows for that page. Row grouping mirrors document_extraction_pipeline.py.
+// OCR'd rows for that page, plus any manual highlighter marks the user drew by
+// hand (in that page's own canvas-pixel coordinates). Row grouping mirrors
+// document_extraction_pipeline.py.
 let pageEntries = [];
+let highlighterOn = false;
 
 function kindOf(file) {
   if (file.type.startsWith('image/')) return 'image';
@@ -240,7 +268,7 @@ async function extractFromImageFile(file) {
       }
     }
   });
-  pageEntries = [{ canvas, rows: getRowsFromTesseractData(data) }];
+  pageEntries = [{ canvas, rows: getRowsFromTesseractData(data), manualRects: [] }];
   return data.text;
 }
 
@@ -267,7 +295,7 @@ async function extractFromPdf(file) {
         }
       }
     });
-    pageEntries.push({ canvas, rows: getRowsFromTesseractData(data) });
+    pageEntries.push({ canvas, rows: getRowsFromTesseractData(data), manualRects: [] });
     fullText += (fullText ? '\n\n' : '') + data.text;
   }
   return fullText;
@@ -324,14 +352,26 @@ function renderHighlightedText(text, pattern, isRegex) {
     : `No matches found for that pattern in this document.`;
 }
 
-// Draws a fresh copy of a page's pristine canvas with a box around every row
-// that matches, so re-running this after a pattern change never compounds
-// old boxes onto the same canvas.
-function drawAnnotatedPage(baseCanvas, rows, re) {
-  const out = document.createElement('canvas');
-  out.width = baseCanvas.width;
-  out.height = baseCanvas.height;
-  const ctx = out.getContext('2d');
+// Paints a highlighter-style translucent mark — borderless, like a real
+// highlighter pen — as opposed to the bordered box used for auto-detected
+// matches, so the two read as visually distinct at a glance.
+function paintHighlighterMark(ctx, r) {
+  const x = Math.min(r.x0, r.x1);
+  const y = Math.min(r.y0, r.y1);
+  const w = Math.abs(r.x1 - r.x0);
+  const h = Math.abs(r.y1 - r.y0);
+  ctx.fillStyle = 'rgba(245, 196, 66, 0.4)';
+  ctx.fillRect(x, y, w, h);
+}
+
+// Repaints a target canvas from scratch: pristine page, then auto-matched row
+// boxes, then manual highlighter marks, then (while a drag is in progress) a
+// live preview of the mark being drawn right now. Always starting from the
+// pristine base means re-running this after a pattern change, a new manual
+// mark, or a live drag frame never compounds old marks onto the same pixels.
+function paintPage(targetCanvas, baseCanvas, rows, re, manualRects, dragRect) {
+  const ctx = targetCanvas.getContext('2d');
+  ctx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
   ctx.drawImage(baseCanvas, 0, 0);
 
   let matches = 0;
@@ -349,8 +389,81 @@ function drawAnnotatedPage(baseCanvas, rows, re) {
       }
     });
   }
-  return { canvas: out, matches };
+  (manualRects || []).forEach(r => paintHighlighterMark(ctx, r));
+  if (dragRect) paintHighlighterMark(ctx, dragRect);
+
+  return matches;
 }
+
+function currentRegexSafe() {
+  try { return buildRowRegex(searchPattern.value.trim(), useRegex.checked); } catch (err) { return null; }
+}
+
+// Converts a pointer event's viewport coordinates into this canvas's own
+// pixel space, since the canvas is displayed at CSS width:100% while its
+// backing resolution (canvas.width/height) is usually larger.
+function canvasPoint(canvasEl, evt) {
+  const rect = canvasEl.getBoundingClientRect();
+  const scaleX = canvasEl.width / rect.width;
+  const scaleY = canvasEl.height / rect.height;
+  return {
+    x: Math.max(0, Math.min(canvasEl.width, (evt.clientX - rect.left) * scaleX)),
+    y: Math.max(0, Math.min(canvasEl.height, (evt.clientY - rect.top) * scaleY)),
+  };
+}
+
+function updateManualControlsVisibility() {
+  const any = pageEntries.some(e => (e.manualRects || []).length > 0);
+  clearManualBtn.style.display = any ? 'inline-block' : 'none';
+}
+
+// Wires up click-drag highlighter drawing on one page's displayed canvas.
+// Only active while the highlighter toggle is on; otherwise the canvas is
+// just a static preview.
+function attachHighlighter(canvasEl, entry) {
+  let dragStart = null;
+  canvasEl.addEventListener('pointerdown', (evt) => {
+    if (!highlighterOn) return;
+    evt.preventDefault();
+    canvasEl.setPointerCapture(evt.pointerId);
+    dragStart = canvasPoint(canvasEl, evt);
+  });
+  canvasEl.addEventListener('pointermove', (evt) => {
+    if (!highlighterOn || !dragStart) return;
+    const p = canvasPoint(canvasEl, evt);
+    paintPage(canvasEl, entry.canvas, entry.rows, currentRegexSafe(), entry.manualRects,
+      { x0: dragStart.x, y0: dragStart.y, x1: p.x, y1: p.y });
+  });
+  function finishDrag(evt) {
+    if (!highlighterOn || !dragStart) return;
+    const p = canvasPoint(canvasEl, evt);
+    const rect = {
+      x0: Math.min(dragStart.x, p.x), y0: Math.min(dragStart.y, p.y),
+      x1: Math.max(dragStart.x, p.x), y1: Math.max(dragStart.y, p.y),
+    };
+    dragStart = null;
+    // Ignore accidental clicks/taps that never really dragged anywhere.
+    if (rect.x1 - rect.x0 > 4 && rect.y1 - rect.y0 > 4) {
+      entry.manualRects.push(rect);
+    }
+    paintPage(canvasEl, entry.canvas, entry.rows, currentRegexSafe(), entry.manualRects);
+    updateManualControlsVisibility();
+  }
+  canvasEl.addEventListener('pointerup', finishDrag);
+  canvasEl.addEventListener('pointercancel', finishDrag);
+}
+
+highlighterToggle.addEventListener('click', () => {
+  highlighterOn = !highlighterOn;
+  highlighterToggle.textContent = highlighterOn ? '🖊️ Highlighter: on' : '🖊️ Highlighter: off';
+  highlighterToggle.classList.toggle('active', highlighterOn);
+  previewCanvases.querySelectorAll('canvas').forEach(c => c.classList.toggle('highlighter-on', highlighterOn));
+});
+
+clearManualBtn.addEventListener('click', () => {
+  pageEntries.forEach(entry => { entry.manualRects = []; });
+  renderPreview();
+});
 
 // Renders whatever was last extracted using the current search pattern —
 // called right after extraction, and again live whenever the pattern or the
@@ -360,6 +473,8 @@ function renderPreview() {
   const isRegex = useRegex.checked;
 
   if (currentKind === 'docx') {
+    highlighterToolbar.style.display = 'none';
+    highlightLegend.style.display = 'none';
     previewCanvases.style.display = 'none';
     previewCanvases.innerHTML = '';
     highlightBox.style.display = 'block';
@@ -373,34 +488,45 @@ function renderPreview() {
   highlightBox.style.display = 'none';
   previewCanvases.style.display = 'flex';
   previewCanvases.innerHTML = '';
+  highlighterToolbar.style.display = 'flex';
+  highlightLegend.style.display = 'flex';
 
-  let re;
-  try {
-    re = buildRowRegex(pattern, isRegex);
-  } catch (err) {
-    matchCount.innerHTML = `<span style="color:#FF6F5E;">Invalid regular expression — check your pattern.</span>`;
-    pageEntries.forEach(entry => previewCanvases.appendChild(drawAnnotatedPage(entry.canvas, entry.rows, null).canvas));
-    return;
-  }
-
-  let totalMatches = 0;
-  pageEntries.forEach((entry, idx) => {
-    const { canvas: annotated, matches } = drawAnnotatedPage(entry.canvas, entry.rows, re);
-    totalMatches += matches;
+  function buildCanvas(entry, idx, re) {
+    const out = document.createElement('canvas');
+    out.width = entry.canvas.width;
+    out.height = entry.canvas.height;
+    out.classList.toggle('highlighter-on', highlighterOn);
+    const matches = paintPage(out, entry.canvas, entry.rows, re, entry.manualRects);
     if (pageEntries.length > 1) {
       const label = document.createElement('div');
       label.className = 'page-label';
       label.textContent = `Page ${idx + 1} of ${pageEntries.length}`;
       previewCanvases.appendChild(label);
     }
-    previewCanvases.appendChild(annotated);
-  });
+    previewCanvases.appendChild(out);
+    attachHighlighter(out, entry);
+    return matches;
+  }
+
+  let re;
+  try {
+    re = buildRowRegex(pattern, isRegex);
+  } catch (err) {
+    matchCount.innerHTML = `<span style="color:#FF6F5E;">Invalid regular expression — check your pattern.</span>`;
+    pageEntries.forEach((entry, idx) => buildCanvas(entry, idx, null));
+    updateManualControlsVisibility();
+    return;
+  }
+
+  let totalMatches = 0;
+  pageEntries.forEach((entry, idx) => { totalMatches += buildCanvas(entry, idx, re); });
 
   matchCount.innerHTML = !pattern
     ? ''
     : totalMatches
       ? `<b>${totalMatches}</b> matching row${totalMatches === 1 ? '' : 's'} boxed above.`
       : 'No matches found for that pattern in this document.';
+  updateManualControlsVisibility();
 }
 
 runBtn.addEventListener('click', async () => {
@@ -457,12 +583,17 @@ async function captureHighlightBox() {
 }
 
 // Recomputes the currently-annotated page canvases fresh from the pristine
-// pages + the live search pattern, so downloads always match what's on screen.
+// pages + the live search pattern + any manual highlighter marks, so
+// downloads always match exactly what's on screen.
 function currentAnnotatedCanvases() {
-  const pattern = searchPattern.value.trim();
-  let re = null;
-  try { re = buildRowRegex(pattern, useRegex.checked); } catch (err) { re = null; }
-  return pageEntries.map(entry => drawAnnotatedPage(entry.canvas, entry.rows, re).canvas);
+  const re = currentRegexSafe();
+  return pageEntries.map(entry => {
+    const out = document.createElement('canvas');
+    out.width = entry.canvas.width;
+    out.height = entry.canvas.height;
+    paintPage(out, entry.canvas, entry.rows, re, entry.manualRects);
+    return out;
+  });
 }
 
 // Stacks multiple pages into one tall image for the single-image download;
