@@ -84,4 +84,13 @@ Everything is in one file on purpose — no build tools, no dependencies beyond 
 
 See [`docs/`](./docs/README.md) for the full breakdown of how each section and script works before making structural changes.
 
-You can also just paste this whole file into Claude (or any AI tool) and ask for changes in plain English — it's structured so that works cleanly.
+## How this was built
+
+Every section, number, and word of content here is mine — I decided what the site
+should say and how it should be structured, wrote the real facts it presents, and
+directed every design decision. I used an AI coding assistant (Claude) as an
+implementation tool on top of that: turning direction into working HTML/CSS/JS,
+fixing bugs, and quickly "vibe coding" a version of an idea to see if it worked before
+refining it — not designing or deciding the site's content on its own. The file is
+also structured so it's easy to hand a section to an AI coding assistant yourself and
+ask for a specific change in plain English, if you want to edit it that way.
