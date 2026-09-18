@@ -273,7 +273,8 @@
 
   /* ---------- SECTIONS ---------- */
   section{padding:76px 0;}
-  .section-head{margin-bottom:40px; max-width:640px;}
+  .section-head{margin-bottom:40px; max-width:640px; opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease;}
+  .section-head.in{opacity:1; transform:translateY(0);}
   .eyebrow{
     font-family:'IBM Plex Sans'; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:0.06em;
     color:var(--teal); margin-bottom:10px; display:block;
@@ -888,8 +889,8 @@
           <div class="tags"><span class="tag">AWS Lambda</span><span class="tag">API Gateway</span><span class="tag">Cognito</span><span class="tag">DynamoDB</span><span class="tag">S3</span><span class="tag">Python</span><span class="tag">Identity &amp; Access Management</span><span class="tag">Serverless Architecture</span></div>
         </div>
         <div class="project-side">
-          <div class="metric"><span class="n">8</span><span class="l">Lambda endpoints, 4 mine</span></div>
-          <div class="metric"><span class="n">100%</span><span class="l">protected routes on Cognito auth</span></div>
+          <div class="metric"><span class="n" data-target="8">0</span><span class="l">Lambda endpoints, 4 mine</span></div>
+          <div class="metric"><span class="n" data-target="100" data-suffix="%">0%</span><span class="l">protected routes on Cognito auth</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/birdtag" target="_blank" rel="noopener">View code (my part) ↗</a>
           <a class="project-link" href="projects/demos/birdtag-demo.html" target="_blank" rel="noopener" style="margin-top:6px;">Try interactive walkthrough ↗</a>
         </div>
@@ -912,8 +913,8 @@
           <div class="tags"><span class="tag">R</span><span class="tag">tidyverse</span><span class="tag">ggplot2</span><span class="tag">Statistical modeling</span><span class="tag">Data Analytics</span></div>
         </div>
         <div class="project-side">
-          <div class="metric"><span class="n">114K</span><span class="l">tracks analyzed</span></div>
-          <div class="metric"><span class="n">26.8x</span><span class="l">genre effect vs. other features</span></div>
+          <div class="metric"><span class="n" data-target="114" data-suffix="K">0K</span><span class="l">tracks analyzed</span></div>
+          <div class="metric"><span class="n" data-target="26.8" data-decimals="1" data-suffix="x">0.0x</span><span class="l">genre effect vs. other features</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/spotify-success-analysis" target="_blank" rel="noopener">View analysis script ↗</a>
           <a class="project-link" href="projects/demos/spotify-demo.html" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
         </div>
@@ -937,7 +938,7 @@
           <div class="tags"><span class="tag">Kotlin</span><span class="tag">Retrofit</span><span class="tag">Firebase Firestore</span><span class="tag">REST API Integration</span><span class="tag">Agile</span></div>
         </div>
         <div class="project-side">
-          <div class="metric"><span class="n">4</span><span class="l">person Agile team</span></div>
+          <div class="metric"><span class="n" data-target="4">0</span><span class="l">person Agile team</span></div>
           <div class="metric"><span class="n">Live</span><span class="l">weather-to-tip pipeline</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/esaver" target="_blank" rel="noopener">View code (my part) ↗</a>
           <a class="project-link" href="projects/demos/esaver-demo.html" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
@@ -985,7 +986,7 @@
           <div class="tags"><span class="tag">React</span><span class="tag">Web Speech API</span><span class="tag">MediaRecorder API</span><span class="tag">Recharts</span></div>
         </div>
         <div class="project-side">
-          <div class="metric"><span class="n">4</span><span class="l">sections: L / R / W / S</span></div>
+          <div class="metric"><span class="n" data-target="4">0</span><span class="l">sections: L / R / W / S</span></div>
           <div class="metric"><span class="n">Official</span><span class="l">IELTS band-score tables</span></div>
           <div class="metric"><span class="n">Band 7</span><span class="l">my real score: Speaking 8.5, Reading 7.0</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/ielts-mock-practice-tool" target="_blank" rel="noopener">View source ↗</a>
@@ -1013,7 +1014,7 @@
         <div class="project-side">
           <div class="metric"><span class="n">1584×396</span><span class="l">exact LinkedIn banner spec</span></div>
           <div class="metric"><span class="n">0</span><span class="l">design tools used</span></div>
-          <div class="metric"><span class="n">2x</span><span class="l">render resolution for crisp text</span></div>
+          <div class="metric"><span class="n" data-target="2" data-suffix="x">0x</span><span class="l">render resolution for crisp text</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/linkedin-banner-generator" target="_blank" rel="noopener">View source ↗</a>
           <a class="project-link" href="projects/demos/linkedin-banner-editor.html" target="_blank" rel="noopener" style="margin-top:6px;">Try live editor ↗</a>
           <a class="project-link" href="https://raw.githubusercontent.com/madhumithachalla/projects/main/linkedin-banner-generator/madhumitha_linkedin_banner.png" target="_blank" rel="noopener" style="margin-top:6px;">View banner image ↗</a>
@@ -1046,19 +1047,19 @@
     </div>
     <div class="leader-grid">
       <div class="leader-card">
-        <div class="leader-metric">45+</div>
+        <div class="leader-metric" data-target="45" data-suffix="+">0+</div>
         <div class="leader-role">Student Adviser</div>
         <div class="leader-org">Monash Student Communities · since Jul 2024</div>
         <p>Mentor a cohort of undergrad and postgrad students through one-on-one check-ins and cluster catch-ups, helping new students navigate university life, and encouraging several of my own mentees to step up into advising themselves.</p>
       </div>
       <div class="leader-card">
-        <div class="leader-metric">20</div>
+        <div class="leader-metric" data-target="20">0</div>
         <div class="leader-role">IT Postgraduate Peer Mentor</div>
         <div class="leader-org">Monash University · since Jan 2026</div>
         <p>Mentor 20 postgraduate IT students through structured sessions and workshops, logging 30+ volunteer hours of one-on-one guidance on coursework, problem-solving, and navigating university resources.</p>
       </div>
       <div class="leader-card">
-        <div class="leader-metric">250+</div>
+        <div class="leader-metric" data-target="250" data-suffix="+">0+</div>
         <div class="leader-role">NSS Student Volunteer</div>
         <div class="leader-org">National Service Scheme, India · Jun 2017 – Apr 2020</div>
         <p>250+ volunteer hours across a 3-year village adoption program improving local infrastructure and education. Represented Chennai at the District Youth Parliament (2019) after a competitive selection process.</p>
@@ -1124,11 +1125,9 @@
         </div>
         <div class="coffee-field" style="margin-top:14px;">
           <label for="msg-body">Message</label>
-          <div class="msg-chips">
-            <button type="button" class="msg-chip" data-fill="I'd like to connect — ">I'd like to connect</button>
-            <button type="button" class="msg-chip" data-fill="I have a job opportunity I think could be a good fit — ">Job opportunity</button>
-            <button type="button" class="msg-chip" data-fill="I'd love to collaborate on a project — ">Collaborate on a project</button>
-            <button type="button" class="msg-chip" data-fill="I had a question about one of your projects — ">Question about a project</button>
+          <div class="msg-chips" id="msgDraftRow" style="display:none;">
+            <button type="button" class="msg-chip" id="msgInsertDraft">✍️ Insert a suggested draft</button>
+            <span class="coffee-note-small" style="margin:0; align-self:center;">Written for your subject — edit anything before sending.</span>
           </div>
           <textarea id="msg-body" rows="4" placeholder="Say hello, ask a question, or pitch an opportunity"></textarea>
         </div>
@@ -1224,11 +1223,13 @@
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
 <script>
-  // Count up the hero stat numbers once they scroll into view.
+  // Count up any number on the page marked with data-target, once it scrolls
+  // into view — the hero stats, but also leadership and project metrics, so
+  // numbers throughout the site feel alive rather than static. Each element
+  // observes and animates independently, on its own first appearance.
   (function(){
-    const nums = document.querySelectorAll('.stat-num[data-target]');
-    const wrap = document.querySelector('.stats-inner');
-    if (!nums.length || !wrap) return;
+    const nums = document.querySelectorAll('[data-target]');
+    if (!nums.length) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function render(el, value){
@@ -1250,15 +1251,17 @@
       requestAnimationFrame(frame);
     }
 
+    if (reduceMotion) { nums.forEach(animate); return; }
+
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          nums.forEach(animate);
-          obs.disconnect();
+          animate(entry.target);
+          obs.unobserve(entry.target);
         }
       });
     }, { threshold: 0.4 });
-    obs.observe(wrap);
+    nums.forEach(el => obs.observe(el));
   })();
 
   // Smooth-scroll all internal anchor links via JS rather than relying purely on
@@ -1279,30 +1282,59 @@
     });
   })();
 
-  // Subject dropdown — "Other" reveals a free-text input in its place
+  // Subject dropdown — "Other" reveals a free-text input in its place, and
+  // every other option writes a full professional draft into the message
+  // box (since there's no backend here to power real autocomplete, this is
+  // the closest static equivalent). The draft is a starting point, not a
+  // final answer: switching subjects only replaces the box while it's still
+  // empty or holds a draft we inserted ourselves, so a visitor's own typing
+  // is never overwritten. A manual "Insert a suggested draft" button covers
+  // the case where they want it back after clearing or editing it.
   (function(){
     const select = document.getElementById('msg-subject');
     const other = document.getElementById('msg-subject-other');
-    if (!select || !other) return;
+    const body = document.getElementById('msg-body');
+    const draftRow = document.getElementById('msgDraftRow');
+    const insertDraftBtn = document.getElementById('msgInsertDraft');
+    if (!select || !other || !body) return;
+
+    const DRAFTS = {
+      'Job opportunity': "Hi Madhumitha,\n\nI came across your portfolio and think there could be a strong fit with an opportunity I'm working on. I'd love to share more details and hear whether it's something you'd be interested in exploring.\n\nLet me know if you're open to a quick chat.\n\nBest,\n",
+      'Collaboration': "Hi Madhumitha,\n\nI'm working on something I think overlaps well with your background, and I'd love to explore whether there's room to collaborate. Happy to share more details whenever suits you.\n\nLooking forward to hearing your thoughts.\n\nBest,\n",
+      'Question about a project': "Hi Madhumitha,\n\nI was looking through one of the projects on your portfolio and had a question about how you approached it. Would you be open to sharing a bit more detail?\n\nThanks in advance,\n",
+      'Mentorship or advice': "Hi Madhumitha,\n\nI came across your background and would love to get your perspective on a few things I'm navigating. Would you be open to a short conversation if your schedule allows?\n\nThank you for considering,\n",
+      'Just saying hi': "Hi Madhumitha,\n\nJust wanted to say hi — I enjoyed looking through your portfolio! Wishing you continued success.\n\nBest,\n",
+    };
+    let lastInsertedDraft = '';
+
+    function placeCursorAfterGreeting(){
+      const pos = body.value.indexOf('\n\n');
+      const cursor = pos === -1 ? body.value.length : pos + 2;
+      body.focus();
+      body.setSelectionRange(cursor, cursor);
+    }
+
+    function insertDraft(){
+      const draft = DRAFTS[select.value];
+      if (!draft) return;
+      body.value = draft;
+      lastInsertedDraft = draft;
+      placeCursorAfterGreeting();
+    }
+
     select.addEventListener('change', () => {
       const isOther = select.value === 'Other';
       other.style.display = isOther ? 'block' : 'none';
       if (isOther) other.focus();
-    });
-  })();
 
-  // Message template chips — quick-fill starter sentences, since a static
-  // site has no backend to power real autocomplete. Editable after filling.
-  (function(){
-    const body = document.getElementById('msg-body');
-    if (!body) return;
-    document.querySelectorAll('.msg-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        body.value = chip.dataset.fill;
-        body.focus();
-        body.setSelectionRange(body.value.length, body.value.length);
-      });
+      const draft = DRAFTS[select.value];
+      draftRow.style.display = draft ? 'flex' : 'none';
+      if (draft && (!body.value.trim() || body.value === lastInsertedDraft)) {
+        insertDraft();
+      }
     });
+
+    if (insertDraftBtn) insertDraftBtn.addEventListener('click', insertDraft);
   })();
 
   // "Send a message" form — same no-backend mailto approach as the coffee scheduler
@@ -1590,9 +1622,10 @@
     tick();
   })();
 
-  // Scroll reveal for project cards, experience tiles, and a few other card grids
+  // Scroll reveal for section headings, project cards, experience tiles, and a
+  // few other card grids — so headings feel less like a static wall of text.
   (function(){
-    const items = document.querySelectorAll('.project, .exp-tile, .leader-card, .rec-card, .juggle-card');
+    const items = document.querySelectorAll('.section-head, .project, .exp-tile, .leader-card, .rec-card, .juggle-card');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { items.forEach(i => i.classList.add('in')); return; }
     const io = new IntersectionObserver((entries) => {
