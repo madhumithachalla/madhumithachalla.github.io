@@ -64,6 +64,19 @@
     border:1px solid var(--line); border-radius:20px; cursor:pointer;
   }
   .toolbar-btn.active{background:#F5C453; color:#1B1130; border-color:#F5C453;}
+  .color-swatches{display:flex; align-items:center; gap:7px;}
+  .swatch-btn{
+    width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,0.2);
+    cursor:pointer; padding:0; box-shadow:0 1px 3px rgba(0,0,0,0.4); flex:none;
+  }
+  .swatch-btn.active{border-color:#fff; box-shadow:0 0 0 2px var(--bg-panel), 0 0 0 4px rgba(255,255,255,0.85);}
+  .custom-swatch{
+    position:relative; overflow:hidden; display:inline-block;
+    background:conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+  }
+  .custom-swatch input[type="color"]{
+    position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; border:none; padding:0;
+  }
   .toolbar-hint{font-size:11.5px; color:var(--slate); flex-basis:100%; line-height:1.4;}
   .preview-canvases{display:flex; flex-direction:column; gap:16px; margin-top:10px;}
   .preview-canvases canvas{width:100%; height:auto; border:1px solid var(--line); border-radius:4px; background:#000; display:block; touch-action:none;}
@@ -116,8 +129,18 @@
     <p class="preview-note" id="previewNote" style="display:none;"></p>
     <div class="highlighter-toolbar" id="highlighterToolbar" style="display:none;">
       <button type="button" id="highlighterToggle" class="toolbar-btn">🖊️ Highlighter: off</button>
+      <div class="color-swatches" id="colorSwatches" role="group" aria-label="Highlighter color">
+        <button type="button" class="swatch-btn active" data-color="#F5C453" style="background:#F5C453;" aria-label="Yellow highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#7ED957" style="background:#7ED957;" aria-label="Green highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#FF6FA5" style="background:#FF6FA5;" aria-label="Pink highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#5EC8FF" style="background:#5EC8FF;" aria-label="Blue highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#FFA65E" style="background:#FFA65E;" aria-label="Orange highlighter"></button>
+        <label class="swatch-btn custom-swatch" aria-label="Custom highlighter color">
+          <input type="color" id="customColorInput" value="#F5C453">
+        </label>
+      </div>
       <button type="button" id="clearManualBtn" class="toolbar-btn" style="display:none;">Clear my highlights</button>
-      <span class="toolbar-hint">Turn the highlighter on, then click-drag directly on the document below to mark anything by hand — on top of (or instead of) the auto-detected matches.</span>
+      <span class="toolbar-hint">Turn the highlighter on, pick a color, then click-drag directly on the document below to mark anything by hand — on top of (or instead of) the auto-detected matches.</span>
     </div>
     <div class="preview-canvases" id="previewCanvases"></div>
     <div class="highlight-legend" id="highlightLegend" style="display:none;">
@@ -163,16 +186,20 @@ const highlighterToolbar = document.getElementById('highlighterToolbar');
 const highlighterToggle = document.getElementById('highlighterToggle');
 const clearManualBtn = document.getElementById('clearManualBtn');
 const highlightLegend = document.getElementById('highlightLegend');
+const colorSwatches = document.getElementById('colorSwatches');
+const customColorInput = document.getElementById('customColorInput');
+const legendManualSwatch = document.querySelector('.swatch-manual');
 
 let currentFile = null;
 let currentKind = null; // 'image' | 'pdf' | 'docx'
 // For 'image'/'pdf': one entry per page, holding the pristine rendered page/image
 // (so we can redraw boxes fresh each time the search pattern changes) plus the
 // OCR'd rows for that page, plus any manual highlighter marks the user drew by
-// hand (in that page's own canvas-pixel coordinates). Row grouping mirrors
-// document_extraction_pipeline.py.
+// hand (in that page's own canvas-pixel coordinates, each remembering its own
+// color). Row grouping mirrors document_extraction_pipeline.py.
 let pageEntries = [];
 let highlighterOn = false;
+let highlighterColor = '#F5C453';
 
 function kindOf(file) {
   if (file.type.startsWith('image/')) return 'image';
@@ -389,14 +416,19 @@ function renderHighlightedText(text, pattern, isRegex) {
 
 // Paints a highlighter-style translucent mark — borderless, like a real
 // highlighter pen — as opposed to the bordered box used for auto-detected
-// matches, so the two read as visually distinct at a glance.
+// matches, so the two read as visually distinct at a glance. Each mark
+// carries its own color (set from whichever swatch was active when it was
+// drawn), so different-colored marks can coexist on the same page.
 function paintHighlighterMark(ctx, r) {
   const x = Math.min(r.x0, r.x1);
   const y = Math.min(r.y0, r.y1);
   const w = Math.abs(r.x1 - r.x0);
   const h = Math.abs(r.y1 - r.y0);
-  ctx.fillStyle = 'rgba(245, 196, 66, 0.4)';
+  ctx.save();
+  ctx.globalAlpha = 0.4;
+  ctx.fillStyle = r.color || '#F5C453';
   ctx.fillRect(x, y, w, h);
+  ctx.restore();
 }
 
 // Repaints a target canvas from scratch: pristine page, then auto-matched row
@@ -467,7 +499,7 @@ function attachHighlighter(canvasEl, entry) {
     if (!highlighterOn || !dragStart) return;
     const p = canvasPoint(canvasEl, evt);
     paintPage(canvasEl, entry.canvas, entry.rows, currentRegexSafe(), entry.manualRects,
-      { x0: dragStart.x, y0: dragStart.y, x1: p.x, y1: p.y });
+      { x0: dragStart.x, y0: dragStart.y, x1: p.x, y1: p.y, color: highlighterColor });
   });
   function finishDrag(evt) {
     if (!highlighterOn || !dragStart) return;
@@ -475,6 +507,7 @@ function attachHighlighter(canvasEl, entry) {
     const rect = {
       x0: Math.min(dragStart.x, p.x), y0: Math.min(dragStart.y, p.y),
       x1: Math.max(dragStart.x, p.x), y1: Math.max(dragStart.y, p.y),
+      color: highlighterColor,
     };
     dragStart = null;
     // Ignore accidental clicks/taps that never really dragged anywhere.
@@ -499,6 +532,22 @@ clearManualBtn.addEventListener('click', () => {
   pageEntries.forEach(entry => { entry.manualRects = []; });
   renderPreview();
 });
+
+// Highlighter color picker — a row of preset swatches (like a mobile PDF/photo
+// markup tool) plus a native <input type="color"> for anything else. Picking
+// a color only changes what NEW marks are drawn in; existing marks keep
+// whatever color they were drawn with.
+function setHighlighterColor(color, sourceBtn) {
+  highlighterColor = color;
+  colorSwatches.querySelectorAll('.swatch-btn[data-color]').forEach(b => {
+    b.classList.toggle('active', b === sourceBtn);
+  });
+  if (legendManualSwatch) legendManualSwatch.style.background = color;
+}
+colorSwatches.querySelectorAll('.swatch-btn[data-color]').forEach(btn => {
+  btn.addEventListener('click', () => setHighlighterColor(btn.dataset.color, btn));
+});
+customColorInput.addEventListener('input', () => setHighlighterColor(customColorInput.value, null));
 
 // Renders whatever was last extracted using the current search pattern —
 // called right after extraction, and again live whenever the pattern or the
