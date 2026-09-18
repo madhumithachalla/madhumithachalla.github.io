@@ -228,17 +228,9 @@ function loadImageToCanvas(file) {
   });
 }
 
-// Group OCR words into rows by vertical position (same idea as ROW_HEIGHT_PX
-// in document_extraction_pipeline.py), so multi-word patterns and whole-row
-// context match the way the real pipeline does. Falls back from data.lines
-// (when the Tesseract build provides it) to building rows from data.words.
-function getRowsFromTesseractData(data) {
-  if (Array.isArray(data.lines) && data.lines.length) {
-    return data.lines
-      .filter(l => l.text && l.text.trim())
-      .map(l => ({ text: l.text.trim(), bbox: l.bbox }));
-  }
-  const words = data.words || [];
+// Groups a flat list of {text, bbox} words into rows by vertical position
+// (same idea as ROW_HEIGHT_PX in document_extraction_pipeline.py).
+function groupWordsIntoRows(words) {
   const rowHeight = 32;
   const rows = new Map();
   words.forEach(w => {
@@ -256,6 +248,49 @@ function getRowsFromTesseractData(data) {
       y1: Math.max(...ws.map(w => w.bbox.y1)),
     },
   }));
+}
+
+// Walks Tesseract.js's hierarchical output (blocks -> paragraphs -> lines ->
+// words), which some builds/versions return instead of (or in addition to)
+// the flat data.lines/data.words convenience arrays. Collects every word
+// bbox it can find, regardless of nesting depth.
+function collectWordsFromBlocks(blocks) {
+  const words = [];
+  (blocks || []).forEach(block => {
+    (block.paragraphs || []).forEach(paragraph => {
+      (paragraph.lines || []).forEach(line => {
+        if (Array.isArray(line.words) && line.words.length) {
+          line.words.forEach(w => { if (w.text && w.bbox) words.push(w); });
+        } else if (line.text && line.bbox) {
+          words.push(line);
+        }
+      });
+    });
+  });
+  return words;
+}
+
+// Turns whatever a Tesseract.js recognize() call returned into row-level
+// {text, bbox} entries, mirroring document_extraction_pipeline.py's row
+// grouping. Different Tesseract.js versions/configurations expose bounding
+// boxes differently, so this tries each known shape in turn:
+// 1) flat data.lines (has its own bbox already, one entry per line)
+// 2) flat data.words (grouped into rows by vertical position)
+// 3) hierarchical data.blocks (words extracted from every nesting level,
+//    then grouped into rows the same way)
+function getRowsFromTesseractData(data) {
+  if (Array.isArray(data.lines) && data.lines.length) {
+    return data.lines
+      .filter(l => l.text && l.text.trim() && l.bbox)
+      .map(l => ({ text: l.text.trim(), bbox: l.bbox }));
+  }
+  if (Array.isArray(data.words) && data.words.length) {
+    return groupWordsIntoRows(data.words);
+  }
+  if (Array.isArray(data.blocks) && data.blocks.length) {
+    return groupWordsIntoRows(collectWordsFromBlocks(data.blocks));
+  }
+  return [];
 }
 
 async function extractFromImageFile(file) {
@@ -484,12 +519,25 @@ function renderPreview() {
     return;
   }
 
-  previewNote.style.display = 'none';
   highlightBox.style.display = 'none';
   previewCanvases.style.display = 'flex';
   previewCanvases.innerHTML = '';
   highlighterToolbar.style.display = 'flex';
   highlightLegend.style.display = 'flex';
+
+  // If OCR found text but couldn't locate any of it on the page (no rows at
+  // all, regardless of search pattern), auto-detected matches can never
+  // appear here — say so plainly instead of silently showing zero matches,
+  // since that's indistinguishable from "it's just broken" otherwise. The
+  // highlighter still works either way, since it doesn't depend on OCR rows.
+  const hasText = rawText.value.trim().length > 0;
+  const hasRows = pageEntries.some(entry => entry.rows.length > 0);
+  if (hasText && !hasRows) {
+    previewNote.style.display = 'block';
+    previewNote.textContent = "Text was extracted, but no positional data came back with it, so auto-detected matches can't be boxed on the page. The highlighter below still works — you can mark things by hand.";
+  } else {
+    previewNote.style.display = 'none';
+  }
 
   function buildCanvas(entry, idx, re) {
     const out = document.createElement('canvas');
