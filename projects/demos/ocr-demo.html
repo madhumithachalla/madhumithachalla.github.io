@@ -58,11 +58,36 @@
   }
   mark{background:var(--violet); color:#100D18; border-radius:2px; padding:0 2px;}
   .preview-note{font-size:12.5px; color:var(--slate); margin:0 0 8px; line-height:1.5;}
+  .highlighter-toolbar{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:12px;}
+  .toolbar-btn{
+    margin-top:0; padding:7px 14px; font-size:12.5px; font-weight:600; background:var(--bg); color:var(--paper);
+    border:1px solid var(--line); border-radius:20px; cursor:pointer;
+  }
+  .toolbar-btn.active{background:#F5C453; color:#1B1130; border-color:#F5C453;}
+  .color-swatches{display:flex; align-items:center; gap:7px;}
+  .swatch-btn{
+    width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,0.2);
+    cursor:pointer; padding:0; box-shadow:0 1px 3px rgba(0,0,0,0.4); flex:none;
+  }
+  .swatch-btn.active{border-color:#fff; box-shadow:0 0 0 2px var(--bg-panel), 0 0 0 4px rgba(255,255,255,0.85);}
+  .custom-swatch{
+    position:relative; overflow:hidden; display:inline-block;
+    background:conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+  }
+  .custom-swatch input[type="color"]{
+    position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; border:none; padding:0;
+  }
+  .toolbar-hint{font-size:11.5px; color:var(--slate); flex-basis:100%; line-height:1.4;}
   .preview-canvases{display:flex; flex-direction:column; gap:16px; margin-top:10px;}
-  .preview-canvases canvas{width:100%; height:auto; border:1px solid var(--line); border-radius:4px; background:#000; display:block;}
+  .preview-canvases canvas{width:100%; height:auto; border:1px solid var(--line); border-radius:4px; background:#000; display:block; touch-action:none;}
+  .preview-canvases canvas.highlighter-on{cursor:crosshair;}
   .page-label{font-size:11px; color:var(--slate); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;}
   .match-count{font-size:13px; color:var(--slate); margin-top:6px;}
   .match-count b{color:var(--paper);}
+  .highlight-legend{display:flex; flex-wrap:wrap; gap:14px; font-size:11.5px; color:var(--slate); margin-top:6px;}
+  .swatch{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle;}
+  .swatch-auto{background:rgba(155,126,222,0.35); border:1.5px solid #9B7EDE;}
+  .swatch-manual{background:rgba(245,196,66,0.55); border:1.5px solid rgba(245,196,66,0.9);}
   .download-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
   .download-row button{margin-top:0; background:var(--violet); color:#fff;}
   .download-row button:disabled{opacity:0.4;}
@@ -75,7 +100,7 @@
 <div class="wrap">
   <a class="back" href="../../index.html">← Back to portfolio</a>
   <h1>Document extraction — live OCR demo</h1>
-  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, type whatever text or pattern you want found, and for images/PDFs the matches get boxed <b>directly on your original document</b> (not just pulled out as plain text) — then download the result as an <b>image</b> or a <b>PDF</b>.</p>
+  <p class="lead">A working recreation of my document-extraction pipeline, running fully in your browser — no server, nothing uploaded anywhere. Upload an <b>image</b>, a <b>PDF</b>, or a <b>Word (.docx)</b> document, type whatever text or pattern you want found, and for images/PDFs the matches get boxed <b>directly on your original document</b> (not just pulled out as plain text). You can also switch on the <b>highlighter</b> and mark anything by hand — click and drag over the document, just like a real highlighter pen — then download the result as an <b>image</b> or a <b>PDF</b>.</p>
 
   <div class="card">
     <div class="dropzone" id="dropzone">
@@ -102,7 +127,26 @@
   <div class="card" id="resultsCard" style="display:none;">
     <h3>Highlighted preview</h3>
     <p class="preview-note" id="previewNote" style="display:none;"></p>
+    <div class="highlighter-toolbar" id="highlighterToolbar" style="display:none;">
+      <button type="button" id="highlighterToggle" class="toolbar-btn">🖊️ Highlighter: off</button>
+      <div class="color-swatches" id="colorSwatches" role="group" aria-label="Highlighter color">
+        <button type="button" class="swatch-btn active" data-color="#F5C453" style="background:#F5C453;" aria-label="Yellow highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#7ED957" style="background:#7ED957;" aria-label="Green highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#FF6FA5" style="background:#FF6FA5;" aria-label="Pink highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#5EC8FF" style="background:#5EC8FF;" aria-label="Blue highlighter"></button>
+        <button type="button" class="swatch-btn" data-color="#FFA65E" style="background:#FFA65E;" aria-label="Orange highlighter"></button>
+        <label class="swatch-btn custom-swatch" aria-label="Custom highlighter color">
+          <input type="color" id="customColorInput" value="#F5C453">
+        </label>
+      </div>
+      <button type="button" id="clearManualBtn" class="toolbar-btn" style="display:none;">Clear my highlights</button>
+      <span class="toolbar-hint">Turn the highlighter on, pick a color, then click-drag directly on the document below to mark anything by hand — on top of (or instead of) the auto-detected matches.</span>
+    </div>
     <div class="preview-canvases" id="previewCanvases"></div>
+    <div class="highlight-legend" id="highlightLegend" style="display:none;">
+      <span><i class="swatch swatch-auto"></i>auto-detected match</span>
+      <span><i class="swatch swatch-manual"></i>your highlight</span>
+    </div>
     <div class="highlight-box" id="highlightBox" style="display:none;"></div>
     <div class="match-count" id="matchCount"></div>
     <div class="download-row">
@@ -138,13 +182,24 @@ const highlightBox = document.getElementById('highlightBox');
 const matchCount = document.getElementById('matchCount');
 const searchPattern = document.getElementById('searchPattern');
 const useRegex = document.getElementById('useRegex');
+const highlighterToolbar = document.getElementById('highlighterToolbar');
+const highlighterToggle = document.getElementById('highlighterToggle');
+const clearManualBtn = document.getElementById('clearManualBtn');
+const highlightLegend = document.getElementById('highlightLegend');
+const colorSwatches = document.getElementById('colorSwatches');
+const customColorInput = document.getElementById('customColorInput');
+const legendManualSwatch = document.querySelector('.swatch-manual');
 
 let currentFile = null;
 let currentKind = null; // 'image' | 'pdf' | 'docx'
 // For 'image'/'pdf': one entry per page, holding the pristine rendered page/image
 // (so we can redraw boxes fresh each time the search pattern changes) plus the
-// OCR'd rows for that page. Row grouping mirrors document_extraction_pipeline.py.
+// OCR'd rows for that page, plus any manual highlighter marks the user drew by
+// hand (in that page's own canvas-pixel coordinates, each remembering its own
+// color). Row grouping mirrors document_extraction_pipeline.py.
 let pageEntries = [];
+let highlighterOn = false;
+let highlighterColor = '#F5C453';
 
 function kindOf(file) {
   if (file.type.startsWith('image/')) return 'image';
@@ -200,17 +255,9 @@ function loadImageToCanvas(file) {
   });
 }
 
-// Group OCR words into rows by vertical position (same idea as ROW_HEIGHT_PX
-// in document_extraction_pipeline.py), so multi-word patterns and whole-row
-// context match the way the real pipeline does. Falls back from data.lines
-// (when the Tesseract build provides it) to building rows from data.words.
-function getRowsFromTesseractData(data) {
-  if (Array.isArray(data.lines) && data.lines.length) {
-    return data.lines
-      .filter(l => l.text && l.text.trim())
-      .map(l => ({ text: l.text.trim(), bbox: l.bbox }));
-  }
-  const words = data.words || [];
+// Groups a flat list of {text, bbox} words into rows by vertical position
+// (same idea as ROW_HEIGHT_PX in document_extraction_pipeline.py).
+function groupWordsIntoRows(words) {
   const rowHeight = 32;
   const rows = new Map();
   words.forEach(w => {
@@ -230,6 +277,49 @@ function getRowsFromTesseractData(data) {
   }));
 }
 
+// Walks Tesseract.js's hierarchical output (blocks -> paragraphs -> lines ->
+// words), which some builds/versions return instead of (or in addition to)
+// the flat data.lines/data.words convenience arrays. Collects every word
+// bbox it can find, regardless of nesting depth.
+function collectWordsFromBlocks(blocks) {
+  const words = [];
+  (blocks || []).forEach(block => {
+    (block.paragraphs || []).forEach(paragraph => {
+      (paragraph.lines || []).forEach(line => {
+        if (Array.isArray(line.words) && line.words.length) {
+          line.words.forEach(w => { if (w.text && w.bbox) words.push(w); });
+        } else if (line.text && line.bbox) {
+          words.push(line);
+        }
+      });
+    });
+  });
+  return words;
+}
+
+// Turns whatever a Tesseract.js recognize() call returned into row-level
+// {text, bbox} entries, mirroring document_extraction_pipeline.py's row
+// grouping. Different Tesseract.js versions/configurations expose bounding
+// boxes differently, so this tries each known shape in turn:
+// 1) flat data.lines (has its own bbox already, one entry per line)
+// 2) flat data.words (grouped into rows by vertical position)
+// 3) hierarchical data.blocks (words extracted from every nesting level,
+//    then grouped into rows the same way)
+function getRowsFromTesseractData(data) {
+  if (Array.isArray(data.lines) && data.lines.length) {
+    return data.lines
+      .filter(l => l.text && l.text.trim() && l.bbox)
+      .map(l => ({ text: l.text.trim(), bbox: l.bbox }));
+  }
+  if (Array.isArray(data.words) && data.words.length) {
+    return groupWordsIntoRows(data.words);
+  }
+  if (Array.isArray(data.blocks) && data.blocks.length) {
+    return groupWordsIntoRows(collectWordsFromBlocks(data.blocks));
+  }
+  return [];
+}
+
 async function extractFromImageFile(file) {
   const canvas = await loadImageToCanvas(file);
   const { data } = await Tesseract.recognize(canvas, 'eng', {
@@ -240,7 +330,7 @@ async function extractFromImageFile(file) {
       }
     }
   });
-  pageEntries = [{ canvas, rows: getRowsFromTesseractData(data) }];
+  pageEntries = [{ canvas, rows: getRowsFromTesseractData(data), manualRects: [] }];
   return data.text;
 }
 
@@ -267,7 +357,7 @@ async function extractFromPdf(file) {
         }
       }
     });
-    pageEntries.push({ canvas, rows: getRowsFromTesseractData(data) });
+    pageEntries.push({ canvas, rows: getRowsFromTesseractData(data), manualRects: [] });
     fullText += (fullText ? '\n\n' : '') + data.text;
   }
   return fullText;
@@ -324,14 +414,31 @@ function renderHighlightedText(text, pattern, isRegex) {
     : `No matches found for that pattern in this document.`;
 }
 
-// Draws a fresh copy of a page's pristine canvas with a box around every row
-// that matches, so re-running this after a pattern change never compounds
-// old boxes onto the same canvas.
-function drawAnnotatedPage(baseCanvas, rows, re) {
-  const out = document.createElement('canvas');
-  out.width = baseCanvas.width;
-  out.height = baseCanvas.height;
-  const ctx = out.getContext('2d');
+// Paints a highlighter-style translucent mark — borderless, like a real
+// highlighter pen — as opposed to the bordered box used for auto-detected
+// matches, so the two read as visually distinct at a glance. Each mark
+// carries its own color (set from whichever swatch was active when it was
+// drawn), so different-colored marks can coexist on the same page.
+function paintHighlighterMark(ctx, r) {
+  const x = Math.min(r.x0, r.x1);
+  const y = Math.min(r.y0, r.y1);
+  const w = Math.abs(r.x1 - r.x0);
+  const h = Math.abs(r.y1 - r.y0);
+  ctx.save();
+  ctx.globalAlpha = 0.4;
+  ctx.fillStyle = r.color || '#F5C453';
+  ctx.fillRect(x, y, w, h);
+  ctx.restore();
+}
+
+// Repaints a target canvas from scratch: pristine page, then auto-matched row
+// boxes, then manual highlighter marks, then (while a drag is in progress) a
+// live preview of the mark being drawn right now. Always starting from the
+// pristine base means re-running this after a pattern change, a new manual
+// mark, or a live drag frame never compounds old marks onto the same pixels.
+function paintPage(targetCanvas, baseCanvas, rows, re, manualRects, dragRect) {
+  const ctx = targetCanvas.getContext('2d');
+  ctx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
   ctx.drawImage(baseCanvas, 0, 0);
 
   let matches = 0;
@@ -349,8 +456,98 @@ function drawAnnotatedPage(baseCanvas, rows, re) {
       }
     });
   }
-  return { canvas: out, matches };
+  (manualRects || []).forEach(r => paintHighlighterMark(ctx, r));
+  if (dragRect) paintHighlighterMark(ctx, dragRect);
+
+  return matches;
 }
+
+function currentRegexSafe() {
+  try { return buildRowRegex(searchPattern.value.trim(), useRegex.checked); } catch (err) { return null; }
+}
+
+// Converts a pointer event's viewport coordinates into this canvas's own
+// pixel space, since the canvas is displayed at CSS width:100% while its
+// backing resolution (canvas.width/height) is usually larger.
+function canvasPoint(canvasEl, evt) {
+  const rect = canvasEl.getBoundingClientRect();
+  const scaleX = canvasEl.width / rect.width;
+  const scaleY = canvasEl.height / rect.height;
+  return {
+    x: Math.max(0, Math.min(canvasEl.width, (evt.clientX - rect.left) * scaleX)),
+    y: Math.max(0, Math.min(canvasEl.height, (evt.clientY - rect.top) * scaleY)),
+  };
+}
+
+function updateManualControlsVisibility() {
+  const any = pageEntries.some(e => (e.manualRects || []).length > 0);
+  clearManualBtn.style.display = any ? 'inline-block' : 'none';
+}
+
+// Wires up click-drag highlighter drawing on one page's displayed canvas.
+// Only active while the highlighter toggle is on; otherwise the canvas is
+// just a static preview.
+function attachHighlighter(canvasEl, entry) {
+  let dragStart = null;
+  canvasEl.addEventListener('pointerdown', (evt) => {
+    if (!highlighterOn) return;
+    evt.preventDefault();
+    canvasEl.setPointerCapture(evt.pointerId);
+    dragStart = canvasPoint(canvasEl, evt);
+  });
+  canvasEl.addEventListener('pointermove', (evt) => {
+    if (!highlighterOn || !dragStart) return;
+    const p = canvasPoint(canvasEl, evt);
+    paintPage(canvasEl, entry.canvas, entry.rows, currentRegexSafe(), entry.manualRects,
+      { x0: dragStart.x, y0: dragStart.y, x1: p.x, y1: p.y, color: highlighterColor });
+  });
+  function finishDrag(evt) {
+    if (!highlighterOn || !dragStart) return;
+    const p = canvasPoint(canvasEl, evt);
+    const rect = {
+      x0: Math.min(dragStart.x, p.x), y0: Math.min(dragStart.y, p.y),
+      x1: Math.max(dragStart.x, p.x), y1: Math.max(dragStart.y, p.y),
+      color: highlighterColor,
+    };
+    dragStart = null;
+    // Ignore accidental clicks/taps that never really dragged anywhere.
+    if (rect.x1 - rect.x0 > 4 && rect.y1 - rect.y0 > 4) {
+      entry.manualRects.push(rect);
+    }
+    paintPage(canvasEl, entry.canvas, entry.rows, currentRegexSafe(), entry.manualRects);
+    updateManualControlsVisibility();
+  }
+  canvasEl.addEventListener('pointerup', finishDrag);
+  canvasEl.addEventListener('pointercancel', finishDrag);
+}
+
+highlighterToggle.addEventListener('click', () => {
+  highlighterOn = !highlighterOn;
+  highlighterToggle.textContent = highlighterOn ? '🖊️ Highlighter: on' : '🖊️ Highlighter: off';
+  highlighterToggle.classList.toggle('active', highlighterOn);
+  previewCanvases.querySelectorAll('canvas').forEach(c => c.classList.toggle('highlighter-on', highlighterOn));
+});
+
+clearManualBtn.addEventListener('click', () => {
+  pageEntries.forEach(entry => { entry.manualRects = []; });
+  renderPreview();
+});
+
+// Highlighter color picker — a row of preset swatches (like a mobile PDF/photo
+// markup tool) plus a native <input type="color"> for anything else. Picking
+// a color only changes what NEW marks are drawn in; existing marks keep
+// whatever color they were drawn with.
+function setHighlighterColor(color, sourceBtn) {
+  highlighterColor = color;
+  colorSwatches.querySelectorAll('.swatch-btn[data-color]').forEach(b => {
+    b.classList.toggle('active', b === sourceBtn);
+  });
+  if (legendManualSwatch) legendManualSwatch.style.background = color;
+}
+colorSwatches.querySelectorAll('.swatch-btn[data-color]').forEach(btn => {
+  btn.addEventListener('click', () => setHighlighterColor(btn.dataset.color, btn));
+});
+customColorInput.addEventListener('input', () => setHighlighterColor(customColorInput.value, null));
 
 // Renders whatever was last extracted using the current search pattern —
 // called right after extraction, and again live whenever the pattern or the
@@ -360,6 +557,8 @@ function renderPreview() {
   const isRegex = useRegex.checked;
 
   if (currentKind === 'docx') {
+    highlighterToolbar.style.display = 'none';
+    highlightLegend.style.display = 'none';
     previewCanvases.style.display = 'none';
     previewCanvases.innerHTML = '';
     highlightBox.style.display = 'block';
@@ -369,38 +568,62 @@ function renderPreview() {
     return;
   }
 
-  previewNote.style.display = 'none';
   highlightBox.style.display = 'none';
   previewCanvases.style.display = 'flex';
   previewCanvases.innerHTML = '';
+  highlighterToolbar.style.display = 'flex';
+  highlightLegend.style.display = 'flex';
 
-  let re;
-  try {
-    re = buildRowRegex(pattern, isRegex);
-  } catch (err) {
-    matchCount.innerHTML = `<span style="color:#FF6F5E;">Invalid regular expression — check your pattern.</span>`;
-    pageEntries.forEach(entry => previewCanvases.appendChild(drawAnnotatedPage(entry.canvas, entry.rows, null).canvas));
-    return;
+  // If OCR found text but couldn't locate any of it on the page (no rows at
+  // all, regardless of search pattern), auto-detected matches can never
+  // appear here — say so plainly instead of silently showing zero matches,
+  // since that's indistinguishable from "it's just broken" otherwise. The
+  // highlighter still works either way, since it doesn't depend on OCR rows.
+  const hasText = rawText.value.trim().length > 0;
+  const hasRows = pageEntries.some(entry => entry.rows.length > 0);
+  if (hasText && !hasRows) {
+    previewNote.style.display = 'block';
+    previewNote.textContent = "Text was extracted, but no positional data came back with it, so auto-detected matches can't be boxed on the page. The highlighter below still works — you can mark things by hand.";
+  } else {
+    previewNote.style.display = 'none';
   }
 
-  let totalMatches = 0;
-  pageEntries.forEach((entry, idx) => {
-    const { canvas: annotated, matches } = drawAnnotatedPage(entry.canvas, entry.rows, re);
-    totalMatches += matches;
+  function buildCanvas(entry, idx, re) {
+    const out = document.createElement('canvas');
+    out.width = entry.canvas.width;
+    out.height = entry.canvas.height;
+    out.classList.toggle('highlighter-on', highlighterOn);
+    const matches = paintPage(out, entry.canvas, entry.rows, re, entry.manualRects);
     if (pageEntries.length > 1) {
       const label = document.createElement('div');
       label.className = 'page-label';
       label.textContent = `Page ${idx + 1} of ${pageEntries.length}`;
       previewCanvases.appendChild(label);
     }
-    previewCanvases.appendChild(annotated);
-  });
+    previewCanvases.appendChild(out);
+    attachHighlighter(out, entry);
+    return matches;
+  }
+
+  let re;
+  try {
+    re = buildRowRegex(pattern, isRegex);
+  } catch (err) {
+    matchCount.innerHTML = `<span style="color:#FF6F5E;">Invalid regular expression — check your pattern.</span>`;
+    pageEntries.forEach((entry, idx) => buildCanvas(entry, idx, null));
+    updateManualControlsVisibility();
+    return;
+  }
+
+  let totalMatches = 0;
+  pageEntries.forEach((entry, idx) => { totalMatches += buildCanvas(entry, idx, re); });
 
   matchCount.innerHTML = !pattern
     ? ''
     : totalMatches
       ? `<b>${totalMatches}</b> matching row${totalMatches === 1 ? '' : 's'} boxed above.`
       : 'No matches found for that pattern in this document.';
+  updateManualControlsVisibility();
 }
 
 runBtn.addEventListener('click', async () => {
@@ -457,12 +680,17 @@ async function captureHighlightBox() {
 }
 
 // Recomputes the currently-annotated page canvases fresh from the pristine
-// pages + the live search pattern, so downloads always match what's on screen.
+// pages + the live search pattern + any manual highlighter marks, so
+// downloads always match exactly what's on screen.
 function currentAnnotatedCanvases() {
-  const pattern = searchPattern.value.trim();
-  let re = null;
-  try { re = buildRowRegex(pattern, useRegex.checked); } catch (err) { re = null; }
-  return pageEntries.map(entry => drawAnnotatedPage(entry.canvas, entry.rows, re).canvas);
+  const re = currentRegexSafe();
+  return pageEntries.map(entry => {
+    const out = document.createElement('canvas');
+    out.width = entry.canvas.width;
+    out.height = entry.canvas.height;
+    paintPage(out, entry.canvas, entry.rows, re, entry.manualRects);
+    return out;
+  });
 }
 
 // Stacks multiple pages into one tall image for the single-image download;
