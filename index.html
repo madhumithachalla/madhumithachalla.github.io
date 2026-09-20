@@ -401,7 +401,17 @@
   .eyebrow.c-green{color:var(--green);}
   .eyebrow.c-pink{color:var(--pink);}
   .eyebrow.c-blue{color:var(--blue);}
-  .section-head h2{font-size:clamp(30px,4vw,42px); font-weight:600;}
+  h2{
+    font-size:clamp(38px,5.5vw,58px); font-weight:700; letter-spacing:-0.015em;
+    background:linear-gradient(90deg, var(--coral), var(--amber), var(--teal), var(--violet), var(--coral));
+    background-size:300% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:headingFlow 9s linear infinite;
+  }
+  @keyframes headingFlow{
+    0%{background-position:0% 50%;}
+    100%{background-position:300% 50%;}
+  }
   .section-head p{color:var(--slate); margin-top:12px; font-size:16.5px;}
 
   /* about */
@@ -429,8 +439,8 @@
   .juggle-card:nth-child(4){border-top-color:var(--violet);}
   .juggle-card:nth-child(5){border-top-color:var(--green);}
   .juggle-card:nth-child(6){border-top-color:var(--coral);}
-  .jc-role{display:block; font-weight:600; font-size:14px; color:var(--paper); margin-bottom:3px;}
-  .jc-org{display:block; font-family:'Inter'; font-size:12.5px; color:var(--slate);}
+  .jc-role{display:block; font-weight:600; font-size:20px; color:var(--paper); margin-bottom:3px;}
+  .jc-org{display:block; font-family:'Inter'; font-size:18px; color:var(--slate);}
   .jc-since{display:block; font-family:'IBM Plex Mono'; font-size:10px; color:var(--coral); margin-top:5px; text-transform:uppercase; letter-spacing:0.04em;}
   .juggle-note{margin-top:16px; font-size:11.5px; color:var(--slate);}
   .juggle-note a{text-decoration:underline;}
@@ -464,13 +474,13 @@
   .pill.upcoming{color:var(--slate); border-color:var(--line); border-style:dashed; background:transparent;}
   .pill.new-sync{color:var(--teal); border-color:var(--teal); background:rgba(45,212,191,0.12);}
   .project.upcoming{opacity:0.88; border-style:dashed; grid-template-columns:1fr;}
-  .project h3{font-size:20px; margin-bottom:6px;}
-  .project .role{font-family:'Inter'; font-weight:500; font-size:13.5px; color:var(--slate); margin-bottom:14px;}
-  .project p{color:var(--ink-soft); font-size:15px; margin:0 0 14px;}
-  .project ul{margin:0 0 14px; padding-left:18px; color:var(--ink-soft); font-size:14.5px;}
+  .project h3{font-size:30px; margin-bottom:6px;}
+  .project .role{font-family:'Inter'; font-weight:500; font-size:20px; color:var(--slate); margin-bottom:14px;}
+  .project p{color:var(--ink-soft); font-size:22px; line-height:1.5; margin:0 0 14px;}
+  .project ul{margin:0 0 14px; padding-left:18px; color:var(--ink-soft); font-size:20px; line-height:1.5;}
   .project ul li{margin-bottom:6px;}
   .tags{display:flex; flex-wrap:wrap; gap:7px;}
-  .tag{font-family:'IBM Plex Mono'; font-size:11px; background:var(--bg); border:1px solid var(--line); padding:3px 8px; border-radius:20px; color:var(--slate);}
+  .tag{font-family:'IBM Plex Mono'; font-size:15px; background:var(--bg); border:1px solid var(--line); padding:5px 12px; border-radius:20px; color:var(--slate);}
   .tag:nth-child(3n+1){border-color:var(--coral); color:#FF6F5E;}
   .tag:nth-child(3n+2){border-color:var(--teal); color:#2DD4BF;}
   .tag:nth-child(3n+3){border-color:var(--violet); color:#9B7EDE;}
@@ -494,15 +504,15 @@
     font-family:'IBM Plex Mono'; font-size:30px; font-weight:600; color:var(--violet);
     margin-bottom:6px;
   }
-  .leader-role{font-family:'Inter'; font-size:17px; font-weight:600; margin-bottom:2px;}
+  .leader-role{font-family:'Inter'; font-size:26px; font-weight:600; margin-bottom:2px;}
   .leader-org{font-family:'Inter'; font-size:12.5px; color:var(--slate); margin-bottom:12px;}
-  .leader-card p{font-size:14.5px; color:var(--ink-soft); margin:0;}
+  .leader-card p{font-size:20px; line-height:1.5; color:var(--ink-soft); margin:0;}
   @media(max-width:760px){ .leader-grid{grid-template-columns:1fr;} }
 
   /* connect: message form + coffee scheduler */
   .connect-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;}
   @media(max-width:800px){ .connect-grid{grid-template-columns:1fr;} }
-  .connect-card-title{font-family:'Inter'; font-size:17px; font-weight:600; margin-bottom:16px;}
+  .connect-card-title{font-family:'Inter'; font-size:26px; font-weight:600; margin-bottom:16px;}
   .coffee-card{
     background:var(--bg-panel); border:1px solid var(--line); border-radius:6px;
     padding:26px 28px; height:100%;
@@ -540,8 +550,8 @@
   /* recommendations */
   .rec-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   .rec-card{background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius); padding:22px;}
-  .rec-card p{font-size:14px; color:var(--ink-soft); margin:0 0 16px; line-height:1.55;}
-  .rec-who{font-family:'Inter'; font-size:12.5px;}
+  .rec-card p{font-size:20px; color:var(--ink-soft); margin:0 0 16px; line-height:1.55;}
+  .rec-who{font-family:'Inter'; font-size:18px;}
   .rec-who b{display:block; color:var(--paper); font-weight:600; margin-bottom:2px;}
   .rec-who span{color:var(--slate);}
   @media(max-width:800px){ .rec-grid{grid-template-columns:1fr;} }
@@ -561,14 +571,14 @@
   .exp-tile:nth-child(5n+3){border-top-color:var(--amber);}
   .exp-tile:nth-child(5n+4){border-top-color:var(--violet);}
   .exp-tile:nth-child(5n+5){border-top-color:var(--green);}
-  .exp-time{font-family:'IBM Plex Mono'; font-size:11px; color:var(--coral); text-transform:uppercase; letter-spacing:0.04em;}
+  .exp-time{font-family:'IBM Plex Mono'; font-size:16px; color:var(--coral); text-transform:uppercase; letter-spacing:0.04em;}
   .exp-tile:nth-child(5n+2) .exp-time{color:var(--teal);}
   .exp-tile:nth-child(5n+3) .exp-time{color:var(--amber);}
   .exp-tile:nth-child(5n+4) .exp-time{color:var(--violet);}
   .exp-tile:nth-child(5n+5) .exp-time{color:var(--green);}
-  .exp-role{font-weight:600; font-size:17px; margin:6px 0 3px;}
-  .exp-org{font-family:'Inter'; font-size:12.5px; color:var(--slate); margin-bottom:9px;}
-  .exp-tile p{margin:0; color:var(--ink-soft); font-size:13.5px; line-height:1.45;}
+  .exp-role{font-weight:600; font-size:26px; margin:6px 0 3px;}
+  .exp-org{font-family:'Inter'; font-size:18px; color:var(--slate); margin-bottom:9px;}
+  .exp-tile p{margin:0; color:var(--ink-soft); font-size:19px; line-height:1.5;}
   .exp-detail-wrap{display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s ease;}
   .exp-detail-wrap > div{overflow:hidden;}
   .exp-tile.expanded .exp-detail-wrap{grid-template-rows:1fr;}
@@ -1584,7 +1594,7 @@
 <section id="juggling" style="background:var(--bg-panel); padding-top:56px; padding-bottom:56px;">
   <div class="wrap">
     <span class="eyebrow c-coral">Right now</span>
-    <h2 style="font-size:22px; margin-bottom:22px;">What "hustle" actually looks like on a Tuesday</h2>
+    <h2 style="margin-bottom:22px;">What "hustle" actually looks like on a Tuesday</h2>
     <div class="juggle-grid">
       <div class="juggle-card"><span class="jc-role">IT Postgraduate Peer Mentor, 20 mentees</span><span class="jc-org">Monash University</span><span class="jc-since">since Jan 2026</span></div>
       <div class="juggle-card"><span class="jc-role">Microsoft 365 Administrator</span><span class="jc-org">Basava Samiti of Asia Pacific</span><span class="jc-since">since Oct 2025</span></div>
