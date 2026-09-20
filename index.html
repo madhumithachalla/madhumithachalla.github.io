@@ -13,7 +13,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Madhumitha Challa | Cloud &amp; Systems Engineer, Melbourne</title>
-<meta name="description" content="Madhumitha Challa: Cloud &amp; Systems Engineering professional based in Melbourne, Australia. Master of Information Technology (Monash University), AWS Certified Cloud Practitioner, 3+ years enterprise IT experience across incident management, ITSM, contact center operations, Microsoft 365, and stakeholder engagement. Open to graduate and entry-level cloud, data &amp; IT roles in Australia.">
+<meta name="description" content="Madhumitha Challa: Cloud &amp; Systems Engineering professional based in Melbourne, Australia. Master of Information Technology (Monash University), AWS Certified Cloud Practitioner, 3+ years enterprise IT experience across incident management, ITSM, IT support, service desk, systems administration, contact center operations, Microsoft 365, and stakeholder engagement. Open to graduate and entry-level IT support, ICT administration, cloud, and data roles across Australia.">
+<meta name="keywords" content="IT Support, ICT Support, ICT Administration, Service Desk, IT Operations, Infrastructure Support, Cloud Support, Systems Administration, Graduate Technology Program, Incident Management, Microsoft 365 Administration, AWS, Melbourne, Australia">
 
 <!-- Open Graph / LinkedIn, Facebook, Slack link previews -->
 <meta property="og:type" content="website">
@@ -459,10 +460,10 @@
   /* shared card liveliness: a small hover lift everywhere, plus a scroll-in
      fade for the cards further down the page (kept off fact-tile, which
      usually sits above the fold already) */
-  .leader-card, .rec-card, .juggle-card{transition:transform .2s ease, box-shadow .2s ease, opacity .5s ease;}
-  .leader-card, .rec-card, .juggle-card{opacity:0; transform:translateY(14px);}
-  .leader-card.in, .rec-card.in, .juggle-card.in{opacity:1; transform:translateY(0);}
-  .leader-card.in:hover, .rec-card.in:hover, .juggle-card.in:hover{transform:translateY(-3px); box-shadow:0 14px 28px -16px rgba(0,0,0,0.5);}
+  .leader-card, .rec-card, .juggle-card, .cert-card{transition:transform .2s ease, box-shadow .2s ease, opacity .5s ease;}
+  .leader-card, .rec-card, .juggle-card, .cert-card{opacity:0; transform:translateY(14px);}
+  .leader-card.in, .rec-card.in, .juggle-card.in, .cert-card.in{opacity:1; transform:translateY(0);}
+  .leader-card.in:hover, .rec-card.in:hover, .juggle-card.in:hover, .cert-card.in:hover{transform:translateY(-3px); box-shadow:0 14px 28px -16px rgba(0,0,0,0.5);}
 
   /* projects */
   .project-list{display:flex; flex-direction:column; gap:18px;}
@@ -517,6 +518,19 @@
   .leader-org{font-family:'Inter'; font-size:12.5px; color:var(--slate); margin-bottom:12px;}
   .leader-card p{font-size:20px; line-height:1.5; color:var(--ink-soft); margin:0;}
   @media(max-width:760px){ .leader-grid{grid-template-columns:1fr;} }
+
+  /* certifications & achievements */
+  .cert-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:14px;}
+  .cert-card{
+    border:1px solid var(--line); border-left:3px solid var(--blue); border-radius:var(--radius);
+    background:var(--bg-panel); padding:16px 18px;
+  }
+  .cert-grid .cert-card:nth-child(5n+2){border-left-color:var(--coral);}
+  .cert-grid .cert-card:nth-child(5n+3){border-left-color:var(--amber);}
+  .cert-grid .cert-card:nth-child(5n+4){border-left-color:var(--violet);}
+  .cert-grid .cert-card:nth-child(5n+5){border-left-color:var(--green);}
+  .cert-title{font-family:'Inter'; font-weight:600; font-size:17px; margin-bottom:4px;}
+  .cert-meta{font-family:'IBM Plex Mono'; font-size:11px; color:var(--slate); text-transform:uppercase; letter-spacing:0.03em;}
 
   /* connect: message form + coffee scheduler */
   .connect-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;}
@@ -632,6 +646,8 @@
   .cat-amber .dash.on{background:#FFCB73;}
   .cat-violet .skills-cat-dot{background:var(--violet);}
   .cat-violet .dash.on{background:#9B7EDE;}
+  .cat-green .skills-cat-dot{background:var(--green);}
+  .cat-green .dash.on{background:#4ADE80;}
 
   /* chat widget */
   #chat-toggle{
@@ -1274,6 +1290,7 @@
       <a href="#about" class="nav-c-coral">About</a>
       <a href="#skills" class="nav-c-amber">Skills</a>
       <a href="#experience" class="nav-c-teal">Experience</a>
+      <a href="#certifications" class="nav-c-blue">Certifications</a>
       <div class="nav-dropdown nav-c-violet" id="nav-dropdown">
         <a href="#projects" class="nav-dropdown-trigger" id="nav-dropdown-trigger">Projects <span class="caret">▾</span></a>
         <div class="nav-dropdown-menu">
@@ -1470,6 +1487,8 @@
       <p>I started the unglamorous way: Programmer Analyst Trainee at Cognizant in 2021, maintaining COBOL and JCL on mainframe systems. Three years later I was running SLA-driven production support and incident management for a healthcare platform serving 3.2 million members. That job taught me what "production" actually means: no shortcuts, no guessing, someone's on the other end of every system. It's the discipline I still bring to every cloud build and dataset.</p>
       <p>Now I'm finishing a Master of IT at Monash while running four roles at once: mentoring postgrad students, advising 45+ mentees, and administering IT systems for two organisations. Cross-functional stakeholder engagement and digital transformation work run through all of it. Cloud and systems engineering is where I'm strongest, but I show up fully for data and software work too.</p>
       <p>Graduating December 2026, after which I'll be transitioning onto a 485 Temporary Graduate Visa. I'm open to relocating anywhere across Australia for the right role.</p>
+      <p style="margin-top:14px; font-family:'IBM Plex Mono'; font-size:12.5px; text-transform:uppercase; letter-spacing:0.03em; color:var(--slate);">Open to:</p>
+      <div class="tags" style="margin-top:6px;"><span class="tag">IT Support</span><span class="tag">ICT Support</span><span class="tag">ICT Administration</span><span class="tag">Service Desk</span><span class="tag">IT Operations</span><span class="tag">Infrastructure Support</span><span class="tag">Cloud Support</span><span class="tag">Systems Administration</span><span class="tag">Graduate Technology Programs</span></div>
     </div>
     <div class="pullquote">
       <p>"Most innovations don't begin as breakthroughs but as ideas others overlook — the one who stays consistent is the one who actually makes a difference."</p>
@@ -1494,19 +1513,25 @@
       <div class="cat-teal">
         <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">IT Operations &amp; Service Management</span><span class="skills-cat-line"></span></div>
         <div class="skills-tag-row">
-          <div class="skill-item"><span class="skill-name">Incident &amp; SLA Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div><div class="skill-item"><span class="skill-name">Root Cause Analysis</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Change Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">ITSM Principles</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Performance Monitoring</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Netcool</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div>
+          <div class="skill-item"><span class="skill-name">Incident &amp; SLA Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div><div class="skill-item"><span class="skill-name">Root Cause Analysis</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Change Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Problem Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">ITSM Principles</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Service Desk Operations</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">End-User Support</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Performance Monitoring</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Netcool</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div>
         </div>
       </div>
       <div class="cat-amber">
         <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">Infrastructure &amp; Administration</span><span class="skills-cat-line"></span></div>
         <div class="skills-tag-row">
-          <div class="skill-item"><span class="skill-name">Windows/Linux Servers</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SCCM</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Active Directory</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Azure MFA</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">IAM</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">CyberArk</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SailPoint</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div>
+          <div class="skill-item"><span class="skill-name">Windows/Linux Servers</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">ICT Administration</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">User Onboarding &amp; Offboarding</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Patch Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SCCM</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Citrix XenDesktop &amp; XenApp</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">VMware vSphere</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Active Directory</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Azure MFA &amp; SSO</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Microsoft 365, Exchange &amp; SharePoint</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div><div class="skill-item"><span class="skill-name">Microsoft Teams</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">IAM</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">CyberArk</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SailPoint</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div>
         </div>
       </div>
       <div class="cat-violet">
         <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">Technical &amp; Programming</span><span class="skills-cat-line"></span></div>
         <div class="skills-tag-row">
-          <div class="skill-item"><span class="skill-name">COBOL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">JCL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">C/C++</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Java</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SQL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">DB2</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Kotlin</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Firebase</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">API Integration</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div>
+          <div class="skill-item"><span class="skill-name">COBOL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">JCL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">C/C++</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Java</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">SQL</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">DB2</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Oracle</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Kotlin</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Firebase</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">API Integration</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div>
+        </div>
+      </div>
+      <div class="cat-green">
+        <div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">Professional &amp; Stakeholder Skills</span><span class="skills-cat-line"></span></div>
+        <div class="skills-tag-row">
+          <div class="skill-item"><span class="skill-name">Stakeholder Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Customer Service</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div><div class="skill-item"><span class="skill-name">Vendor Coordination</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Cross-Functional Collaboration</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Documentation &amp; Knowledge Management</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash"></span></span></div><div class="skill-item"><span class="skill-name">Technical Troubleshooting</span><span class="skill-dashes"><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span><span class="dash on"></span></span></div>
         </div>
       </div>
     </div>
@@ -1565,8 +1590,8 @@
         <div class="exp-time mono">Jan 2026 — present</div>
         <div class="exp-role">IT Postgraduate Peer Mentor</div>
         <div class="exp-org">Monash University</div>
-        <p>Mentor 20+ postgraduate IT students through structured sessions: technical guidance, career development, university resources.</p>
-        <div class="exp-detail-wrap"><div><p class="exp-detail">Mentor 20+ postgraduate IT students through structured one-on-one sessions and small-group workshops, logging 30+ volunteer hours so far on coursework problem-solving, career development conversations, and helping students find their way around university resources and support services.</p></div></div>
+        <p>Mentor 20+ postgraduate IT students across structured catch-ups: technical guidance, career development, university resources.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Support a cohort of 20 postgraduate IT mentees across 3 structured catch-ups of 2–3 hours each, logging 30+ volunteer hours so far. Deliver one-on-one technical guidance, help facilitate workshops, and manage scheduling and session content. Assist students with technical queries and problem-solving across IT disciplines, building stakeholder engagement and communication skills through interaction with a diverse cohort.</p></div></div>
         <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
       <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
@@ -1586,19 +1611,27 @@
         <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
       <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
+        <div class="exp-time mono">Oct 2025 — Jan 2026</div>
+        <div class="exp-role">Operations Assistant</div>
+        <div class="exp-org">Monash Residential Services · Melbourne, VIC</div>
+        <p>Coordinated maintenance requests, contractor scheduling, and compliance documentation across a large university residential environment.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Coordinated maintenance requests, contractor scheduling, and compliance documentation across a large university residential environment, keeping requests moving between residents, contractors, and the wider Residential Services team while maintaining accurate records for audit and compliance purposes.</p></div></div>
+        <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Nov 2023 — Jul 2024</div>
         <div class="exp-role">Programmer</div>
         <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare</div>
-        <p>Handled 50-80+ Netcool alerts per shift for EmblemHealth and ConnectiCare, triaging and resolving incidents while sustaining a 95%+ audit score. Supported users across the US, India, and other client regions through the transition from Avaya to Genesys Cloud CX for contact center operations.</p>
-        <div class="exp-detail-wrap"><div><p class="exp-detail">Handled 50-80+ Netcool alerts per shift for EmblemHealth and ConnectiCare, triaging and resolving incidents that came in across the shift and keeping response times within SLA. Supported users across the US, India, and other client regions through a legacy contact center transition from Avaya to Genesys Cloud CX, helping manage the volume of calls and issues that came with the changeover while sustaining a 95%+ audit score throughout.</p></div></div>
+        <p>Handled 50–80+ Netcool alerts per shift across Prod/Non-Prod Windows &amp; Linux servers, and built an Event Alert Dashboard that improved monitoring efficiency and incident awareness for the wider support team.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Monitored Netcool alert queues handling 50–80+ alerts per shift across Prod and Non-Prod Windows and Linux servers, raising Proactive Problem Records when thresholds were breached and coordinating cross-team remediation and root cause investigation. Managed XenDesktop and XenApp via the VMware console, resolved VM and login issues through Citrix and vSphere, and coordinated Windows Server 2012 R2, 2016, and 2019 patch management across Prod and Non-Prod environments. Designed and developed an Event Alert Dashboard that improved operational visibility, monitoring efficiency, and incident awareness for support teams. Contributed to Cognizant's Avaya-to-Genesys Cloud CX contact center migration, part of a program that successfully migrated 30,000+ associates and agents across eight lines of business, achieving a 5% increase in patient engagement, a 20% reduction in manual interventions per week, and a 2% decrease in average handling time. Administered Active Directory, Azure MFA and SSO, Microsoft 365, Exchange, SharePoint, CyberArk Endpoint Privilege Manager, SailPoint, and Oracle/SQL database access. Achieved and maintained a 95%+ Audit Dashboard Score through adherence to operational controls, process compliance, and service quality standards.</p></div></div>
         <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
       <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Apr 2022 — Nov 2023</div>
         <div class="exp-role">Programmer Analyst</div>
         <div class="exp-org">Cognizant Technology Solutions · client: EmblemHealth &amp; ConnectiCare (3.2M members)</div>
-        <p>Supported EmblemHealth/ConnectiCare production operations across US, India, and other client regions; assisted a legacy Avaya-to-Genesys Cloud CX contact center transition. Sustained 100 CSAT and 95%+ audit scores.</p>
-        <div class="exp-detail-wrap"><div><p class="exp-detail">Supported production operations for EmblemHealth and ConnectiCare, a health insurer serving 3.2 million members, handling incident management and SLA-driven ticket resolution across multiple countries including the US and India. Assisted users through a legacy contact center transition from Avaya to Genesys Cloud CX, managing high call volumes during the changeover. Sustained a 100 CSAT score and 95%+ audit scores throughout, in a step up from the Trainee role before it.</p></div></div>
+        <p>Part of the Cognizant team on EmblemHealth's Oracle Cloud migration: 17 modules in under 11 months, $700K projected annual savings, 30%+ IT cost reduction over five years. Recognised as CSAT Champion and awarded two Cognizant Cheers Awards.</p>
+        <div class="exp-detail-wrap"><div><p class="exp-detail">Resolved incidents and service requests within SLA commitments for EmblemHealth and ConnectiCare, achieving a 100 CSAT score and a 95%+ Audit Dashboard Score throughout the engagement. Performed L1.5 activities including Netcool monitoring, VM troubleshooting via Citrix and vSphere, Exchange and SharePoint administration, SailPoint identity management, and Oracle/SQL database access, collaborating across infrastructure, database, and vendor teams. Authored SOPs that standardised incident resolution and handoff processes, and was part of the Cognizant team on EmblemHealth's Oracle Cloud migration: 17 modules delivered in under 11 months, with $700K in projected annual savings and a 30%+ IT cost reduction projected over five years. Recognised as CSAT Champion (September 2023, 100 CSAT score) and awarded two Cognizant Cheers Awards — Sapphire and Amber — for technical excellence, professional growth, and service delivery leadership.</p></div></div>
         <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
       <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
@@ -1608,6 +1641,42 @@
         <p>Where it started: structured onboarding in COBOL, JCL, DB2, and incident management, progressing to independent SLA ownership.</p>
         <div class="exp-detail-wrap"><div><p class="exp-detail">The entry point into the Cognizant / EmblemHealth-ConnectiCare engagement: a structured onboarding program covering COBOL, JCL, DB2, and incident management fundamentals, before progressing to independent ownership of SLA commitments. The foundation the Programmer and Programmer Analyst roles that followed were built on.</p></div></div>
         <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow c-blue">Certifications &amp; achievements</span>
+      <h2>Proof, not just a claim</h2>
+      <p>Formal certifications alongside the awards and recognitions that came out of three years in production support.</p>
+    </div>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <div class="cert-title">AWS Certified Cloud Practitioner</div>
+        <div class="cert-meta">Amazon Web Services · 2024</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-title">IT Help Desk for Beginners</div>
+        <div class="cert-meta">LinkedIn Learning · 2025</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-title">Agile Fundamentals</div>
+        <div class="cert-meta">Udemy · 2021</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-title">Cognizant Cheers Sapphire Award</div>
+        <div class="cert-meta">Cognizant Technology Solutions · 2023 — technical excellence &amp; service delivery</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-title">Cognizant Cheers Amber Award</div>
+        <div class="cert-meta">Cognizant Technology Solutions · 2023 — professional growth &amp; service delivery</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-title">CSAT Champion</div>
+        <div class="cert-meta">Cognizant Technology Solutions · Sep 2023 — 100 CSAT score</div>
       </div>
     </div>
   </div>
@@ -1668,18 +1737,18 @@
           </div>
           <h3>What actually predicts an independent artist's success</h3>
           <div class="role">Role: sole analyst</div>
-          <p>Analysis of 114,000 Spotify tracks to test which factors (genre, tempo, audio features) actually correlate with an independent artist's success, rather than relying on industry folklore. A topic I chose myself, written up as a Monash assignment.</p>
+          <p>Analysis of 114,000 real Spotify tracks (Kaggle dataset) to test which factors — genre, audio features, artist reputation — actually predict an independent artist's success on the platform. A topic I chose myself: first proposed as a business case study for a Monash assignment, then demonstrated with a real R Markdown analysis against the full dataset.</p>
           <ul>
-            <li>Compared genre against individual audio-feature variables (danceability, energy, tempo, acousticness, and more) as predictors of a track's popularity across the full 114K-row dataset.</li>
-            <li>Found genre alone carried roughly 26.8x more predictive weight than any single audio feature. That's the headline finding of the analysis.</li>
-            <li>Presented the findings and recommendation as a written analysis for the assignment brief; the live explorer below recreates the same comparison interactively.</li>
+            <li>Wrote the R Markdown analysis myself: profiled the real 114K-track dataset and compared genre, individual audio features, and artist reputation as predictors of track popularity.</li>
+            <li>Found genre alone carried roughly 26.8x more predictive weight than any single audio feature (every audio-feature correlation to popularity came in below |r| = 0.1). That's the headline finding.</li>
+            <li>Also confirmed algorithmic gatekeeping in the data (under 1% of tracks reach "hit" status) and that artist reputation, not audio quality, drives repeat success.</li>
           </ul>
-          <div class="tags"><span class="tag">Data Analysis</span><span class="tag">Statistical Reasoning</span><span class="tag">Correlation Analysis</span><span class="tag">Data Storytelling</span></div>
+          <div class="tags"><span class="tag">R</span><span class="tag">tidyverse</span><span class="tag">ggplot2</span><span class="tag">R Markdown</span><span class="tag">Statistical Modeling</span><span class="tag">Data Analytics</span></div>
         </div>
         <div class="project-side">
           <div class="metric"><span class="n" data-target="114" data-suffix="K">0K</span><span class="l">tracks analyzed</span></div>
           <div class="metric"><span class="n" data-target="26.8" data-decimals="1" data-suffix="x">0.0x</span><span class="l">genre effect vs. other features</span></div>
-          <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/spotify-success-analysis" target="_blank" rel="noopener">View analysis notes ↗</a>
+          <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/spotify-success-analysis" target="_blank" rel="noopener">View analysis script ↗</a>
           <a class="project-link" href="projects/demos/spotify-demo.html" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
         </div>
       </div>
@@ -2495,7 +2564,7 @@
   // Scroll reveal for section headings, project cards, experience tiles, and a
   // few other card grids — so headings feel less like a static wall of text.
   (function(){
-    const items = document.querySelectorAll('.section-head, .project, .exp-tile, .leader-card, .rec-card, .juggle-card');
+    const items = document.querySelectorAll('.section-head, .project, .exp-tile, .leader-card, .rec-card, .juggle-card, .cert-card');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { items.forEach(i => i.classList.add('in')); return; }
     const io = new IntersectionObserver((entries) => {
