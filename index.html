@@ -132,7 +132,12 @@
     padding:16px 28px; max-width:var(--maxw); margin:0 auto;
   }
   .nav-brand{display:flex; align-items:center; gap:9px;}
-  .nav-logo-static{width:52px; height:auto; flex:none;}
+  .nav-logo-badge{position:relative; width:68px; height:32px; flex:none;}
+  .nav-cosmic-bg{position:absolute; inset:0; width:100%; height:100%; border-radius:8px;}
+  .nav-logo-static{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:52px; height:auto; flex:none;
+  }
   .nav-name{font-family:'Fraunces', serif; font-weight:600; font-size:19px; letter-spacing:-0.01em;}
   .nav-links{display:flex; align-items:center; gap:26px; font-family:'Inter'; font-weight:500; font-size:13.5px;}
   .nav-links a{text-decoration:none; color:var(--slate); border-bottom:1px solid transparent; padding-bottom:2px; transition:color .15s, border-color .15s, filter .15s;}
@@ -298,14 +303,15 @@
   .hero-name{
     font-family:'Fraunces', 'Inter', serif;
     font-optical-sizing:auto;
-    font-size:clamp(52px, 9vw, 104px);
-    font-weight:600;
+    font-size:clamp(54px, 9.5vw, 112px);
+    font-weight:700;
     font-style:normal;
-    line-height:0.92;
-    letter-spacing:-0.01em;
+    line-height:0.9;
+    letter-spacing:-0.02em;
     margin-bottom:22px;
-    background:linear-gradient(100deg, #FFFFFF 40%, var(--amber) 78%, var(--coral));
+    background:linear-gradient(105deg, #FFFFFF 18%, #FFF3D6 42%, var(--amber) 68%, var(--coral) 94%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 6px 26px rgba(245,166,35,0.18));
   }
   .hero-tagline{
     font-family:'Inter'; font-size:clamp(18px,2.4vw,23px); font-weight:500;
@@ -696,6 +702,35 @@
 <header class="nav">
   <div class="nav-inner">
     <div class="nav-brand">
+      <div class="nav-logo-badge">
+        <svg class="nav-cosmic-bg" viewBox="0 0 68 32" aria-hidden="true">
+          <defs>
+            <radialGradient id="navSpaceGrad" cx="50%" cy="45%" r="75%">
+              <stop offset="0%" stop-color="#1D1240"/>
+              <stop offset="100%" stop-color="#05030D"/>
+            </radialGradient>
+            <radialGradient id="navMarsGrad" cx="35%" cy="32%" r="65%">
+              <stop offset="0%" stop-color="#FFB37A"/>
+              <stop offset="55%" stop-color="#E2643A"/>
+              <stop offset="100%" stop-color="#8A2F18"/>
+            </radialGradient>
+            <radialGradient id="navSaturnGrad" cx="35%" cy="32%" r="65%">
+              <stop offset="0%" stop-color="#FFF3D6"/>
+              <stop offset="55%" stop-color="#E8C98A"/>
+              <stop offset="100%" stop-color="#A9793F"/>
+            </radialGradient>
+          </defs>
+          <rect width="68" height="32" rx="8" fill="url(#navSpaceGrad)"/>
+          <circle cx="11" cy="7" r="0.8" fill="#fff" opacity="0.7"/>
+          <circle cx="58" cy="25" r="0.7" fill="#fff" opacity="0.5"/>
+          <circle cx="34" cy="5" r="0.6" fill="#fff" opacity="0.5"/>
+          <circle cx="24" cy="27" r="0.6" fill="#fff" opacity="0.4"/>
+          <circle cx="8" cy="23" r="5.2" fill="url(#navMarsGrad)"/>
+          <g transform="rotate(-18 59 11)">
+            <ellipse cx="59" cy="11" rx="9" ry="2.4" fill="none" stroke="#D8B673" stroke-width="1"/>
+          </g>
+          <circle cx="59" cy="11" r="4.3" fill="url(#navSaturnGrad)"/>
+        </svg>
       <svg class="nav-logo-static" viewBox="70 55 1060 410" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 
       <defs>
@@ -1192,6 +1227,7 @@
       </g>
 
       </svg>
+      </div>
       <div class="nav-name">Madhumitha Challa</div>
     </div>
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
@@ -1927,11 +1963,12 @@
 
 <script>
   // Count up any number on the page marked with data-target, once it scrolls
-  // into view — the hero stats, but also leadership and project metrics, so
-  // numbers throughout the site feel alive rather than static. Each element
-  // observes and animates independently, on its own first appearance.
+  // into view — leadership and project metrics, so numbers throughout the
+  // site feel alive rather than static. Each element observes and animates
+  // independently, on its own first appearance. The hero "Impact so far"
+  // stats are excluded here and looped forever instead, further down.
   (function(){
-    const nums = document.querySelectorAll('[data-target]');
+    const nums = Array.from(document.querySelectorAll('[data-target]')).filter(el => !el.closest('.stats-inner'));
     if (!nums.length) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1961,6 +1998,53 @@
         if (entry.isIntersecting) {
           animate(entry.target);
           obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    nums.forEach(el => obs.observe(el));
+  })();
+
+  // The hero "Impact so far" stats loop forever instead of animating once --
+  // count up, hold at the real value for a beat, then recount -- so the strip
+  // reads as a live dashboard rather than a static number that ran once and
+  // froze. It always settles back on the true value; only the motion repeats.
+  (function(){
+    const nums = document.querySelectorAll('.stats-inner [data-target]');
+    if (!nums.length) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function render(el, value){
+      const decimals = parseInt(el.dataset.decimals || '0', 10);
+      el.textContent = (el.dataset.prefix || '') + value.toFixed(decimals) + (el.dataset.suffix || '');
+    }
+    if (reduceMotion) { nums.forEach(el => render(el, parseFloat(el.dataset.target))); return; }
+
+    function cycle(el){
+      const target = parseFloat(el.dataset.target);
+      const duration = 1400;
+      const holdMs = 2600;
+      const start = performance.now();
+      function frame(now){
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        render(el, target * eased);
+        if (p < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          render(el, target);
+          setTimeout(() => cycle(el), holdMs);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    let started = false;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          nums.forEach(cycle);
+          obs.disconnect();
         }
       });
     }, { threshold: 0.4 });
