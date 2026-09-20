@@ -523,16 +523,26 @@
   .cert-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:14px;}
   .cert-card{
     border:1px solid var(--line); border-left:3px solid var(--blue); border-radius:var(--radius);
-    background:var(--bg-panel); padding:16px 18px;
+    background:var(--bg-panel); padding:16px 18px; cursor:pointer;
   }
   .cert-grid .cert-card:nth-child(5n+2){border-left-color:var(--coral);}
   .cert-grid .cert-card:nth-child(5n+3){border-left-color:var(--amber);}
   .cert-grid .cert-card:nth-child(5n+4){border-left-color:var(--violet);}
   .cert-grid .cert-card:nth-child(5n+5){border-left-color:var(--green);}
-  .cert-title{font-family:'Inter'; font-weight:600; font-size:17px; margin-bottom:4px;}
-  .cert-meta{font-family:'IBM Plex Mono'; font-size:11px; color:var(--slate); text-transform:uppercase; letter-spacing:0.03em;}
-  .cert-reason{font-family:'Inter'; font-size:13.5px; line-height:1.4; color:var(--ink-soft); margin-top:8px;}
-  .cert-team{font-family:'IBM Plex Mono'; font-size:11px; line-height:1.5; color:var(--slate); margin-top:8px;}
+  .cert-title{font-family:'Inter'; font-weight:700; font-size:18px; margin-bottom:4px;}
+  .cert-meta{font-family:'Inter'; font-weight:500; font-size:13.5px; color:var(--slate);}
+  .cert-detail-wrap{display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s ease;}
+  .cert-detail-wrap > div{overflow:hidden;}
+  .cert-card.expanded .cert-detail-wrap{grid-template-rows:1fr;}
+  .cert-reason{font-family:'Inter'; font-size:12.5px; line-height:1.4; color:var(--ink-soft); margin-top:10px;}
+  .cert-team{font-family:'IBM Plex Mono'; font-size:10.5px; line-height:1.5; color:var(--slate); margin-top:8px;}
+  .cert-toggle-label{
+    display:inline-flex; align-items:center; gap:4px; margin-top:10px;
+    font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em;
+    color:var(--slate);
+  }
+  .cert-toggle-label svg{width:9px; height:9px; transition:transform .2s ease;}
+  .cert-card.expanded .cert-toggle-label svg{transform:rotate(180deg);}
 
   /* connect: message form + coffee scheduler */
   .connect-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;}
@@ -1657,41 +1667,50 @@
       <p>Formal certifications alongside the awards and recognitions that came out of three years in production support.</p>
     </div>
     <div class="cert-grid">
-      <div class="cert-card">
+      <div class="cert-card" role="button" tabindex="0" aria-expanded="false">
         <div class="cert-title">AWS Certified Cloud Practitioner</div>
         <div class="cert-meta">Amazon Web Services · 2024</div>
-        <p class="cert-reason">Foundational validation of cloud concepts, core AWS services, and security/billing basics — directly relevant to the cloud &amp; systems roles I'm targeting.</p>
+        <div class="cert-detail-wrap"><div><p class="cert-reason">Foundational validation of cloud concepts, core AWS services, and security/billing basics — directly relevant to the cloud &amp; systems roles I'm targeting.</p></div></div>
+        <span class="cert-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="cert-card">
+      <div class="cert-card" role="button" tabindex="0" aria-expanded="false">
         <div class="cert-title">IT Help Desk for Beginners</div>
         <div class="cert-meta">LinkedIn Learning · 2025</div>
-        <p class="cert-reason">Structured troubleshooting and ticketing fundamentals, sharpened for service desk and end-user support work.</p>
+        <div class="cert-detail-wrap"><div><p class="cert-reason">Structured troubleshooting and ticketing fundamentals, sharpened for service desk and end-user support work.</p></div></div>
+        <span class="cert-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="cert-card">
+      <div class="cert-card" role="button" tabindex="0" aria-expanded="false">
         <div class="cert-title">Agile Fundamentals</div>
         <div class="cert-meta">Udemy · 2021</div>
-        <p class="cert-reason">Scrum/Kanban basics I still lean on for sprint-based project work and stakeholder coordination.</p>
+        <div class="cert-detail-wrap"><div><p class="cert-reason">Scrum/Kanban basics I still lean on for sprint-based project work and stakeholder coordination.</p></div></div>
+        <span class="cert-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="cert-card">
+      <div class="cert-card" role="button" tabindex="0" aria-expanded="false">
         <div class="cert-title">Cognizant Cheers Sapphire Award</div>
         <div class="cert-meta">Cognizant Technology Solutions · 2023</div>
-        <p class="cert-reason">Peer-nominated recognition for technical excellence and service delivery on the EmblemHealth/ConnectiCare account.</p>
+        <div class="cert-detail-wrap"><div><p class="cert-reason">Peer-nominated recognition for technical excellence and service delivery on the EmblemHealth/ConnectiCare account.</p></div></div>
+        <span class="cert-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="cert-card">
+      <div class="cert-card" role="button" tabindex="0" aria-expanded="false">
         <div class="cert-title">Cognizant Cheers Amber Award</div>
         <div class="cert-meta">Cognizant Technology Solutions · 2023</div>
-        <p class="cert-reason">Recognised for professional growth and consistent contribution to service delivery over the engagement.</p>
+        <div class="cert-detail-wrap"><div><p class="cert-reason">Recognised for professional growth and consistent contribution to service delivery over the engagement.</p></div></div>
+        <span class="cert-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="cert-card">
+      <div class="cert-card" role="button" tabindex="0" aria-expanded="false">
         <div class="cert-title">CSAT Champion</div>
         <div class="cert-meta">Cognizant Technology Solutions · Sep 2023</div>
-        <p class="cert-reason">Highest customer satisfaction outcomes on the account that month, with a 100 CSAT score.</p>
+        <div class="cert-detail-wrap"><div><p class="cert-reason">Highest customer satisfaction outcomes on the account that month, with a 100 CSAT score.</p></div></div>
+        <span class="cert-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="cert-card">
+      <div class="cert-card" role="button" tabindex="0" aria-expanded="false">
         <div class="cert-title">Best Floor Address</div>
         <div class="cert-meta">MEC Climate Change Conference 2026, Monash Energy Club · Aug 8–9, 2026</div>
-        <p class="cert-reason">A Model UN–style case conference: represented ASEAN Climate Frontline States in live floor negotiations on carbon-credit policy, then helped build the policy framework behind a proposed amendment preventing systematic undervaluation of ASEAN carbon credits and tying issuance to verified emissions reductions — part of a broader tech-transfer case pitching Japan a simulated USD 1B critical-minerals partnership with ASEAN.</p>
-        <p class="cert-team">Team: Prithvi Vijay Kumar (floor negotiations), Riya Biju Ollukaran (evidence &amp; analysis), Sadat Junaid (strategy &amp; deal-making), Nithilan Renganathan (Japan delegation), Sameer Navuduri (coalition tracking)</p>
+        <div class="cert-detail-wrap"><div>
+          <p class="cert-reason">A Model UN–style case conference: represented ASEAN Climate Frontline States in live floor negotiations on carbon-credit policy, then helped build the policy framework behind a proposed amendment preventing systematic undervaluation of ASEAN carbon credits and tying issuance to verified emissions reductions — part of a broader tech-transfer case pitching Japan a simulated USD 1B critical-minerals partnership with ASEAN.</p>
+          <p class="cert-team">Team: Prithvi Vijay Kumar (floor negotiations), Riya Biju Ollukaran (evidence &amp; analysis), Sadat Junaid (strategy &amp; deal-making), Nithilan Renganathan (Japan delegation), Sameer Navuduri (coalition tracking)</p>
+        </div></div>
+        <span class="cert-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
     </div>
   </div>
@@ -1866,6 +1885,22 @@
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/linkedin-banner-generator" target="_blank" rel="noopener">View source ↗</a>
           <a class="project-link" href="projects/demos/linkedin-banner-editor.html" target="_blank" rel="noopener" style="margin-top:6px;">Try live editor ↗</a>
           <a class="project-link" href="https://raw.githubusercontent.com/madhumithachalla/projects/main/linkedin-banner-generator/madhumitha_linkedin_banner.png" target="_blank" rel="noopener" style="margin-top:6px;">View banner image ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-contact-icons">
+        <div>
+          <div class="project-top">
+            <span class="pill indie">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Personal build</span>
+          </div>
+          <h3>Contact link icons</h3>
+          <div class="role">Role: sole builder</div>
+          <p>The small inline SVG icons (email, LinkedIn, GitHub, portfolio) sitting beside the contact links in this site's own footer — no icon font or external library, just a handful of `currentColor` SVGs that inherit the link's own color and hover state.</p>
+          <div class="tags"><span class="tag">SVG</span><span class="tag">HTML/CSS</span></div>
+        </div>
+        <div class="project-side">
+          <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/contact-link-icons" target="_blank" rel="noopener">View source ↗</a>
         </div>
       </div>
 
@@ -2604,6 +2639,29 @@
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           setExpanded(!tile.classList.contains('expanded'));
+        }
+      });
+    });
+  })();
+
+  // Click-to-expand certification/achievement cards — same pattern as the
+  // experience tiles above: title + date always visible, the "why it
+  // matters" reason (and team credit, where present) stays collapsed
+  // until clicked.
+  (function(){
+    const cards = document.querySelectorAll('.cert-card');
+    cards.forEach(card => {
+      const label = card.querySelector('.cert-toggle-label');
+      function setExpanded(expanded){
+        card.classList.toggle('expanded', expanded);
+        card.setAttribute('aria-expanded', String(expanded));
+        if (label) label.firstChild.textContent = expanded ? 'Show less ' : 'Read more ';
+      }
+      card.addEventListener('click', () => setExpanded(!card.classList.contains('expanded')));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setExpanded(!card.classList.contains('expanded'));
         }
       });
     });
