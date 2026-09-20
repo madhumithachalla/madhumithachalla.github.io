@@ -8,49 +8,85 @@
 <style>
   :root{
     --bg:#100D18; --bg-panel:#1C1729; --paper:#F3EEFA; --slate:#9E90B8; --line:rgba(255,255,255,0.14);
-    --coral:#C4A6FB; --teal:#EDE4FF; --violet:#9B7EDE;
+    --coral:#FF6F5E; --amber:#F5A623; --teal:#2DD4BF; --violet:#9B7EDE; --green:#4ADE80;
+    --blue:#6BA3FF; --pink:#FF71C4;
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--bg); color:var(--paper); font-family:'Segoe UI', -apple-system, sans-serif; padding:32px 20px 60px;}
-  .wrap{max-width:720px; margin:0 auto;}
+  .wrap{max-width:760px; margin:0 auto;}
   a.back{color:var(--slate); text-decoration:none; font-size:13px;}
-  h1{font-size:26px; margin:18px 0 6px;}
-  p.lead{color:var(--slate); font-size:14.5px; margin:0 0 24px; line-height:1.5;}
+  h1{font-size:28px; margin:18px 0 6px;}
+  p.lead{color:var(--slate); font-size:14.5px; margin:0 0 24px; line-height:1.55;}
   .card{background:var(--bg-panel); border:1px solid var(--line); border-radius:6px; padding:22px; margin-bottom:16px;}
+  .card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;}
   .stat-row{display:flex; gap:24px; flex-wrap:wrap; margin-bottom:6px;}
   .stat{flex:1; min-width:140px;}
-  .stat .n{font-size:26px; font-weight:700; color:var(--coral);}
+  .stat .n{font-size:28px; font-weight:700; color:var(--coral);}
   .stat .l{font-size:12px; color:var(--slate); text-transform:uppercase; letter-spacing:0.03em;}
   select{
     background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:9px 12px;
     border-radius:4px; font-size:14px;
   }
-  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:9px;}
-  .bar-label{width:90px; font-size:13px; color:var(--slate); text-transform:capitalize; flex:none;}
-  .bar-track{flex:1; background:var(--bg); border-radius:20px; height:16px; overflow:hidden;}
-  .bar-fill{height:100%; background:linear-gradient(90deg, var(--violet), var(--coral)); border-radius:20px;}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .bar-label{width:172px; font-size:13px; color:var(--paper); text-transform:capitalize; flex:none; display:flex; align-items:center; gap:8px;}
+  .bar-dot{width:9px; height:9px; border-radius:50%; flex:none;}
+  .bar-sub{font-size:11px; color:var(--slate); text-transform:none;}
+  .bar-track{flex:1; background:var(--bg); border-radius:20px; height:14px; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:20px; transition:width .4s ease;}
   .bar-val{width:36px; text-align:right; font-size:12.5px; color:var(--slate); flex:none;}
-  h3{font-size:13px; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0 0 14px;}
-  .foot{font-size:12px; color:var(--slate); margin-top:24px; line-height:1.5;}
+  h3{font-size:13px; text-transform:uppercase; letter-spacing:0.05em; color:var(--slate); margin:0;}
+  .foot{font-size:12px; color:var(--slate); margin-top:24px; line-height:1.6;}
+  .btn-resample{
+    font-family:inherit; font-size:12.5px; font-weight:600; color:var(--bg); background:var(--teal);
+    border:none; border-radius:20px; padding:8px 16px; cursor:pointer; transition:transform .12s ease, background .12s ease;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-resample:hover{background:var(--coral);}
+  .btn-resample:active{transform:scale(0.96);}
+  .btn-resample svg{width:13px; height:13px;}
+  .flash{animation:flash .5s ease;}
+  @keyframes flash{ 0%{ background:rgba(45,212,191,0.18); } 100%{ background:transparent; } }
+  .legend{display:flex; flex-wrap:wrap; gap:10px 16px; margin-bottom:18px; font-size:12px; color:var(--slate);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .legend .bar-dot{width:8px; height:8px;}
+  .sample-note{font-size:11.5px; color:var(--slate); margin-top:2px;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="../../index.html">← Back to portfolio</a>
   <h1>Spotify success analysis — live explorer</h1>
-  <p class="lead">The same question my original analysis asked — does genre or an individual audio feature predict popularity better? — running live against a 350-track representative sample (the original analysis used 114,000 real Spotify tracks; this demo uses a smaller synthetic sample built to reflect the same real pattern, since the full raw dataset isn't mine to redistribute).</p>
+  <p class="lead">The same question my original analysis asked — does genre or an individual audio feature predict popularity better? — running live against a 350-track representative sample (the original analysis used 114,000 real Spotify tracks; this demo uses a smaller synthetic sample built to reflect the same real pattern, since the full raw dataset isn't mine to redistribute). Artist names here are illustrative placeholders standing in for independent artists, not real acts.</p>
 
   <div class="card">
-    <h3>Headline finding</h3>
+    <div class="card-head">
+      <h3 style="margin:0;">Headline finding</h3>
+      <button class="btn-resample" id="resampleBtn" title="Draw a fresh bootstrap sample and recompute everything live">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>
+        Resample
+      </button>
+    </div>
     <div class="stat-row">
       <div class="stat"><div class="n" id="genreEffect">—</div><div class="l">Genre effect vs. avg feature</div></div>
-      <div class="stat"><div class="n" id="rowCount">—</div><div class="l">Tracks in this sample</div></div>
+      <div class="stat"><div class="n" id="rowCount">—</div><div class="l">Tracks in this draw</div></div>
       <div class="stat"><div class="n" id="genreCount">—</div><div class="l">Genres compared</div></div>
     </div>
+    <p class="sample-note">Each "Resample" draws a fresh bootstrap sample (with replacement) from the 350-track pool — the numbers above shift slightly each time, which is the point: it's live math, not a static screenshot.</p>
   </div>
 
   <div class="card">
-    <h3>Average popularity by genre</h3>
+    <h3>Top 5 genres by popularity</h3>
+    <div class="legend" id="genreLegend"></div>
+    <div id="topGenreBars"></div>
+  </div>
+
+  <div class="card">
+    <h3>Top 5 artists by popularity</h3>
+    <div id="topArtistBars"></div>
+  </div>
+
+  <div class="card">
+    <h3>All genres, ranked</h3>
     <div id="genreBars"></div>
   </div>
 
@@ -60,7 +96,7 @@
   </div>
 
   <div class="card">
-    <h3>Explore a single genre</h3>
+    <h3 style="margin-bottom:14px;">Explore a single genre</h3>
     <select id="genrePicker"></select>
     <div id="genreDetail" style="margin-top:14px; font-size:14px; color:var(--slate);"></div>
   </div>
@@ -70,6 +106,12 @@
 
 <script>
 const FEATURES = ["danceability", "energy", "valence", "tempo", "acousticness"];
+const GENRE_COLORS = {
+  "pop": "#FF71C4", "rock": "#FF6F5E", "hip-hop": "#F5A623", "r&b": "#6BA3FF",
+  "edm": "#2DD4BF", "indie": "#9B7EDE", "classical": "#4ADE80", "jazz": "#FFB84D",
+  "country": "#C97F0A", "metal": "#8C8C99",
+};
+function genreColor(g) { return GENRE_COLORS[g] || "#9E90B8"; }
 
 function mean(arr) { return arr.reduce((a,b) => a+b, 0) / arr.length; }
 
@@ -97,48 +139,84 @@ function genreEtaSquared(data) {
   return ssBetween / ssTotal;
 }
 
-function render() {
-  const data = SPOTIFY_SAMPLE;
+// Bootstrap resample: draw n rows with replacement from the fixed pool,
+// so re-running genuinely recomputes on a different draw each time.
+function bootstrapSample(pool, n) {
+  const out = [];
+  for (let i = 0; i < n; i++) out.push(pool[Math.floor(Math.random() * pool.length)]);
+  return out;
+}
+
+function barRow({ label, sub, value, max, color, dot }) {
+  const pct = max > 0 ? (value / max * 100).toFixed(0) : 0;
+  return `
+    <div class="bar-row">
+      <div class="bar-label">${dot ? `<span class="bar-dot" style="background:${color}"></span>` : ''}${label}${sub ? `<span class="bar-sub">${sub}</span>` : ''}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
+      <div class="bar-val">${typeof value === 'number' && value % 1 !== 0 ? value.toFixed(2) : value}</div>
+    </div>`;
+}
+
+function render(data) {
   document.getElementById('rowCount').textContent = data.length;
 
   const genres = [...new Set(data.map(d => d.genre))].sort();
   document.getElementById('genreCount').textContent = genres.length;
 
-  // Genre effect vs average feature correlation (abs)
   const eta = genreEtaSquared(data);
   const featureCorrs = FEATURES.map(f => Math.abs(pearson(data.map(d=>d[f]), data.map(d=>d.popularity))));
   const avgFeatureEffect = mean(featureCorrs.map(c => c*c));
   const ratio = eta / avgFeatureEffect;
   document.getElementById('genreEffect').textContent = ratio.toFixed(1) + 'x';
 
-  // Genre bars
+  // Genre averages, colored, full ranked list
   const genreAvgs = genres.map(g => {
     const vals = data.filter(d => d.genre === g).map(d => d.popularity);
-    return { genre: g, avg: mean(vals) };
+    return { genre: g, avg: mean(vals), n: vals.length };
   }).sort((a,b) => b.avg - a.avg);
   const maxAvg = Math.max(...genreAvgs.map(g => g.avg));
-  document.getElementById('genreBars').innerHTML = genreAvgs.map(g => `
-    <div class="bar-row">
-      <div class="bar-label">${g.genre}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${(g.avg/maxAvg*100).toFixed(0)}%"></div></div>
-      <div class="bar-val">${g.avg.toFixed(0)}</div>
-    </div>`).join('');
 
-  // Feature correlation bars
+  document.getElementById('genreBars').innerHTML = genreAvgs.map(g => barRow({
+    label: g.genre, sub: `${g.n} tracks`, value: g.avg, max: maxAvg, color: genreColor(g.genre), dot: true,
+  })).join('');
+
+  document.getElementById('topGenreBars').innerHTML = genreAvgs.slice(0, 5).map(g => barRow({
+    label: g.genre, sub: `${g.n} tracks`, value: g.avg, max: maxAvg, color: genreColor(g.genre), dot: true,
+  })).join('');
+
+  document.getElementById('genreLegend').innerHTML = genres.map(g =>
+    `<span><span class="bar-dot" style="background:${genreColor(g)}"></span>${g}</span>`
+  ).join('');
+
+  // Top artists by average popularity (min 3 tracks in this draw to avoid one-hit noise)
+  const byArtist = {};
+  data.forEach(d => { (byArtist[d.artist] = byArtist[d.artist] || []).push(d); });
+  const artistAvgs = Object.entries(byArtist)
+    .filter(([, rows]) => rows.length >= 3)
+    .map(([artist, rows]) => ({
+      artist, genre: rows[0].genre, avg: mean(rows.map(r => r.popularity)), n: rows.length,
+    }))
+    .sort((a,b) => b.avg - a.avg)
+    .slice(0, 5);
+  const maxArtist = Math.max(...artistAvgs.map(a => a.avg));
+  document.getElementById('topArtistBars').innerHTML = artistAvgs.map(a => barRow({
+    label: a.artist, sub: `${a.genre} · ${a.n} tracks`, value: a.avg, max: maxArtist, color: genreColor(a.genre), dot: true,
+  })).join('');
+
+  // Feature correlation bars (neutral color family, not genre-tied)
   const featRows = FEATURES.map((f, i) => ({ f, c: featureCorrs[i] })).sort((a,b) => b.c - a.c);
   const maxC = Math.max(...featRows.map(r => r.c));
-  document.getElementById('featureBars').innerHTML = featRows.map(r => `
-    <div class="bar-row">
-      <div class="bar-label">${r.f}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${(r.c/maxC*100).toFixed(0)}%"></div></div>
-      <div class="bar-val">${r.c.toFixed(2)}</div>
-    </div>`).join('');
+  document.getElementById('featureBars').innerHTML = featRows.map((r, i) => barRow({
+    label: r.f, value: r.c, max: maxC, color: i === 0 ? '#FF6F5E' : '#4A3968', dot: false,
+  })).join('');
 
   // Genre picker
   const picker = document.getElementById('genrePicker');
+  const prevValue = picker.value;
   picker.innerHTML = genres.map(g => `<option value="${g}">${g}</option>`).join('');
-  picker.addEventListener('change', () => showGenreDetail(picker.value, data));
-  showGenreDetail(genres[0], data);
+  picker.value = genres.includes(prevValue) ? prevValue : genres[0];
+  picker.onchange = () => showGenreDetail(picker.value, data);
+  showGenreDetail(picker.value, data);
 }
 
 function showGenreDetail(genre, data) {
@@ -148,11 +226,22 @@ function showGenreDetail(genre, data) {
   const avgEnergy = mean(rows.map(d => d.energy));
   const avgTempo = mean(rows.map(d => d.tempo));
   document.getElementById('genreDetail').innerHTML =
-    `<b style="color:var(--paper); text-transform:capitalize;">${genre}</b> — ${rows.length} tracks in sample<br>
+    `<b style="color:${genreColor(genre)}; text-transform:capitalize;">● ${genre}</b> — ${rows.length} tracks in this draw<br>
      Avg popularity: ${avgPop.toFixed(0)} · Avg danceability: ${avgDance.toFixed(2)} · Avg energy: ${avgEnergy.toFixed(2)} · Avg tempo: ${avgTempo.toFixed(0)} BPM`;
 }
 
-render();
+let currentDraw = SPOTIFY_SAMPLE;
+render(currentDraw);
+
+document.getElementById('resampleBtn').addEventListener('click', () => {
+  currentDraw = bootstrapSample(SPOTIFY_SAMPLE, SPOTIFY_SAMPLE.length);
+  render(currentDraw);
+  document.querySelectorAll('.card').forEach(c => {
+    c.classList.remove('flash');
+    void c.offsetWidth;
+    c.classList.add('flash');
+  });
+});
 </script>
 </body>
 </html>
