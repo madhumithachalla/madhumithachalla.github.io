@@ -213,7 +213,7 @@
     padding:7px 14px 7px 12px; border-radius:20px;
     color:#E7DFF7; margin-bottom:28px;
   }
-  .dot{width:8px; height:8px; border-radius:50%; background:var(--coral); box-shadow:0 0 0 3px rgba(255,111,94,0.3); flex:none;}
+  .dot{width:8px; height:8px; border-radius:50%; background:#FF6F5E; box-shadow:0 0 0 3px rgba(255,111,94,0.3); flex:none;}
   .dot.pulse{animation:pulse 2.2s ease-in-out infinite;}
   @keyframes pulse{
     0%,100%{box-shadow:0 0 0 3px rgba(255,111,94,0.3);}
@@ -234,13 +234,13 @@
   }
   .portrait-fallback{
     display:none; align-items:center; justify-content:center;
-    font-size:44px; font-weight:600; color:var(--paper); letter-spacing:0.02em;
+    font-size:44px; font-weight:600; color:#F3EEFA; letter-spacing:0.02em;
     font-family:'Space Grotesk';
   }
-  .portrait-caption{font-size:11px; color:var(--slate); text-align:center; max-width:180px; letter-spacing:0.02em;}
+  .portrait-caption{font-size:11px; color:#9E90B8; text-align:center; max-width:180px; letter-spacing:0.02em;}
   .portrait-intro{
-    font-size:12.5px; color:var(--ink-soft); text-align:center; max-width:190px; line-height:1.55;
-    margin-top:4px; padding-top:16px; border-top:1px solid var(--line);
+    font-size:12.5px; color:#C7BEDB; text-align:center; max-width:190px; line-height:1.55;
+    margin-top:4px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.14);
   }
   @media(max-width:760px){
     .hero-grid{grid-template-columns:1fr;}
@@ -280,10 +280,10 @@
     font-family:'Space Grotesk'; font-size:clamp(18px,2.4vw,23px); font-weight:500;
     color:#E7DFF7; max-width:640px; line-height:1.35; margin:0 0 14px;
   }
-  .hero-tagline .accent{color:var(--amber);}
+  .hero-tagline .accent{color:#F5A623;}
   .hero-sub{
     max-width:600px;
-    color:var(--slate);
+    color:#9E90B8;
     font-size:15px;
     margin-top:0;
   }
@@ -301,6 +301,12 @@
   .btn-primary:hover{transform:translateY(-1px);}
   .btn-ghost{border:1px solid var(--line); color:var(--paper);}
   .btn-ghost:hover{border-color:var(--amber); color:var(--amber);}
+  /* the hero keeps its own dark background regardless of theme, so its
+     buttons/text must stay pinned to fixed light-on-dark colors instead
+     of the theme variables (which flip for the rest of the page) */
+  .hero .btn-primary{background:#F5A623; color:#1B1130;}
+  .hero .btn-ghost{border-color:rgba(255,255,255,0.14); color:#F3EEFA;}
+  .hero .btn-ghost:hover, .hero .btn:focus-visible{border-color:#F5A623; color:#F5A623; outline-color:#F5A623;}
 
   /* ---------- STAT STRIP ---------- */
   .stats{
