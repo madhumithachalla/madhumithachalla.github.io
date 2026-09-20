@@ -92,7 +92,7 @@
     background:var(--bg);
     color:var(--paper);
     font-family:'IBM Plex Sans', sans-serif;
-    font-size:16px;
+    font-size:16.5px;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     transition:background-color .25s ease, color .25s ease;
@@ -131,7 +131,7 @@
   }
   .nav-brand{display:flex; align-items:center; gap:9px;}
   .nav-logo-static{width:52px; height:auto; flex:none;}
-  .nav-name{font-family:'Fraunces', serif; font-weight:600; font-size:18px; letter-spacing:-0.01em;}
+  .nav-name{font-family:'Fraunces', serif; font-weight:600; font-size:19px; letter-spacing:-0.01em;}
   .nav-links{display:flex; align-items:center; gap:26px; font-family:'IBM Plex Sans'; font-weight:500; font-size:13.5px;}
   .nav-links a{text-decoration:none; color:var(--slate); border-bottom:1px solid transparent; padding-bottom:2px; transition:color .15s, border-color .15s, filter .15s;}
   .nav-links a:hover, .nav-links a:focus-visible{filter:brightness(1.25); border-color:currentColor;}
@@ -284,7 +284,7 @@
   .hero-sub{
     max-width:600px;
     color:#9E90B8;
-    font-size:15px;
+    font-size:16px;
     margin-top:0;
   }
   .caret{display:inline-block; width:7px; height:14px; background:var(--amber); vertical-align:-2px; animation:blink 1s step-end infinite;}
@@ -318,7 +318,7 @@
   .stats-inner{
     display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
   }
-  .stat-num{font-family:'IBM Plex Mono'; font-size:26px; color:var(--paper); font-weight:600;}
+  .stat-num{font-family:'IBM Plex Mono'; font-size:clamp(34px,4.5vw,48px); color:var(--paper); font-weight:700; letter-spacing:-0.01em;}
   .stats-inner > div:nth-child(1) .stat-num{color:var(--coral);}
   .stats-inner > div:nth-child(2) .stat-num{color:var(--teal);}
   .stats-inner > div:nth-child(3) .stat-num{color:var(--amber);}
@@ -354,17 +354,22 @@
   .section-head{margin-bottom:40px; max-width:640px; opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease;}
   .section-head.in{opacity:1; transform:translateY(0);}
   .eyebrow{
-    font-family:'IBM Plex Sans'; font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:0.06em;
+    font-family:'IBM Plex Sans'; font-weight:700; font-size:13.5px; text-transform:uppercase; letter-spacing:0.08em;
     color:var(--teal); margin-bottom:10px; display:block;
   }
   .eyebrow.c-coral{color:var(--coral);}
+  .eyebrow.c-amber{color:var(--amber);}
+  .eyebrow.c-teal{color:var(--teal);}
   .eyebrow.c-violet{color:var(--violet);}
-  .section-head h2{font-size:clamp(26px,3.4vw,34px); font-weight:600;}
-  .section-head p{color:var(--slate); margin-top:12px; font-size:15.5px;}
+  .eyebrow.c-green{color:var(--green);}
+  .eyebrow.c-pink{color:var(--pink);}
+  .eyebrow.c-blue{color:var(--blue);}
+  .section-head h2{font-size:clamp(30px,4vw,42px); font-weight:600;}
+  .section-head p{color:var(--slate); margin-top:12px; font-size:16.5px;}
 
   /* about */
   .about-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:start;}
-  .about-grid p{font-size:16.5px; color:var(--ink-soft); margin:0 0 16px;}
+  .about-grid p{font-size:17px; color:var(--ink-soft); margin:0 0 16px;}
   .about-grid p:last-child{margin-bottom:0;}
   .about-card{
     border:1px solid var(--line); border-radius:var(--radius); padding:22px 22px 6px;
@@ -452,7 +457,7 @@
   .tag:nth-child(3n+3){border-color:var(--violet); color:#9B7EDE;}
   .project-side{border-left:1px solid var(--line); padding-left:24px; display:flex; flex-direction:column; gap:16px;}
   .metric{font-family:'IBM Plex Mono';}
-  .metric .n{font-size:22px; font-weight:600; color:var(--paper); display:block;}
+  .metric .n{font-size:26px; font-weight:700; color:var(--paper); display:block;}
   .metric .l{font-size:11px; color:var(--slate); text-transform:uppercase; letter-spacing:0.03em;}
   .project-link{font-family:'IBM Plex Sans'; font-weight:500; font-size:13px; color:var(--teal); text-decoration:none; border-bottom:1px solid var(--teal); align-self:flex-start; margin-top:auto;}
   @media(max-width:760px){
@@ -542,7 +547,7 @@
   .exp-tile:nth-child(5n+3) .exp-time{color:var(--amber);}
   .exp-tile:nth-child(5n+4) .exp-time{color:var(--violet);}
   .exp-tile:nth-child(5n+5) .exp-time{color:var(--green);}
-  .exp-role{font-weight:600; font-size:15.5px; margin:6px 0 3px;}
+  .exp-role{font-weight:600; font-size:17px; margin:6px 0 3px;}
   .exp-org{font-family:'IBM Plex Sans'; font-size:12.5px; color:var(--slate); margin-bottom:9px;}
   .exp-tile p{margin:0; color:var(--ink-soft); font-size:13.5px; line-height:1.45;}
   .exp-detail-wrap{display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s ease;}
@@ -1309,7 +1314,7 @@
 <section id="about">
   <div class="wrap about-grid">
     <div>
-      <span class="eyebrow">About</span>
+      <span class="eyebrow c-coral">About</span>
       <h2 style="margin-bottom:22px;">From watching the dashboard to building it</h2>
       <p>I started the unglamorous way: Programmer Analyst Trainee at Cognizant in 2021, maintaining COBOL and JCL on mainframe systems. Three years later I was running SLA-driven production support and incident management for a healthcare platform serving 3.2 million members. That job taught me what "production" actually means: no shortcuts, no guessing, someone's on the other end of every system. It's the discipline I still bring to every cloud build and dataset.</p>
       <p>Now I'm finishing a Master of IT at Monash while running four roles at once: mentoring postgrad students, advising 45+ mentees, and administering IT systems for two organisations. Cross-functional stakeholder engagement and digital transformation work run through all of it. Cloud and systems engineering is where I'm strongest, but I show up fully for data and software work too.</p>
@@ -1352,7 +1357,7 @@
 <section id="skills">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow c-violet">Toolkit</span>
+      <span class="eyebrow c-amber">Toolkit</span>
       <h2>Skills &amp; stack</h2>
       <p>Grouped the way I actually use them: enterprise cloud and IT operations first, since that's three years of paid production experience. The dashes show how much I actually use each one, not a self-rated score.</p>
     </div>
@@ -1389,7 +1394,7 @@
 <section id="experience">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow c-violet">Experience</span>
+      <span class="eyebrow c-teal">Experience</span>
       <h2>Where the hours actually went</h2>
     </div>
     <div class="exp-grid">
@@ -1501,7 +1506,7 @@
 <section id="projects" style="background:var(--bg-panel);">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow c-coral">Projects</span>
+      <span class="eyebrow c-violet">Projects</span>
       <h2>Things I've actually built</h2>
       <p>A mix of team builds and solo work. Team contributions are scoped to what was mine. The rest belonged to teammates.</p>
     </div>
@@ -1677,7 +1682,7 @@
 <section id="leadership">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow c-violet">Leadership &amp; mentorship</span>
+      <span class="eyebrow c-green">Leadership &amp; mentorship</span>
       <h2>The interpersonal side of the resume</h2>
       <p>Technical skills get most of the spotlight here, but a good chunk of my actual week is spent leading, mentoring, and supporting people, and I think that's worth showing, not hiding.</p>
     </div>
@@ -1731,7 +1736,7 @@
 <section id="coffee">
   <div class="wrap">
     <div class="section-head">
-      <span class="eyebrow c-coral">Let's talk</span>
+      <span class="eyebrow c-pink">Let's talk</span>
       <h2>Get in touch, or grab a coffee</h2>
       <p>Two ways in: a quick message, or an actual catch-up, in person or virtual.</p>
     </div>
