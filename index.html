@@ -618,7 +618,7 @@
   .exp-detail-wrap > div{overflow:hidden; padding-top:6px;}
   .exp-tile.expanded .exp-detail-wrap{grid-template-rows:1fr;}
   .exp-detail{
-    margin:0 !important; padding:14px 16px !important; color:var(--ink) !important;
+    margin:0 !important; padding:14px 16px !important; color:var(--paper) !important;
     background:var(--bg-panel); border-left:3px solid var(--coral);
     border-radius:0 8px 8px 0; font-size:19px; line-height:1.6;
   }
@@ -647,7 +647,7 @@
   .skills-cat-line{flex:1; height:1px; background:var(--line);}
   .skills-tag-row{display:flex; flex-wrap:wrap; gap:10px;}
   .skill-item{display:flex; flex-direction:column; gap:7px; padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:var(--bg-panel); min-width:132px;}
-  .skill-name{font-family:'Inter'; font-weight:600; font-size:13.5px; color:var(--ink); letter-spacing:-0.005em;}
+  .skill-name{font-family:'Inter'; font-weight:600; font-size:13.5px; color:var(--paper); letter-spacing:-0.005em;}
   .skill-dashes{display:flex; gap:3px;}
   .dash{width:13px; height:3px; border-radius:2px; background:var(--line);}
   .cat-coral .skills-cat-dot{background:var(--coral);}
@@ -1336,7 +1336,7 @@
   </div>
 </div>
 
-<section class="hero">
+<section class="hero" id="hero">
   <canvas id="meteor-canvas" aria-hidden="true"></canvas>
   <div class="wrap hero-grid">
     <div class="hero-text">
@@ -1901,6 +1901,48 @@
         </div>
         <div class="project-side">
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/contact-link-icons" target="_blank" rel="noopener">View source ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-portfolio">
+        <div>
+          <div class="project-top">
+            <span class="pill indie">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Personal build</span>
+          </div>
+          <h3>This portfolio</h3>
+          <div class="role">Role: sole builder</div>
+          <p>The site you're on right now: a single-file, hand-coded portfolio with no framework or build step — theming, animations, the built-in chat assistant, the live project-repo sync, and every section on this page written directly in HTML/CSS/JS.</p>
+          <ul>
+            <li>Light/dark theming, scroll-reveal animations, and an animated starfield/meteor backdrop, all built from scratch.</li>
+            <li>A built-in FAQ chat assistant answering questions about my background with static keyword matching, no backend or API key.</li>
+            <li>Live-syncs with my <code>projects</code> GitHub repo so a new project folder never goes unlisted, even before I've written a full card for it here.</li>
+          </ul>
+          <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">SVG</span><span class="tag">GitHub Pages</span></div>
+        </div>
+        <div class="project-side">
+          <a class="project-link" href="https://github.com/MadhumithaChalla/MadhumithaChalla.github.io" target="_blank" rel="noopener">View source ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-logo">
+        <div>
+          <div class="project-top">
+            <span class="pill indie">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Personal build</span>
+          </div>
+          <h3>Logo mark</h3>
+          <div class="role">Role: sole builder</div>
+          <p>My own personal mark, used in the nav bar and beside my name in the hero above: an "M" and a "C" drawn as one continuous flowing line that reads as an infinity loop, built as a plain SVG path rather than a traced or scanned image.</p>
+          <ul>
+            <li>A single smooth cubic-bezier path forms the M/C monogram — no raster image anywhere, so it stays crisp at any size.</li>
+            <li>A glowing "photon" orbits the loop continuously, trailed by a small fading dust trail, all driven by native SVG <code>animateMotion</code>.</li>
+            <li>The nav version sits on a small hand-drawn cosmic badge (a tiny Mars and Saturn scene) for a bit of personality at a size most logos wouldn't bother with.</li>
+          </ul>
+          <div class="tags"><span class="tag">SVG</span><span class="tag">CSS Animation</span></div>
+        </div>
+        <div class="project-side">
+          <a class="project-link" href="#hero">See it in the nav ↑</a>
         </div>
       </div>
 
