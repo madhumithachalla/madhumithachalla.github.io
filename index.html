@@ -285,10 +285,11 @@
   .portrait-fact:nth-child(6){border-top-color:#6BA3FF;}
   .portrait-fact-icon{width:15px; height:15px; flex:none;}
   .portrait-fact span{font-size:11px; color:#C7BEDB; line-height:1.3;}
-  .terminal-widget{
-    width:100%; max-width:224px; margin-top:4px; padding-top:16px;
-    border-top:1px solid rgba(255,255,255,0.14);
-  }
+  .routine-scene{display:flex; align-items:flex-end; gap:14px; margin-top:26px; max-width:400px;}
+  .routine-figure{width:56px; height:66px; flex:none;}
+  .rbadge{opacity:0; transition:opacity .35s ease;}
+  .rbadge.active{opacity:1;}
+  .terminal-widget{width:100%; max-width:280px;}
   .terminal-box{
     background:#0A0812; border:1px solid rgba(255,255,255,0.14); border-radius:8px;
     padding:10px 12px; font-family:'IBM Plex Mono'; font-size:10.5px; line-height:1.7;
@@ -316,6 +317,7 @@
       width:100%; text-align:left; max-width:none; margin-top:10px; padding-top:12px;
     }
     .portrait-facts{max-width:none;}
+    .routine-scene{max-width:none;}
     .terminal-widget{max-width:none;}
   }
   #meteor-canvas{
@@ -1368,6 +1370,47 @@
         <a class="btn btn-ghost" href="#contact">Get in touch</a>
         <a class="btn btn-ghost" href="https://github.com/MadhumithaChalla/MadhumithaChalla.github.io" target="_blank" rel="noopener">View source ↗</a>
       </div>
+
+      <div class="routine-scene">
+        <svg class="routine-figure" viewBox="0 0 64 76" aria-hidden="true">
+          <circle cx="32" cy="16" r="9" fill="none" stroke="var(--paper)" stroke-width="2.5"/>
+          <path d="M14 70 C14 50 20 40 32 40 C44 40 50 50 50 70" fill="none" stroke="var(--paper)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="4" y1="70" x2="60" y2="70" stroke="var(--slate)" stroke-width="2" stroke-linecap="round"/>
+          <g id="routineBadge">
+            <g class="rbadge active" data-badge="0">
+              <path d="M44 20 L58 14 L44 8 L30 14 Z" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M37 17 V25 C37 27 40 29 44 29 C48 29 51 27 51 25 V17" fill="none" stroke="var(--teal)" stroke-width="2"/>
+            </g>
+            <g class="rbadge" data-badge="1">
+              <rect x="36" y="10" width="22" height="14" rx="1.5" fill="none" stroke="var(--amber)" stroke-width="2"/>
+              <line x1="34" y1="26" x2="60" y2="26" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <g class="rbadge" data-badge="2">
+              <path d="M36 8 h20 a3 3 0 0 1 3 3 v8 a3 3 0 0 1-3 3 h-13 l-5 5 v-5 h-2 a3 3 0 0 1-3-3 v-8 a3 3 0 0 1 3-3 Z" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linejoin="round"/>
+            </g>
+            <g class="rbadge" data-badge="3">
+              <path d="M38 12 h14 v9 a7 7 0 0 1-7 7 a7 7 0 0 1-7-7 Z" fill="none" stroke="var(--coral)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M52 15 h3 a3 3 0 0 1 0 6 h-3" fill="none" stroke="var(--coral)" stroke-width="2"/>
+              <line x1="41" y1="6" x2="41" y2="9" stroke="var(--coral)" stroke-width="1.6" stroke-linecap="round"/>
+              <line x1="45" y1="5" x2="45" y2="9" stroke="var(--coral)" stroke-width="1.6" stroke-linecap="round"/>
+            </g>
+            <g class="rbadge" data-badge="4">
+              <path d="M38 27 L54 11 a2.5 2.5 0 0 1 3.5 3.5 L41 30 l-5 1.5 Z" fill="none" stroke="var(--pink)" stroke-width="2" stroke-linejoin="round"/>
+            </g>
+            <g class="rbadge" data-badge="5">
+              <path d="M52 8 A9 9 0 1 0 52 26 A7 7 0 0 1 52 8 Z" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>
+              <text x="42" y="8" font-size="7" fill="var(--blue)" font-family="'IBM Plex Mono'">z z</text>
+            </g>
+          </g>
+        </svg>
+        <div class="terminal-widget" role="img" aria-label="Terminal window looping through a typed-out summary of her typical Tuesday: Master of IT lectures at Monash in the morning, the Baazar internship and HR Projects midday, mentoring and Monash Data and AI Society in the afternoon, coffee catch-ups and coding this site in the evening, and writing poetry as Female Photon late at night.">
+          <div class="terminal-box">
+            <div class="terminal-dots"><span></span><span></span><span></span></div>
+            <div><span class="terminal-prompt">$</span> cat typical_tuesday.log</div>
+            <div id="terminal-lines"></div><span class="terminal-cursor">&nbsp;</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="hero-portrait">
@@ -1436,13 +1479,6 @@
           <div class="portrait-fact">
             <svg class="portrait-fact-icon" viewBox="0 0 24 24" fill="none" stroke="#6BA3FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3Z"/><path d="M11.6 16.8 10 21l-2-1 .9-4.4"/></svg>
             <span>Open to relocating across Australia</span>
-          </div>
-        </div>
-        <div class="terminal-widget" role="img" aria-label="Terminal window looping through a typed-out summary of her typical Tuesday: Master of IT lectures at Monash in the morning, the Baazar internship and HR Projects midday, mentoring and Monash Data and AI Society in the afternoon, coffee catch-ups and coding this site in the evening, and writing poetry as Female Photon late at night.">
-          <div class="terminal-box">
-            <div class="terminal-dots"><span></span><span></span><span></span></div>
-            <div><span class="terminal-prompt">$</span> cat typical_tuesday.log</div>
-            <div id="terminal-lines"></div><span class="terminal-cursor">&nbsp;</span>
           </div>
         </div>
     </div>
@@ -2539,6 +2575,10 @@
       '> late night: poetry as "Female Photon"',
       '> repeat. (mostly)',
     ];
+    const badges = document.querySelectorAll('.rbadge');
+    function setBadge(i){
+      badges.forEach(b => b.classList.toggle('active', b.dataset.badge === String(i)));
+    }
     if (reduced) {
       el.textContent = lines.join('\n');
       return;
@@ -2546,10 +2586,11 @@
     let li = 0, ci = 0, text = '';
     function tick(){
       if (li >= lines.length) {
-        setTimeout(() => { text = ''; li = 0; ci = 0; el.textContent = ''; tick(); }, 2200);
+        setTimeout(() => { text = ''; li = 0; ci = 0; el.textContent = ''; setBadge(0); tick(); }, 2200);
         return;
       }
       const line = lines[li];
+      if (ci === 0) setBadge(li);
       if (ci <= line.length) {
         el.textContent = text + line.slice(0, ci);
         ci++;
