@@ -24,6 +24,9 @@ COP31 "Build for 2035" priority: **Zero Waste & Methane Reduction**.
 | **Freshness curve + what-if** | The Expiry Twin draws each batch's quality curve from its sensor history, against "now" and the date limit. A slider asks *what if it is stored at X °C from now?* and updates the window live. |
 | **Waste-risk scenarios** | Ordinary rotation, freshness-first, markdown and transfer are ranked by kg at risk before the next use, and the lowest is highlighted. |
 | **About ShelfShift** | The problem we solve, product goals, COP31 alignment, the UN SDGs it serves (2, 12.3, 12.5, 13) and the team. |
+| **12 products in 7 categories** | Fruit, vegetables, dairy, meat & poultry, seafood, bakery and ready meals, each with its own reference temperature and quality window. 17 demo batches, filterable by category. |
+| **Impact report** | One click produces a shareable report: stock and waste risk by category, CO₂-e if landfilled, rescue actions, scenario comparison, recorded outcomes and sources. Print / save as PDF or download as HTML. |
+| **Readable text** | Larger default text, plus an A− / A / A+ control that is remembered in your browser. |
 | **Guided demo** | A six-step in-app tour (▶ Guided demo) tells the story for judges in about two minutes. |
 
 
@@ -32,7 +35,7 @@ COP31 "Build for 2035" priority: **Zero Waste & Methane Reduction**.
 | Criterion | Weight | Where to look |
 |---|---|---|
 | COP31 alignment | 30 % | Zero Waste & Methane priority. Climate lens with a cited national emissions factor. Food recovery hierarchy. Modelled vs recorded impact kept strictly separate (no greenwashing). |
-| Build quality | 30 % | Dependency-free ES modules. Pure, tested domain core (`core.js`). 37 unit/UI tests plus a real-browser end-to-end journey. GitHub Actions CI. Schema-validated backups with migration. Formula-safe CSV. Escaped HTML. Stale-approval guards. Responsive down to 390 px. |
+| Build quality | 30 % | Dependency-free ES modules. Pure, tested domain core (`core.js`). 39 unit/UI tests plus a real-browser end-to-end journey. GitHub Actions CI. Schema-validated backups with migration. Formula-safe CSV. Escaped HTML. Stale-approval guards. Responsive down to 390 px. |
 | Creativity | 20 % | Freshness-aware planning that couples a temperature digital twin to demand, a what-if cold-chain slider, and hierarchy-ranked rescue actions in one workflow. |
 | Presentation | 20 % | Guided demo, a [two-minute pitch script](docs/DEMO.md), and screenshots. Every number on screen says whether it is modelled or recorded. |
 
@@ -60,7 +63,7 @@ Requirements: Python 3 for the static server and Node.js 20+ for tests. No npm i
 ```bash
 npm start            # = python3 -m http.server 8080 --directory dist
 # open http://localhost:8080 and press "▶ Guided demo"
-npm test             # 37 unit + UI tests
+npm test             # 39 unit + UI tests
 ```
 
 Optional real-browser check (needs Playwright: `npm install --no-save playwright && npx playwright install chromium`):
@@ -82,7 +85,8 @@ On Windows, `py -m http.server 8080 --directory dist` also works. Serve over HTT
 6. **Stock planner**: earliest-quality-first allocation, eligible carryover, confirmed inbound and replenishment.
 7. **Actions & approvals**: waste-risk scenarios, then propose an action and have a reviewer approve it against current data.
 8. **Outcomes & evidence**: record what actually happened, with a reference. Export to CSV.
-9. **Project & backup**: idea credits, epics, JSON backup/restore, model clock and audit trail.
+9. **Impact report**: print, save as PDF or download the full summary.
+10. **Project & backup**: idea credits, epics, JSON backup/restore, model clock and audit trail.
 
 ## Honest boundaries
 
@@ -97,6 +101,7 @@ This is a complete local demonstration, not a production retailer service. The s
 - `tests/core.test.mjs`, `tests/ui-smoke.test.mjs`: domain and UI tests (`npm test`).
 - `e2e/journey.mjs`: real-browser journey (`npm run e2e`).
 - `.github/workflows/test.yml`: CI for unit and browser tests.
+- `research/`: the team's Drive research, proposals, decision workbook and ShelfShift concept files ([index](research/README.md)).
 - `docs/`: [requirements](docs/REQUIREMENTS.md), [architecture](docs/ARCHITECTURE.md), [epics and owners](docs/EPICS.md), [demo script](docs/DEMO.md), [idea provenance](docs/IDEAS.md), [validation record](docs/VALIDATION.md), screenshots.
 - `.openai/hosting.json`: existing Site identity. Do not reuse it to create a different hosted project.
 

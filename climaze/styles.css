@@ -35,3 +35,12 @@
 .banner a.tag{text-decoration:none}
 @media(max-width:1050px){.about-stats,.sdgs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.about-stats,.sdgs{grid-template-columns:1fr}.hero-about h2{font-size:22px}}
+
+/* Category chips, text size, report */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 16px}.chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--ink);min-height:34px}.chip span{color:var(--muted);font-weight:500;margin-left:4px}.chip.on{background:var(--green);border-color:var(--green);color:#fff}.chip.on span{color:#d7e8a9}
+body{zoom:var(--text-scale,1.12)}
+.text-size{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.text-size button{border:0;background:#fff;padding:6px 9px;font-weight:700;color:var(--ink);min-width:32px;min-height:32px}.text-size button[aria-pressed=true]{background:var(--green);color:#fff}.text-size button+button{border-left:1px solid var(--line)}
+.report h2{font-family:Manrope,sans-serif;font-size:26px;margin:6px 0}.report h3{font-family:Manrope,sans-serif;font-size:17px;margin:26px 0 10px}.report-head{border-bottom:3px solid var(--green);padding-bottom:12px}.report .kpis{margin:10px 0}.report-notes{font-size:13px;color:var(--muted);padding-left:18px}.report-notes li{margin:6px 0}
+@media print{aside,header.top,footer,#tour,#toast,.report-actions,.page-head{display:none!important}body{zoom:1;background:#fff}.shell{display:block}main{padding:0}.panel{border:0;padding:0}.report section{break-inside:avoid}.kpi{border:1px solid #ccc}}
+@media(max-width:650px){.text-size button{min-width:28px;padding:4px 6px}}
+@media(max-width:650px){header.top{flex-wrap:wrap;gap:10px}.top-actions{flex-wrap:wrap;gap:6px}.demo-pill{display:none}}
