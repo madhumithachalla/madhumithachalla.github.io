@@ -1,13 +1,41 @@
+
 # ShelfShift, by team CliMaze
 
 **Prevent food waste before it exists. Read the batch, not just the date.**
 
-Food businesses rotate perishables by the date on the label. Two crates with the same date can have very different lives left if one sat in a warm loading bay. ShelfShift, built and owned by team **CliMaze**, combines **Madhumitha Challa's demand and stock planning** for retail, hospitality and food production with **Abhishek's temperature-history Expiry Twin**. Every batch is planned against its *real* remaining quality, so stock gets used, sold or donated before it becomes landfill methane.
 
-COP31 "Build for 2035" priority: **Zero Waste & Methane Reduction**.
+
+Food businesses rotate perishables by the date on the label. Two crates with the same date can have very different lives left if one sat in a warm loading bay. ShelfShift, built and owned by team **CliMaze**, combines **Madhumitha Challa's demand and stock planning** for retail, hospitality and food production with **Abhishek Prabhu's temperature-history Expiry Twin**. Every batch is planned against its *real* remaining quality, so stock gets used, sold or donated before it becomes landfill methane.
 
 **Live demo: https://madhumithachalla.github.io/climaze/** (press ▶ Guided demo)
 
+
+## COP31 and the UN Sustainable Development Goals
+
+**COP31** takes place in **Antalya, Türkiye, from 9 to 20 November 2026**, with Australia as President of Negotiations and Pre-COP events in the Pacific. The Presidency frames 2026 around *implementation*. ShelfShift answers the **Zero Waste & Methane Reduction** priority with a tool a food business can use today and an impact measure it can verify.
+
+| UN SDG | How ShelfShift contributes |
+|---|---|
+| **SDG 2** Zero Hunger | Safe surplus goes to people first through the *Feed people* rung of the Rescue ladder. |
+| **SDG 12.3** Halve food waste by 2030 | Freshness-first planning prevents waste at retail and food-service level. |
+| **SDG 12.5** Reduce waste generation | Prevention before recovery, and recovery before landfill, in every recommendation. |
+| **SDG 13** Climate Action | Less food in landfill means less methane; the Climate lens shows modelled CO₂-e. |
+
+**Watch: COP31 explained** (also embedded on the About page of the live demo):
+- [What is COP31?](https://www.youtube.com/watch?v=MDxd4dBMjvw)
+- [Antalya hosts COP31](https://www.youtube.com/watch?v=OmIAhvP4d5U)
+- [COP31 Presidency: From Baku to Antalya](https://www.youtube.com/watch?v=LggVYnUj990)
+
+
+## Meet team CliMaze
+
+| | Member | Role |
+|---|---|---|
+| 🌿 | **Madhumitha Challa** ([@madhumithachalla](https://github.com/madhumithachalla)) | Team lead: product, demand and stock planning, integration and pitch |
+| ❄️ | **Abhishek Prabhu** ([@AbhishekPrabhu1459](https://github.com/AbhishekPrabhu1459)) | Smart cold-chain Expiry Twin, data and modelling |
+| ⚙️ | **Vijayaraja Vaikunth** ([@vijayaraja12](https://github.com/vijayaraja12)) | Prototype intelligence and data pipeline |
+| 🧪 | **Shyam Rangasamy Sundaraj** ([@shyamrangasamyaus2024-coder](https://github.com/shyamrangasamyaus2024-coder)) | AI architecture review, evaluation and risk |
+| 🌏 | **Nithilan** | Policy, stakeholders, equity and impact |
 
 ## Why it matters
 
@@ -24,10 +52,11 @@ COP31 "Build for 2035" priority: **Zero Waste & Methane Reduction**.
 | **Freshness curve + what-if** | The Expiry Twin draws each batch's quality curve from its sensor history, against "now" and the date limit. A slider asks *what if it is stored at X °C from now?* and updates the window live. |
 | **Waste-risk scenarios** | Ordinary rotation, freshness-first, markdown and transfer are ranked by kg at risk before the next use, and the lowest is highlighted. |
 | **About ShelfShift** | The problem we solve, product goals, COP31 alignment, the UN SDGs it serves (2, 12.3, 12.5, 13) and the team. |
-| **12 products in 7 categories** | Fruit, vegetables, dairy, meat & poultry, seafood, bakery and ready meals, each with its own reference temperature and quality window. 17 demo batches, filterable by category. |
+| **12 products in 7 categories** | Fruit, vegetables, dairy, meat & poultry, seafood, bakery and ready meals, each with its own reference temperature and quality window. 16 demo batches, filterable by category. |
 | **Impact report** | One click produces a shareable report: stock and waste risk by category, CO₂-e if landfilled, rescue actions, scenario comparison, recorded outcomes and sources. Print / save as PDF or download as HTML. |
 | **Readable text** | Larger default text, plus an A− / A / A+ control that is remembered in your browser. |
 | **Guided demo** | A six-step in-app tour (▶ Guided demo) tells the story for judges in about two minutes. |
+
 
 
 ## How it maps to the judging criteria
@@ -35,9 +64,9 @@ COP31 "Build for 2035" priority: **Zero Waste & Methane Reduction**.
 | Criterion | Weight | Where to look |
 |---|---|---|
 | COP31 alignment | 30 % | Zero Waste & Methane priority. Climate lens with a cited national emissions factor. Food recovery hierarchy. Modelled vs recorded impact kept strictly separate (no greenwashing). |
-| Build quality | 30 % | Dependency-free ES modules. Pure, tested domain core (`core.js`). 39 unit/UI tests plus a real-browser end-to-end journey. GitHub Actions CI. Schema-validated backups with migration. Formula-safe CSV. Escaped HTML. Stale-approval guards. Responsive down to 390 px. |
+| Build quality | 30 % | Dependency-free ES modules. Pure, tested domain core (`core.js`). 40 unit/UI tests plus a real-browser end-to-end journey. GitHub Actions CI. Schema-validated backups with migration. Formula-safe CSV. Escaped HTML. Stale-approval guards. Responsive down to 390 px. |
 | Creativity | 20 % | Freshness-aware planning that couples a temperature digital twin to demand, a what-if cold-chain slider, and hierarchy-ranked rescue actions in one workflow. |
-| Presentation | 20 % | Guided demo, a [two-minute pitch script](docs/DEMO.md), and screenshots. Every number on screen says whether it is modelled or recorded. |
+| Presentation | 20 % | CliMaze branding, COP31 and SDG band, team intro, embedded COP31 videos, printable impact report, guided demo, a [two-minute pitch script](docs/DEMO.md), and screenshots. Every number on screen says whether it is modelled or recorded. |
 
 
 ## Try it live
@@ -63,7 +92,7 @@ Requirements: Python 3 for the static server and Node.js 20+ for tests. No npm i
 ```bash
 npm start            # = python3 -m http.server 8080 --directory dist
 # open http://localhost:8080 and press "▶ Guided demo"
-npm test             # 39 unit + UI tests
+npm test             # 40 unit + UI tests
 ```
 
 Optional real-browser check (needs Playwright: `npm install --no-save playwright && npx playwright install chromium`):
@@ -95,6 +124,7 @@ This is a complete local demonstration, not a production retailer service. The s
 ## File map
 
 - `dist/index.html`, `dist/styles.css`: app shell and responsive design.
+- `dist/climaze-logo.svg`, `dist/climaze-wordmark.svg`: CliMaze logo and wordmark.
 - `dist/core.js`: pure calculations: quality and what-if, curve, plan, scenarios with at-risk, rescue ladder, climate impact, validation.
 - `dist/app.js`: screens, Climate lens, freshness chart, guided demo, forms, storage and import/export.
 - `dist/PROJECT.md`: downloadable in-app handover (copy of this README).
@@ -105,6 +135,6 @@ This is a complete local demonstration, not a production retailer service. The s
 - `docs/`: [requirements](docs/REQUIREMENTS.md), [architecture](docs/ARCHITECTURE.md), [epics and owners](docs/EPICS.md), [demo script](docs/DEMO.md), [idea provenance](docs/IDEAS.md), [validation record](docs/VALIDATION.md), screenshots.
 - `.openai/hosting.json`: existing Site identity. Do not reuse it to create a different hosted project.
 
-## Team and credits
+## Credits
 
-Madhumitha Challa: food-business demand and stock planning. Abhishek: Smart Cold-Chain Expiry Twin. Proposed delivery owners for each epic, including Shyam, Vijayaraja and Nithilan, are in [docs/EPICS.md](docs/EPICS.md). Vijay's separate Rot Clock idea is preserved in [docs/IDEAS.md](docs/IDEAS.md).
+ShelfShift is designed, built and owned by team CliMaze. Vijay's separate Rot Clock idea is preserved in [docs/IDEAS.md](docs/IDEAS.md); proposed epic owners are in [docs/EPICS.md](docs/EPICS.md).
