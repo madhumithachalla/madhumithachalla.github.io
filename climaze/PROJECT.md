@@ -1,10 +1,13 @@
-# CliMaze Food Planner
+# ShelfShift, by team CliMaze
 
 **Prevent food waste before it exists. Read the batch, not just the date.**
 
-Food businesses rotate perishables by the date on the label. Two crates with the same date can have very different lives left if one sat in a warm loading bay. CliMaze combines **Madhumitha Challa's demand and stock planning** for retail, hospitality and food production with **Abhishek's temperature-history Expiry Twin**. Every batch is planned against its *real* remaining quality, so stock gets used, sold or donated before it becomes landfill methane.
+Food businesses rotate perishables by the date on the label. Two crates with the same date can have very different lives left if one sat in a warm loading bay. ShelfShift, built and owned by team **CliMaze**, combines **Madhumitha Challa's demand and stock planning** for retail, hospitality and food production with **Abhishek's temperature-history Expiry Twin**. Every batch is planned against its *real* remaining quality, so stock gets used, sold or donated before it becomes landfill methane.
 
 COP31 "Build for 2035" priority: **Zero Waste & Methane Reduction**.
+
+**Live demo: https://madhumithachalla.github.io/climaze/** (press ▶ Guided demo)
+
 
 ## Why it matters
 
@@ -20,16 +23,19 @@ COP31 "Build for 2035" priority: **Zero Waste & Methane Reduction**.
 | **Rescue ladder** | For each at-risk batch, picks the next best action from the food recovery hierarchy: **Prevent** (use first / mark down) → **Feed people** (donate if collection time fits) → **Check** (inspect) → **Recover** (compost or anaerobic digestion, never landfill). One click prefills a proposal, and staff approval is still required. |
 | **Freshness curve + what-if** | The Expiry Twin draws each batch's quality curve from its sensor history, against "now" and the date limit. A slider asks *what if it is stored at X °C from now?* and updates the window live. |
 | **Waste-risk scenarios** | Ordinary rotation, freshness-first, markdown and transfer are ranked by kg at risk before the next use, and the lowest is highlighted. |
+| **About ShelfShift** | The problem we solve, product goals, COP31 alignment, the UN SDGs it serves (2, 12.3, 12.5, 13) and the team. |
 | **Guided demo** | A six-step in-app tour (▶ Guided demo) tells the story for judges in about two minutes. |
+
 
 ## How it maps to the judging criteria
 
 | Criterion | Weight | Where to look |
 |---|---|---|
 | COP31 alignment | 30 % | Zero Waste & Methane priority. Climate lens with a cited national emissions factor. Food recovery hierarchy. Modelled vs recorded impact kept strictly separate (no greenwashing). |
-| Build quality | 30 % | Dependency-free ES modules. Pure, tested domain core (`core.js`). 36 unit/UI tests plus a real-browser end-to-end journey. GitHub Actions CI. Schema-validated backups with migration. Formula-safe CSV. Escaped HTML. Stale-approval guards. Responsive down to 390 px. |
+| Build quality | 30 % | Dependency-free ES modules. Pure, tested domain core (`core.js`). 37 unit/UI tests plus a real-browser end-to-end journey. GitHub Actions CI. Schema-validated backups with migration. Formula-safe CSV. Escaped HTML. Stale-approval guards. Responsive down to 390 px. |
 | Creativity | 20 % | Freshness-aware planning that couples a temperature digital twin to demand, a what-if cold-chain slider, and hierarchy-ranked rescue actions in one workflow. |
 | Presentation | 20 % | Guided demo, a [two-minute pitch script](docs/DEMO.md), and screenshots. Every number on screen says whether it is modelled or recorded. |
+
 
 ## Try it live
 
@@ -54,7 +60,7 @@ Requirements: Python 3 for the static server and Node.js 20+ for tests. No npm i
 ```bash
 npm start            # = python3 -m http.server 8080 --directory dist
 # open http://localhost:8080 and press "▶ Guided demo"
-npm test             # 36 unit + UI tests
+npm test             # 37 unit + UI tests
 ```
 
 Optional real-browser check (needs Playwright: `npm install --no-save playwright && npx playwright install chromium`):
@@ -69,13 +75,14 @@ On Windows, `py -m http.server 8080 --directory dist` also works. Serve over HTT
 ## The full workflow
 
 1. **Overview**: the Climate lens and Rescue ladder show today's risk and the next best actions.
-2. **Batch inventory**: receive batches, search, and place or release holds.
-3. **Expiry Twin**: temperature history → effective age (Q10 = 2) → remaining window, freshness curve and what-if storage.
-4. **Demand forecast**: seven-day observed-day baseline, or covers/output units × kg per unit ÷ yield.
-5. **Stock planner**: earliest-quality-first allocation, eligible carryover, confirmed inbound and replenishment.
-6. **Actions & approvals**: waste-risk scenarios, then propose an action and have a reviewer approve it against current data.
-7. **Outcomes & evidence**: record what actually happened, with a reference. Export to CSV.
-8. **Project & backup**: idea credits, epics, JSON backup/restore, model clock and audit trail.
+2. **About ShelfShift**: problem, goals, COP31, SDGs and team.
+3. **Batch inventory**: receive batches, search, and place or release holds.
+4. **Expiry Twin**: temperature history → effective age (Q10 = 2) → remaining window, freshness curve and what-if storage.
+5. **Demand forecast**: seven-day observed-day baseline, or covers/output units × kg per unit ÷ yield.
+6. **Stock planner**: earliest-quality-first allocation, eligible carryover, confirmed inbound and replenishment.
+7. **Actions & approvals**: waste-risk scenarios, then propose an action and have a reviewer approve it against current data.
+8. **Outcomes & evidence**: record what actually happened, with a reference. Export to CSV.
+9. **Project & backup**: idea credits, epics, JSON backup/restore, model clock and audit trail.
 
 ## Honest boundaries
 
