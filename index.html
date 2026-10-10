@@ -1934,6 +1934,54 @@
         </div>
       </div>
 
+      <div class="project" id="proj-focuslens">
+        <div>
+          <div class="project-top">
+            <span class="pill indie">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Android + Web</span>
+          </div>
+          <h3>FocusLens: screen-time &amp; focus app</h3>
+          <div class="role">Role: sole builder</div>
+          <p>A phone-habit app that reads real Android usage data (the same source Digital Wellbeing uses) instead of estimating it, blocks specific apps or just their most distracting sections with a challenge that gets harder the more it's triggered, and ships a companion web app so people without an Android device still get the non-blocking half: journaling, cycle/wellness tracking, and a weekly usage report.</p>
+          <ul>
+            <li>Android app (Kotlin/Jetpack Compose): per-app and per-section blocking — e.g. just Instagram Reels or YouTube Shorts, not the whole app — via an AccessibilityService, with an escalating pause-screen challenge.</li>
+            <li>Its own Room-backed usage history snapshots daily and hourly totals before Android's raw event log ages out (about a week), so a "Today by hour" chart and month/year views stay exact instead of degrading into coarse buckets.</li>
+            <li>A rule-based weekly report (not AI) turns that data into specific suggestions — a busiest-hour call-out, a top-app flag — each tied to an actual in-app control, not just a number restated back.</li>
+            <li>Firebase Auth (Google + email) and Firestore shared across both apps, with Health Connect and device-Contacts import wired up as opt-in, permission-gated data sources.</li>
+          </ul>
+          <div class="tags"><span class="tag">Kotlin</span><span class="tag">Jetpack Compose</span><span class="tag">Room</span><span class="tag">AccessibilityService</span><span class="tag">Firebase Auth</span><span class="tag">Firestore</span><span class="tag">JavaScript (PWA)</span><span class="tag">GitHub Actions CI</span></div>
+        </div>
+        <div class="project-side">
+          <div class="metric"><span class="n">Android + Web</span><span class="l">dual-platform build</span></div>
+          <div class="metric"><span class="n">Real</span><span class="l">usage data, not an estimate</span></div>
+          <a class="project-link" href="https://github.com/madhumithachalla/focuslens" target="_blank" rel="noopener">View source ↗</a>
+          <a class="project-link" href="https://madhumithachalla.github.io/focuslens/" target="_blank" rel="noopener" style="margin-top:6px;">Try the web app ↗</a>
+          <a class="project-link" href="https://github.com/madhumithachalla/focuslens/releases/latest/download/focuslens-debug.apk" target="_blank" rel="noopener" style="margin-top:6px;">Download Android APK ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-job-automation">
+        <div>
+          <div class="project-top">
+            <span class="pill indie">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Personal automation</span>
+          </div>
+          <h3>Job search automation &amp; tracker</h3>
+          <div class="role">Role: sole builder</div>
+          <p>A nightly automation that searches for roles matching my own criteria, drafts a preview for me to review, and only ever applies after I explicitly approve — nothing goes out on its own. Approved applications land in a timestamped tracker that syncs to a dashboard and Notion, so the whole search stays in one place instead of scattered across job boards and email.</p>
+          <ul>
+            <li>Runs on a schedule, searches, and stops at a human review step every time — there's no "fully autonomous apply" mode, by design.</li>
+            <li>Built around swappable connectors (job sources, the tracker, Notion) rather than anything hardcoded, so pointing it at a different search means different connected accounts, not different code.</li>
+            <li>No live dashboard linked here on purpose — it runs against my own accounts and real applications, which isn't something to publish. If you'd want the same setup pointed at your own accounts, <a href="#contact">get in touch</a> instead of me exposing mine.</li>
+          </ul>
+          <div class="tags"><span class="tag">Claude Agent SDK</span><span class="tag">Automation</span><span class="tag">Notion API</span><span class="tag">Scheduled Tasks</span></div>
+        </div>
+        <div class="project-side">
+          <div class="metric"><span class="n">Nightly</span><span class="l">automated search + preview</span></div>
+          <div class="metric"><span class="n">Approval-gated</span><span class="l">nothing applies without my review</span></div>
+        </div>
+      </div>
+
       <div class="project" id="proj-ocr">
         <div>
           <div class="project-top">
