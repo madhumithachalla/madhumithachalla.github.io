@@ -2415,10 +2415,13 @@
             <button type="button" class="msg-chip" id="msgInsertDraft">✍️ Insert a suggested draft</button>
             <span class="coffee-note-small" style="margin:0; align-self:center;">Written for your subject — edit anything before sending.</span>
           </div>
-          <textarea id="msg-body" rows="4" placeholder="Say hello, ask a question, or pitch an opportunity"></textarea>
+          <textarea id="msg-body" rows="4" placeholder="Say hello, ask a question, or pitch an opportunity" maxlength="2000"></textarea>
+          <p class="coffee-note-small" id="msg-char-count" style="margin-top:4px; text-align:right;">0 / 2000</p>
         </div>
-        <button class="btn btn-primary" id="msg-send" style="margin-top:16px; border:none; cursor:pointer;">Send message ↗</button>
-        <p class="coffee-note-small">Opens your email app with everything filled in. Nothing is submitted or stored here.</p>
+        <p class="coffee-note-small" id="msg-error" style="display:none; color:#B3261E; margin:0 0 8px;"></p>
+        <button class="btn btn-primary" id="msg-send" style="margin-top:4px; border:none; cursor:pointer;">Send message ↗</button>
+        <button type="button" class="btn" id="msg-copy" style="margin-top:8px; margin-left:8px; background:transparent; border:1px solid var(--line); cursor:pointer;">Copy instead ⧉</button>
+        <p class="coffee-note-small">Opens your email app with everything filled in. No mail app on this device? Use "Copy instead" and paste it into an email yourself. Nothing is submitted or stored here.</p>
         <p class="coffee-note-small mono" style="margin-top:6px;">⏱ Avg. response time: within 24 hours</p>
       </div>
 
@@ -2741,29 +2744,81 @@
     if (insertDraftBtn) insertDraftBtn.addEventListener('click', insertDraft);
   })();
 
-  // "Send a message" form — same no-backend mailto approach as the coffee scheduler
+  // "Send a message" form — same no-backend mailto approach as the coffee scheduler.
+  // Validates name + message are filled in (an empty mailto just looks broken on send),
+  // and offers a clipboard fallback for visitors whose device has no mail app configured —
+  // a plain mailto: link silently does nothing in that case, with no way to tell why.
   (function(){
     const btn = document.getElementById('msg-send');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const name = document.getElementById('msg-name').value.trim();
+    const copyBtn = document.getElementById('msg-copy');
+    const errorEl = document.getElementById('msg-error');
+    const nameEl = document.getElementById('msg-name');
+    const bodyEl = document.getElementById('msg-body');
+    const charCount = document.getElementById('msg-char-count');
+    if (!btn || !bodyEl) return;
+
+    if (charCount) {
+      bodyEl.addEventListener('input', () => {
+        charCount.textContent = `${bodyEl.value.length} / 2000`;
+      });
+    }
+
+    function composeEmail(){
+      const name = nameEl.value.trim();
       const email = document.getElementById('msg-email').value.trim();
       const subjectSelect = document.getElementById('msg-subject').value;
       const subjectOther = document.getElementById('msg-subject-other').value.trim();
       const subjectInput = subjectSelect === 'Other' ? subjectOther : subjectSelect;
-      const message = document.getElementById('msg-body').value.trim();
-
+      const message = bodyEl.value.trim();
       const subject = subjectInput || 'Message from your portfolio';
       const bodyLines = [
         `Hi Madhumitha,`,
         ``,
-        message || '(no message written)',
+        message,
         ``,
-        `— ${name || 'someone'}${email ? ` (${email})` : ''}`
+        `— ${name}${email ? ` (${email})` : ''}`
       ];
-      const mailto = `mailto:rchmadhumitha@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
-      window.location.href = mailto;
+      return { name, message, subject, text: bodyLines.join('\n') };
+    }
+
+    function validate(){
+      const name = nameEl.value.trim();
+      const message = bodyEl.value.trim();
+      if (!name) return "Add your name so I know who's writing.";
+      if (!message) return "Add a message before sending — an empty email isn't much to go on.";
+      return null;
+    }
+
+    function showError(msg){
+      if (!errorEl) return;
+      errorEl.textContent = msg;
+      errorEl.style.display = msg ? 'block' : 'none';
+    }
+
+    btn.addEventListener('click', () => {
+      const err = validate();
+      if (err) { showError(err); return; }
+      showError(null);
+      const { subject, text } = composeEmail();
+      window.location.href = `mailto:rchmadhumitha@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
     });
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async () => {
+        const err = validate();
+        if (err) { showError(err); return; }
+        showError(null);
+        const { subject, text } = composeEmail();
+        const full = `To: rchmadhumitha@gmail.com\nSubject: ${subject}\n\n${text}`;
+        try {
+          await navigator.clipboard.writeText(full);
+          copyBtn.textContent = 'Copied ✓';
+          setTimeout(() => { copyBtn.textContent = 'Copy instead ⧉'; }, 2000);
+        } catch (e) {
+          showError('Could not copy automatically — select and copy the message by hand.');
+        }
+      });
+    }
   })();
 
   // "Right now" juggle cards self-expire — add data-end="YYYY-MM" to any
