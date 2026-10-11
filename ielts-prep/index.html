@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IELTS Prep, by Madhumitha Challa</title>
+<meta name="description" content="Free, original IELTS-style practice — Reading, Writing, Speaking and Listening — built by Madhumitha Challa. Not affiliated with IELTS, IDP or the British Council.">
+<style>
+  :root{
+    --bg:#0f1115; --panel:#1a1d24; --panel2:#20242d; --line:#2b303b;
+    --ink:#e8e6df; --sub:#9aa0ac; --accent:#5ec2a6; --accent2:#e0a95e;
+    --bad:#e0685e; --good:#5ec2a6; --radius:12px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{padding:22px 20px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(15,17,21,.95);backdrop-filter:blur(6px);z-index:5}
+  header h1{margin:0;font-size:22px}
+  header h1 small{display:block;font-size:13px;font-weight:400;opacity:.65;margin-top:2px}
+  nav{display:flex;gap:6px;overflow-x:auto;margin-top:14px;padding-bottom:2px}
+  nav button{flex:0 0 auto;background:transparent;border:1px solid var(--line);color:var(--ink);padding:7px 14px;border-radius:999px;font-size:13px;cursor:pointer}
+  nav button.active{background:var(--accent);color:#07140f;border-color:var(--accent);font-weight:700}
+  main{max-width:760px;margin:0 auto;padding:22px 18px 70px}
+  h2{font-size:20px;margin:4px 0 6px}
+  .sub{color:var(--sub);font-size:13px;margin:0 0 18px;line-height:1.6}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .card.soft{background:var(--panel2)}
+  .note{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--sub)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--panel2);color:var(--accent);border:1px solid var(--line)}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .btn{background:var(--accent);color:#07140f;border:none;padding:10px 16px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer}
+  .btn:disabled{opacity:.4;cursor:default}
+  .ghost{background:transparent;border:1px solid var(--line);color:var(--ink);padding:9px 15px;border-radius:9px;font-size:14px;cursor:pointer}
+  .ghost.sm{padding:5px 11px;font-size:12px}
+  .q{margin:16px 0;padding-top:14px;border-top:1px solid var(--line)}
+  .q:first-child{border-top:none;padding-top:0}
+  .q p.stem{margin:0 0 8px;font-weight:600}
+  label.opt{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin:6px 0;cursor:pointer}
+  label.opt input{margin-top:3px}
+  input[type="text"],textarea,select{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:9px 10px;font-size:14px;font-family:inherit}
+  textarea{resize:vertical;min-height:140px}
+  .result{font-size:13px;margin-top:6px}
+  .result.correct{color:var(--good)}
+  .result.wrong{color:var(--bad)}
+  .score{font-size:15px;font-weight:700;margin-top:4px}
+  .timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:28px}
+  .passage{white-space:pre-line;font-size:14.5px;background:var(--panel2);border-radius:10px;padding:14px;margin-bottom:14px;max-height:280px;overflow-y:auto}
+  .footerline{font-size:11.5px;color:var(--sub);margin-top:30px;text-align:center;padding-top:16px;border-top:1px solid var(--line)}
+  a{color:var(--accent)}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--line);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}
+  .toast.show{opacity:1}
+  .wc{font-size:12px;color:var(--sub)}
+  ul.checklist{list-style:none;margin:10px 0 0;padding:0;font-size:13px}
+  ul.checklist li{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
+  ul.checklist input{margin-top:3px}
+  audio{width:100%;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>IELTS Prep<small>built by Madhumitha Challa &mdash; free, original practice material</small></h1>
+  <nav id="nav"></nav>
+</header>
+<main id="main"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+let toastTimer=null;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2400)}
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+let tab=lsGet("ielts-tab")||"home";
+const TABS=[["home","Home"],["reading","Reading"],["listening","Listening"],["writing","Writing"],["speaking","Speaking"],["resources","Resources"]];
+
+function renderNav(){
+  $("#nav").innerHTML=TABS.map(([id,label])=>`<button data-t="${id}" class="${tab===id?"active":""}">${label}</button>`).join("");
+  $$("#nav button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;lsSet("ielts-tab",tab);render()});
+}
+
+/* ---------- Home ---------- */
+function home(){
+  const scores=lsGet("ielts-scores")||[];
+  $("#main").innerHTML=`
+    <h2>Practice IELTS, free</h2>
+    <p class="sub">Every passage, prompt and cue card on this site is <b>original material I wrote myself</b> &mdash; modeled on the real test's format and timing, never copied or adapted from IELTS.org, IDP or the British Council. For the real thing, see the Resources tab for their own official free samples.</p>
+    <div class="card soft">
+      <div class="pill">Reading</div>
+      <p style="margin:8px 0 0;font-size:14px">Two original passages, each with True/False/Not Given, multiple choice and fill-in-the-blank questions &mdash; instant scoring.</p>
+    </div>
+    <div class="card soft">
+      <div class="pill">Listening</div>
+      <p style="margin:8px 0 0;font-size:14px">An original transcript read aloud by your browser's own text-to-speech, then comprehension questions &mdash; no copyrighted audio involved.</p>
+    </div>
+    <div class="card soft">
+      <div class="pill">Writing</div>
+      <p style="margin:8px 0 0;font-size:14px">Task 1 (describe a chart) and Task 2 (essay) prompts, with a timer, live word count, and a plain-language self-review checklist.</p>
+    </div>
+    <div class="card soft">
+      <div class="pill">Speaking</div>
+      <p style="margin:8px 0 0;font-size:14px">Cue cards at the real test's timing (1 min prep, 2 min speaking) &mdash; records locally to your device for playback only, nothing uploaded anywhere.</p>
+    </div>
+    ${scores.length?`<h3 style="margin:22px 0 8px;font-size:15px">Your recent scores</h3>${scores.slice(-6).reverse().map(s=>`<div class="note" style="margin-bottom:6px">${s.section} &middot; ${s.label} &mdash; <b>${s.score}</b> &middot; ${new Date(s.at).toLocaleDateString()}</div>`).join("")}`:""}
+    <div class="note" style="margin-top:20px">Scores save to this browser only (localStorage) &mdash; nothing is sent anywhere, no account needed.</div>
+  `;
+}
+
+/* ---------- Reading ---------- */
+const READING_PASSAGES=[
+{
+  title:"Passage 1 &mdash; The Quiet Spread of Urban Beekeeping",
+  text:`Over the past decade, a growing number of city dwellers have taken up beekeeping on rooftops, balconies and in small community gardens. What began as a niche hobby among environmentally conscious residents has, in several major cities, become a recognised part of local food and biodiversity policy.
+
+Proponents argue that urban beekeeping offers several advantages over rural apiaries. Cities are often warmer than surrounding countryside, giving bees a longer active season. Urban green spaces, including parks and private gardens, frequently host a wider variety of flowering plants than large-scale monoculture farmland, which can mean a more varied diet for the bees and, in turn, a more complex honey flavour.
+
+However, the trend has not been without controversy. Some ecologists warn that a sudden concentration of managed honeybee colonies in a small area can place competitive pressure on wild, native pollinator species, such as solitary bees and bumblebees, which do not have beekeepers advocating on their behalf. Unlike honeybees, many native species are solitary, do not produce surplus honey, and are already in decline due to habitat loss — a trend that an influx of honeybees competing for the same limited flowers could make worse rather than better.
+
+City authorities have responded in different ways. Some have introduced hive registration schemes and caps on the number of hives permitted per hectare, partly to manage this competitive pressure and partly for public safety reasons. Others have taken the opposite approach, actively subsidising rooftop hives as part of broader "green roof" initiatives intended to improve building insulation and reduce stormwater runoff, with pollination treated as a welcome side effect rather than the primary goal.
+
+What is widely agreed upon, even among critics of the trend, is that the popularity of urban beekeeping has raised public awareness of pollinator decline in general — including among people who will never keep a hive themselves but who have, as a result, become more supportive of planting pollinator-friendly gardens and reducing pesticide use in public spaces.`,
+  questions:[
+    {type:"tfng", stem:"Urban beekeeping has become part of official policy in some cities.", answer:"true"},
+    {type:"tfng", stem:"All ecologists agree that urban beekeeping benefits native pollinator species.", answer:"false"},
+    {type:"tfng", stem:"The passage states that solitary bees produce less honey than honeybees do.", answer:"notgiven"},
+    {type:"mc", stem:"According to the passage, why might city-grown honey have a more complex flavour?", options:["Cities are colder than the countryside","Urban green spaces often have a wider variety of flowering plants","Honeybees in cities live longer","Urban hives are larger than rural ones"], answer:1},
+    {type:"mc", stem:"Why have some cities introduced caps on the number of hives per hectare?", options:["To increase honey production","To reduce the cost of beekeeping licences","Partly to manage competitive pressure on wild pollinators","To encourage more rooftop gardens"], answer:2},
+    {type:"fill", stem:"Even critics agree the trend has raised public ______ of pollinator decline.", answer:"awareness"}
+  ]
+},
+{
+  title:"Passage 2 &mdash; The Return of the Night Train",
+  text:`For much of the late twentieth century, overnight train travel across Europe was in steady decline, squeezed out by the rise of low-cost short-haul flights and high-speed daytime rail. By the early 2010s, many long-standing overnight routes connecting major capitals had been discontinued entirely, their rolling stock scrapped or sold off to operators in other regions.
+
+In the past few years, however, several national rail operators have reintroduced overnight services, and some have ordered newly built sleeper carriages for the first time in decades. Industry analysts point to a combination of factors behind this reversal. Rising environmental awareness has made travellers, particularly younger ones, more willing to accept a longer journey time in exchange for a substantially smaller carbon footprint compared with flying the same route. At the same time, some governments have introduced taxes or restrictions on short-haul domestic flights where a reasonable rail alternative exists, altering the economics in rail's favour.
+
+Operators have also had to rethink what passengers expect from an overnight journey. Older sleeper services were often associated with ageing carriages, shared compartments and limited privacy. New services increasingly offer solo pods with reading lights and charging points, pre-booked meals, and, on some routes, private shower facilities — features designed to appeal to business travellers as much as backpackers, a market the old overnight trains rarely tried to capture.
+
+Not every attempt has succeeded commercially. Several routes reinstated in the early 2020s were later suspended again after passenger numbers failed to cover operating costs, particularly on journeys where competing daytime high-speed rail already offered a fast, direct alternative. This suggests that the revival is strongest specifically on routes where no fast daytime alternative exists, rather than being a universal rebound for overnight rail as a mode of transport.`,
+  questions:[
+    {type:"tfng", stem:"Overnight train services declined in the late twentieth century partly due to competition from cheap flights.", answer:"true"},
+    {type:"tfng", stem:"Every overnight route reinstated since 2020 has been commercially successful.", answer:"false"},
+    {type:"tfng", stem:"The passage states the exact number of new sleeper routes launched since 2020.", answer:"notgiven"},
+    {type:"mc", stem:"What does the passage suggest changed passengers' willingness to accept longer journeys?", options:["Lower ticket prices than flying","Greater environmental awareness","Government subsidies for sleeper trains","Faster overnight travel speeds"], answer:1},
+    {type:"mc", stem:"According to the passage, new sleeper services target which group that older services did not?", options:["Backpackers","Business travellers","Daytime commuters","Airline passengers"], answer:1},
+    {type:"fill", stem:"The revival appears strongest on routes where no fast daytime ______ exists.", answer:"alternative"}
+  ]
+}];
+
+function scoreKey(secIdx){return "ielts-reading-"+secIdx}
+
+function reading(){
+  const pIdx = lsGet("ielts-reading-idx")||0;
+  const p = READING_PASSAGES[pIdx];
+  $("#main").innerHTML=`
+    <h2>Reading</h2>
+    <p class="sub">Original passage. Read it, then answer the questions below. These are practice formats (True/False/Not Given, multiple choice, fill-in-the-blank) &mdash; the same formats the real test uses, with content I wrote myself.</p>
+    <div class="bar" style="margin-bottom:14px">
+      ${READING_PASSAGES.map((pp,i)=>`<button class="ghost sm" data-pi="${i}" style="${i===pIdx?'background:var(--accent);color:#07140f;border-color:var(--accent);font-weight:700':''}">Passage ${i+1}</button>`).join("")}
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">${p.title}</h3>
+      <div class="passage">${p.text}</div>
+      <form id="rform">
+        ${p.questions.map((q,i)=>renderQ(q,i)).join("")}
+        <div class="bar"><button class="btn" type="submit">Check answers</button></div>
+        <div id="rresult"></div>
+      </form>
+    </div>
+  `;
+  $$("#main [data-pi]").forEach(b=>b.onclick=()=>{lsSet("ielts-reading-idx",+b.dataset.pi);reading()});
+  $("#rform").onsubmit=e=>{
+    e.preventDefault();
+    let correct=0;
+    p.questions.forEach((q,i)=>{
+      const el=$("#rresult_"+i);
+      const given=answerFor(q,i);
+      const ok=isCorrect(q,given);
+      if(ok)correct++;
+      el.textContent=ok?"Correct":`Not quite — correct answer: ${displayAnswer(q)}`;
+      el.className="result "+(ok?"correct":"wrong");
+    });
+    const pct=Math.round(100*correct/p.questions.length);
+    $("#rresult").insertAdjacentHTML("afterend",`<p class="score">Score: ${correct}/${p.questions.length} (${pct}%)</p>`);
+    const scores=lsGet("ielts-scores")||[];
+    scores.push({section:"Reading",label:p.title.replace(/&mdash;.*/,"").trim(),score:`${correct}/${p.questions.length}`,at:Date.now()});
+    lsSet("ielts-scores",scores);
+    toast("Score saved to this browser");
+  };
+}
+function renderQ(q,i){
+  if(q.type==="tfng"){
+    return `<div class="q"><p class="stem">${i+1}. ${q.stem}</p>
+      ${["true","false","notgiven"].map(v=>`<label class="opt"><input type="radio" name="q${i}" value="${v}">${v==="notgiven"?"Not Given":v[0].toUpperCase()+v.slice(1)}</label>`).join("")}
+      <div class="result" id="rresult_${i}"></div></div>`;
+  }
+  if(q.type==="mc"){
+    return `<div class="q"><p class="stem">${i+1}. ${q.stem}</p>
+      ${q.options.map((o,oi)=>`<label class="opt"><input type="radio" name="q${i}" value="${oi}">${o}</label>`).join("")}
+      <div class="result" id="rresult_${i}"></div></div>`;
+  }
+  return `<div class="q"><p class="stem">${i+1}. ${q.stem}</p>
+    <input type="text" name="q${i}" placeholder="Type one word">
+    <div class="result" id="rresult_${i}"></div></div>`;
+}
+function answerFor(q,i){
+  if(q.type==="fill")return ($(`[name="q${i}"]`)?.value||"").trim().toLowerCase();
+  const el=document.querySelector(`[name="q${i}"]:checked`);
+  return el?el.value:null;
+}
+function isCorrect(q,given){
+  if(given===null||given==="")return false;
+  if(q.type==="mc")return +given===q.answer;
+  if(q.type==="fill")return given===q.answer.toLowerCase();
+  return given===q.answer;
+}
+function displayAnswer(q){
+  if(q.type==="mc")return q.options[q.answer];
+  if(q.type==="tfng")return q.answer==="notgiven"?"Not Given":q.answer[0].toUpperCase()+q.answer.slice(1);
+  return q.answer;
+}
+
+/* ---------- Listening ---------- */
+const LISTENING=[{
+  title:"A campus library orientation",
+  transcript:`Good morning, everyone, and welcome to the library orientation session. My name is Mr. Ahern, and I'm one of the student services librarians here. Before we start the tour, let me give you a few key details.
+
+The main library building is open from seven in the morning until midnight during term time, but on weekends it closes earlier, at nine in the evening. If you need twenty-four hour access, there's a smaller study space on the second floor of the Hendricks building that stays open around the clock, but it doesn't hold any physical books — it's just desks and power outlets.
+
+Borrowing works differently depending on your enrollment type. Undergraduate students can borrow up to eight items at once, for a period of three weeks, with one renewal allowed if nobody else has requested the item. Postgraduate students get a higher limit of fifteen items, for four weeks at a time.
+
+If you need a book that's already checked out, you can place a hold through the online catalogue, and you'll get an email notification within two working days once it's ready for collection. Please note that the collection point is not at the main desk — it's a separate shelf near the east entrance, labelled "Holds."
+
+Finally, printing costs ten cents per black-and-white page and forty cents per colour page, and you can top up your printing account using the machine near the café on the ground floor.`,
+  questions:[
+    {stem:"What time does the library close on weekends during term time?", answer:"9pm", alt:["nine pm","nine","21:00","9:00pm","9 pm"]},
+    {stem:"How many items can an undergraduate student borrow at once?", answer:"8", alt:["eight"]},
+    {stem:"Where is the collection point for items placed on hold?", answer:"near the east entrance", alt:["east entrance","shelf near the east entrance"]},
+    {stem:"How much does one colour printed page cost?", answer:"40 cents", alt:["forty cents","0.40","$0.40","40c"]}
+  ]
+}];
+
+function listening(){
+  const l=LISTENING[0];
+  $("#main").innerHTML=`
+    <h2>Listening</h2>
+    <p class="sub">An original transcript, read aloud by your browser's built-in text-to-speech (no recorded audio, nothing copyrighted). Press play, listen once or twice, then answer from memory.</p>
+    <div class="card">
+      <h3 style="margin-top:0">${l.title}</h3>
+      <div class="bar">
+        <button class="btn" id="lplay">▶ Play</button>
+        <button class="ghost" id="lstop">Stop</button>
+        <button class="ghost" id="ltranscript">Show transcript</button>
+      </div>
+      <div class="passage" id="ltext" style="display:none;margin-top:14px">${l.transcript}</div>
+      <form id="lform" style="margin-top:16px">
+        ${l.questions.map((q,i)=>`<div class="q"><p class="stem">${i+1}. ${q.stem}</p><input type="text" name="lq${i}" placeholder="Your answer"><div class="result" id="lresult_${i}"></div></div>`).join("")}
+        <div class="bar"><button class="btn" type="submit">Check answers</button></div>
+        <div id="lscore"></div>
+      </form>
+    </div>
+    <div class="note">Text-to-speech voice and quality depends on your browser/device &mdash; if it sounds odd, "Show transcript" lets you read it instead.</div>
+  `;
+  let utter=null;
+  $("#lplay").onclick=()=>{
+    if(!("speechSynthesis" in window)){toast("Speech synthesis isn't supported in this browser — try Show transcript instead.");return}
+    window.speechSynthesis.cancel();
+    utter=new SpeechSynthesisUtterance(l.transcript);
+    utter.rate=0.95;
+    window.speechSynthesis.speak(utter);
+  };
+  $("#lstop").onclick=()=>window.speechSynthesis && window.speechSynthesis.cancel();
+  $("#ltranscript").onclick=()=>{const t=$("#ltext");t.style.display=t.style.display==="none"?"block":"none"};
+  $("#lform").onsubmit=e=>{
+    e.preventDefault();
+    let correct=0;
+    l.questions.forEach((q,i)=>{
+      const given=($(`[name="lq${i}"]`).value||"").trim().toLowerCase();
+      const ok=given===q.answer.toLowerCase()||(q.alt||[]).some(a=>a.toLowerCase()===given);
+      if(ok)correct++;
+      $("#lresult_"+i).textContent=ok?"Correct":`Not quite — accepted answer: ${q.answer}`;
+      $("#lresult_"+i).className="result "+(ok?"correct":"wrong");
+    });
+    $("#lscore").innerHTML=`<p class="score">Score: ${correct}/${l.questions.length}</p>`;
+    const scores=lsGet("ielts-scores")||[];
+    scores.push({section:"Listening",label:l.title,score:`${correct}/${l.questions.length}`,at:Date.now()});
+    lsSet("ielts-scores",scores);
+    toast("Score saved to this browser");
+  };
+}
+
+/* ---------- Writing ---------- */
+const WRITING_PROMPTS={
+  task1:[
+    "The chart below shows the percentage of households in three countries with access to high-speed internet between 2000 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words.",
+    "The diagram below shows the process of how recycled paper is produced from used paper. Summarise the information by describing the main stages of the process. Write at least 150 words."
+  ],
+  task2:[
+    "Some people believe that university education should be free for all students, while others think students should pay for at least part of the cost. Discuss both views and give your own opinion. Write at least 250 words.",
+    "In many countries, more people are choosing to live alone than in the past. What do you think are the causes of this trend, and what effects does it have on society? Write at least 250 words."
+  ]
+};
+function writing(){
+  const t1 = lsGet("ielts-w-t1idx")||0, t2 = lsGet("ielts-w-t2idx")||0;
+  $("#main").innerHTML=`
+    <h2>Writing</h2>
+    <p class="sub">Original prompts in the same two-task format as the real test. Write directly below &mdash; nothing is uploaded, this is for your own practice and self-review.</p>
+    <div class="card">
+      <div class="bar" style="margin-bottom:10px"><span class="pill">Task 1 &middot; aim for 20 min</span>
+        <button class="ghost sm" id="t1next">Different prompt</button></div>
+      <p style="font-size:14px">${WRITING_PROMPTS.task1[t1]}</p>
+      <textarea id="t1text" placeholder="Write your Task 1 response here…"></textarea>
+      <div class="wc" id="t1wc">0 words</div>
+    </div>
+    <div class="card">
+      <div class="bar" style="margin-bottom:10px"><span class="pill">Task 2 &middot; aim for 40 min</span>
+        <button class="ghost sm" id="t2next">Different prompt</button></div>
+      <p style="font-size:14px">${WRITING_PROMPTS.task2[t2]}</p>
+      <textarea id="t2text" placeholder="Write your Task 2 response here…"></textarea>
+      <div class="wc" id="t2wc">0 words</div>
+    </div>
+    <div class="card soft">
+      <h3 style="margin-top:0;font-size:15px">Self-review checklist</h3>
+      <ul class="checklist">
+        <li><input type="checkbox">Did I fully answer every part of the question?</li>
+        <li><input type="checkbox">Is there a clear structure (intro, body paragraphs, conclusion for Task 2)?</li>
+        <li><input type="checkbox">Did I use a range of vocabulary, not repeating the same words?</li>
+        <li><input type="checkbox">Are my sentences a mix of simple and complex structures?</li>
+        <li><input type="checkbox">Did I check grammar and spelling?</li>
+        <li><input type="checkbox">Did I meet the minimum word count?</li>
+      </ul>
+    </div>
+  `;
+  const wc=(ta,out)=>{const n=(ta.value.trim().match(/\S+/g)||[]).length;out.textContent=n+" words"};
+  $("#t1text").oninput=()=>wc($("#t1text"),$("#t1wc"));
+  $("#t2text").oninput=()=>wc($("#t2text"),$("#t2wc"));
+  $("#t1next").onclick=()=>{lsSet("ielts-w-t1idx",(t1+1)%WRITING_PROMPTS.task1.length);writing()};
+  $("#t2next").onclick=()=>{lsSet("ielts-w-t2idx",(t2+1)%WRITING_PROMPTS.task2.length);writing()};
+}
+
+/* ---------- Speaking ---------- */
+const CUE_CARDS=[
+  "Describe a skill you taught yourself. You should say: what the skill is, how you learned it, how long it took, and explain why you decided to learn it.",
+  "Describe a place you visited that you found peaceful. You should say: where it was, when you went there, what you did there, and explain why you found it peaceful.",
+  "Describe a decision that was difficult to make. You should say: what the decision was, when you made it, what the alternatives were, and explain why it was difficult."
+];
+function speaking(){
+  const idx=lsGet("ielts-s-idx")||0;
+  $("#main").innerHTML=`
+    <h2>Speaking &mdash; Part 2</h2>
+    <p class="sub">Original cue card, real test timing: 1 minute to prepare, then speak for up to 2 minutes. Recording stays on this device for your own playback &mdash; nothing is uploaded.</p>
+    <div class="card">
+      <div class="bar" style="margin-bottom:10px"><span class="pill">Cue card</span><button class="ghost sm" id="snext">Different card</button></div>
+      <p style="font-size:14.5px">${CUE_CARDS[idx]}</p>
+      <div class="bar" style="align-items:center;gap:18px;margin-top:16px">
+        <div class="timer" id="stimer">1:00</div>
+        <button class="btn" id="sstart">Start preparation</button>
+        <button class="ghost" id="sreset" style="display:none">Reset</button>
+      </div>
+      <div id="srecordWrap" style="display:none;margin-top:14px">
+        <div class="bar">
+          <button class="btn" id="srec">● Record</button>
+          <button class="ghost" id="sstop" style="display:none">■ Stop</button>
+        </div>
+        <audio id="splayback" controls style="display:none"></audio>
+      </div>
+      <div class="note" id="smicnote" style="margin-top:12px">Recording needs mic permission from your browser — if it's blocked, you can still use the timer and just speak out loud without saving a recording.</div>
+    </div>
+  `;
+  $("#snext").onclick=()=>{lsSet("ielts-s-idx",(idx+1)%CUE_CARDS.length);speaking()};
+  let phase="prep", remaining=60, timerInt=null, stream=null, recorder=null, chunks=[];
+  const timerEl=$("#stimer");
+  function tick(){
+    remaining--;
+    const m=Math.floor(remaining/60), s=remaining%60;
+    timerEl.textContent=`${m}:${String(s).padStart(2,"0")}`;
+    if(remaining<=0){
+      clearInterval(timerInt);
+      if(phase==="prep"){
+        phase="speak"; remaining=120;
+        toast("Prep over — start speaking");
+        $("#srecordWrap").style.display="block";
+        timerInt=setInterval(tick,1000);
+      } else {
+        toast("Time's up");
+        if(recorder && recorder.state==="recording")recorder.stop();
+      }
+    }
+  }
+  $("#sstart").onclick=()=>{
+    $("#sstart").disabled=true;
+    $("#sreset").style.display="inline-block";
+    phase="prep"; remaining=60;
+    timerInt=setInterval(tick,1000);
+  };
+  $("#sreset").onclick=()=>speaking();
+  $("#srec").onclick=async ()=>{
+    try{
+      stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      recorder=new MediaRecorder(stream);
+      chunks=[];
+      recorder.ondataavailable=e=>chunks.push(e.data);
+      recorder.onstop=()=>{
+        const blob=new Blob(chunks,{type:"audio/webm"});
+        const url=URL.createObjectURL(blob);
+        const pb=$("#splayback"); pb.src=url; pb.style.display="block";
+        stream.getTracks().forEach(t=>t.stop());
+      };
+      recorder.start();
+      $("#srec").style.display="none"; $("#sstop").style.display="inline-block";
+    }catch(e){ $("#smicnote").textContent="Mic access was blocked or unavailable — you can still practice out loud using just the timer."; }
+  };
+  $("#sstop").onclick=()=>{ if(recorder)recorder.stop(); $("#sstop").style.display="none"; $("#srec").style.display="inline-block"; };
+}
+
+/* ---------- Resources ---------- */
+function resources(){
+  $("#main").innerHTML=`
+    <h2>Official &amp; free resources</h2>
+    <p class="sub">For the real test experience, go straight to the organisations that actually run it. These links point to their own published free material — nothing on this page is copied from them.</p>
+    <div class="card"><h3 style="margin-top:0;font-size:16px">IELTS.org</h3>
+      <p style="font-size:14px">The official test body's own site, with free sample test questions for all four sections.</p>
+      <a href="https://ielts.org" target="_blank" rel="noopener">ielts.org ↗</a></div>
+    <div class="card"><h3 style="margin-top:0;font-size:16px">IDP IELTS</h3>
+      <p style="font-size:14px">One of the official test delivery partners, with free practice tests and test-day booking.</p>
+      <a href="https://ielts.idp.com" target="_blank" rel="noopener">ielts.idp.com ↗</a></div>
+    <div class="card"><h3 style="margin-top:0;font-size:16px">British Council</h3>
+      <p style="font-size:14px">The other official test delivery partner, also publishing free practice material and preparation tips.</p>
+      <a href="https://www.britishcouncil.org/exam/ielts" target="_blank" rel="noopener">britishcouncil.org/exam/ielts ↗</a></div>
+    <div class="note">Why this site doesn't reproduce their material directly: official IELTS, IDP and British Council test content is copyrighted commercial material. Everything you practice with here was written from scratch, in the same format and timing as the real test, so you get extra practice without anyone's copyright being infringed.</div>
+  `;
+}
+
+function render(){
+  renderNav();
+  ({home,reading,listening,writing,speaking,resources})[tab]();
+}
+render();
+</script>
+<div style="max-width:760px;margin:0 auto;padding:0 18px">
+  <p class="footerline">© 2026 Madhumitha Challa. All practice content on this page is original and written by her; this project is not affiliated with, endorsed by, or reviewed by IELTS, IDP Education or the British Council. All trademarks belong to their respective owners.</p>
+</div>
+</body>
+</html>
