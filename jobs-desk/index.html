@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Job Desk</title>
+<title>Job Desk, by Madhumitha Challa</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: left rail of tabs on desktop, bottom tab bar on phone; ink-navy study-lamp palette */
@@ -61,8 +61,8 @@ button.sm{padding:3px 8px;font-size:12px}a.lnk{text-decoration:none;color:var(--
 </style>
 <div class="app">
 <nav role="tablist" aria-label="Sections">
-<h1>Job Desk<small>a free template &mdash; your data stays in your own Airtable</small></h1>
-<button role="tab" data-t="tracker">Tracker</button><button role="tab" data-t="portals">Portals</button><button role="tab" data-t="learn">Learn</button>
+<h1>Job Desk<small>built by Madhumitha Challa &mdash; try it free, your data stays your own</small></h1>
+<button role="tab" data-t="guide">Setup guide</button><button role="tab" data-t="tracker">Tracker</button><button role="tab" data-t="portals">Portals</button><button role="tab" data-t="learn">Learn</button>
 <button role="tab" data-t="profile">My profile &amp; work rights</button><button role="tab" data-t="check">Resume check</button><button role="tab" data-t="assistant">Assistant</button><button role="tab" data-t="ach">Achievements</button><button role="tab" data-t="reply">Reply guide</button><button role="tab" data-t="settings">Privacy &amp; consent</button>
 <button class="ghost" id="theme" style="margin:12px 8px;width:auto">Theme</button>
 </nav>
@@ -262,10 +262,32 @@ function makeAirtableDb(cfg){
   }
  };
 }
+/* Zero-setup fallback: tracking works immediately with no account and no Airtable, stored only
+   in this browser's localStorage. Connecting Airtable later is an upgrade (sync across browsers
+   and devices), never a requirement to use the tracker at all. */
+function makeLocalDb(){
+ const KEY="jd-local-apps";
+ const read=()=>lsGet(KEY)||{};
+ const write=o=>lsSet(KEY,o);
+ const listeners=[];
+ const notify=()=>{const obj=read();listeners.forEach(f=>f({docs:Object.keys(obj).map(id=>({id,data:()=>obj[id]}))}))};
+ return{
+  collection(name){if(name!=="applications")return{onSnapshot(){}};return{onSnapshot(cb){listeners.push(cb);notify()}}},
+  doc(path){
+   if(path==="prefs/main")return{set:async v=>{lsSet("jd-prefs",v)},onSnapshot(){}};
+   if(!path.startsWith("applications/"))return{set:async()=>{},update:async()=>{},onSnapshot(){}};
+   const id=path.split("/")[1];
+   return{
+    update:async o=>{const obj=read();obj[id]=Object.assign({id},obj[id]||{},o);write(obj);notify()},
+    set:async o=>{const obj=read();obj[id]=Object.assign({id},o);write(obj);notify()}
+   };
+  }
+ };
+}
 async function getDb(){
  if(window.claude&&window.claude.use){return await window.claude.use("db")}
- const cfg=atCfg();if(!cfg){showConnect();return null}
- atDisconnectLink();return makeAirtableDb(cfg);
+ const cfg=atCfg();if(cfg){atDisconnectLink();return makeAirtableDb(cfg)}
+ return makeLocalDb();
 }
 
 /* Optional account sync: bring-your-own Firebase, used only to carry the Profile tab (work
@@ -333,15 +355,70 @@ function fbAccountBlock(){
 function fbAccountHandlers(){
  const c=$("#fbConnectBtn");if(c)c.onclick=showFbConnect;
  const dc=$("#fbDisconnectBtn");if(dc)dc.onclick=()=>{fbClearCfg();toast("Disconnected");render()};
- const si=$("#fbSignInBtn");if(si)si.onclick=async()=>{try{await fbSignIn($("#fbEmail").value.trim(),$("#fbPass").value)}catch(e){toast("Sign in failed: check email and password")}};
- const su=$("#fbSignUpBtn");if(su)su.onclick=async()=>{try{await fbSignUp($("#fbEmail").value.trim(),$("#fbPass").value)}catch(e){toast("Could not create account: "+(e.code||"try a different password"))}};
- const g=$("#fbGoogleBtn");if(g)g.onclick=async()=>{try{await fbGoogle()}catch(e){toast("Google sign-in failed")}};
+ const si=$("#fbSignInBtn");if(si)si.onclick=async()=>{try{await fbSignIn($("#fbEmail").value.trim(),$("#fbPass").value);toast("Signed in. Head to My profile & work rights to fill in your details.")}catch(e){toast("Sign in failed: check email and password")}};
+ const su=$("#fbSignUpBtn");if(su)su.onclick=async()=>{try{await fbSignUp($("#fbEmail").value.trim(),$("#fbPass").value);toast("Account created. Head to My profile & work rights to fill in your details.")}catch(e){toast("Could not create account: "+(e.code||"try a different password"))}};
+ const g=$("#fbGoogleBtn");if(g)g.onclick=async()=>{try{await fbGoogle();toast("Signed in. Head to My profile & work rights to fill in your details.")}catch(e){toast("Google sign-in failed")}};
  const so=$("#fbSignOutBtn");if(so)so.onclick=async()=>{await fbSignOut();toast("Signed out")};
+}
+
+/* First-run welcome: replaces a cold credentials modal as the first thing a visitor sees.
+   Shown once (localStorage jd-welcomed), explains the tool, asks for a one-line agreement,
+   and offers sign-in as a choice rather than a gate. */
+function jdShowWelcome(){
+ if(lsGet("jd-welcomed"))return;
+ const d=document.createElement("div");
+ d.style.cssText="position:fixed;inset:0;background:rgba(10,12,16,.92);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto";
+ d.innerHTML='<div style="max-width:480px;width:100%;background:var(--panel,#1c2029);color:var(--ink,#e8e6df);border:1px solid var(--line,#2b303b);border-radius:14px;padding:26px;display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow:auto">'
+  +'<h2 style="margin:0">Welcome to Job Desk</h2>'
+  +'<p style="margin:0;font-size:14px;opacity:.85">This is the real job search system I built and use for my own search — tracker, resume and ATS check, a curated portal list, and general work rights guidance — shared here so you can run your own copy of it. Your data is yours alone: nothing is stored anywhere but this browser, unless you choose to connect your own Firebase (for an account) or Airtable (for a synced tracker). Neither is required to start.</p>'
+  +'<label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;opacity:.85"><input type="checkbox" id="jdAgree" style="margin-top:3px">I understand this is a free template with no warranty, my data is mine alone (this browser, or my own Firebase and Airtable if I connect them, never Madhumitha’s), and anything here about visas or eligibility is general information, not legal or migration advice.</label>'
+  +'<div class="bar"><button class="btn" id="jdSignIn" disabled>Sign up or log in</button><button class="ghost" id="jdSkip" disabled>Just let me browse</button></div>'
+  +'<p style="margin:0;font-size:12px;opacity:.6">Full setup steps for an account, a synced tracker, or running the full automation yourself are in the Setup guide tab any time.</p>'
+  +'</div>';
+ document.body.appendChild(d);
+ const agree=d.querySelector("#jdAgree"),bSignIn=d.querySelector("#jdSignIn"),bSkip=d.querySelector("#jdSkip");
+ agree.onchange=()=>{bSignIn.disabled=bSkip.disabled=!agree.checked};
+ const finish=()=>{lsSet("jd-welcomed",true);d.remove()};
+ bSignIn.onclick=()=>{finish();tab="settings";render();setTimeout(()=>{if(!fbCfg())showFbConnect()},50)};
+ bSkip.onclick=finish;
+}
+
+function guide(){
+ $("#main").innerHTML=`<h2>Setup guide</h2><p class="sub">Everything below is optional. The Tracker, Portals, Learn, Resume check and Assistant tabs all work right now with nothing connected — your tracked roles just stay in this browser. Connect an account or Airtable only if you want your data to follow you across devices. These are text steps, not screenshots: Firebase and Airtable's own screens change over time, so the exact button to press is named instead of pictured.</p>
+ <h3 style="font:600 18px var(--display);margin:18px 0 6px">1. Just use it (no setup)</h3>
+ <div class="note">Open Tracker and use Add role. It is saved in this browser only. Nothing to connect, nothing to sign up for.</div>
+ <h3 style="font:600 18px var(--display);margin:18px 0 6px">2. Optional: create an account (your own Firebase)</h3>
+ <p class="sub">Lets your Profile tab (work rights, skills, saved answers) follow you to another browser or device.</p>
+ <ol class="sub" style="padding-left:18px">
+  <li>Go to the Firebase console and create a new project (free Spark plan is enough).</li>
+  <li>In that project: Build &gt; Authentication &gt; Get started &gt; enable Email/Password (and Google if you want it).</li>
+  <li>Build &gt; Firestore Database &gt; Create database &gt; start in production mode.</li>
+  <li>Project settings (gear icon) &gt; General &gt; Your apps &gt; Add app &gt; Web, and copy the six config values it gives you.</li>
+  <li>In Firestore &gt; Rules, paste the rule shown when you press Connect your Firebase below, then Publish.</li>
+  <li>Come back here, go to Privacy &amp; consent, press Connect your Firebase, and paste those six values in.</li>
+ </ol>
+ <div class="bar"><button class="btn" id="gdFb" type="button">Connect your Firebase now</button></div>
+ <h3 style="font:600 18px var(--display);margin:18px 0 6px">3. Optional: a tracker synced across browsers (your own Airtable)</h3>
+ <ol class="sub" style="padding-left:18px">
+  <li>Create a free Airtable account and a new base.</li>
+  <li>Add a table with these columns (names matter): Role ID, Company, Role Title, Location, Salary, Closing Date, Priority, Tier, Status, Source, Apply URL, Applied Date, Pinned, Notes, Portal Category, Employer Type, Function, Level.</li>
+  <li>In Airtable: Account &gt; Developer hub &gt; Personal access tokens &gt; Create token, scoped to this one base, with data.records:read and data.records:write.</li>
+  <li>The base ID (starts app) and table ID (starts tbl) are in the base's API documentation page, or in its URL.</li>
+  <li>Press Connect your Airtable below and paste the token, base ID and table ID in.</li>
+ </ol>
+ <div class="bar"><button class="btn" id="gdAt" type="button">Connect your Airtable now</button></div>
+ <h3 style="font:600 18px var(--display);margin:18px 0 6px">4. Optional: run the full automation yourself</h3>
+ <p class="sub">This site is a tracker and a set of checks you use by hand. The actual search-and-apply agent (nightly search, tailored resume and cover letter per role, approval-gated applying, never submitting without you) is a separate Claude skill you run with your own Claude account and your own job data — none of it goes through Madhumitha.</p>
+ <div class="bar"><a class="btn" href="jobs-automation-skill.zip" download>Download the skill (.zip)</a></div>
+ <p class="sub">To use it: in Claude, add it as a skill (claude.ai Settings &gt; Capabilities &gt; Skills &gt; upload, or for Claude Code drop the unzipped folder into your project's .claude/skills/). Open the skill's own README.md first and fill in your own details where it asks — it ships with none of Madhumitha's.</p>
+ <p class="foot">© 2026 Madhumitha Challa. All rights reserved.</p>`;
+ const gfb=$("#gdFb");if(gfb)gfb.onclick=()=>{tab="settings";render();setTimeout(()=>{if(!fbCfg())showFbConnect();else toast("Already connected — see Privacy & consent to sign in")},50)};
+ const gat=$("#gdAt");if(gat)gat.onclick=showConnect;
 }
 
 function savePrefs(){lsSet("jd-prefs",prefs); if(db){db.doc("prefs/main").set(prefs).catch(()=>{})}}
 function daysTo(d){if(!d)return null;const t=new Date(d+"T00:00:00");return Math.round((t-new Date(new Date().toDateString()))/864e5)}
-function render(){document.querySelectorAll("nav [role=tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===tab));({tracker,portals,learn,profile,check,assistant,ach,respond,reply,settings})[tab]();if(!document.querySelector("#main .foot")){const f=document.createElement("p");f.className="foot";f.textContent="© 2026 Madhumitha Challa. All rights reserved. Private. Your data stays in your own space.";$("#main").appendChild(f)}}
+function render(){document.querySelectorAll("nav [role=tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===tab));({tracker,portals,learn,profile,check,assistant,ach,respond,reply,settings,guide})[tab]();if(!document.querySelector("#main .foot")){const f=document.createElement("p");f.className="foot";f.textContent="© 2026 Madhumitha Challa. All rights reserved. Private. Your data stays in your own space.";$("#main").appendChild(f)}}
 function counts(){const c={};STATUSES.forEach(s=>c[s]=0);apps.forEach(a=>{c[a.status]=(c[a.status]||0)+1});return c}
 function pastDue(a){return a.closing&&!DONE.includes(a.status)&&daysTo(a.closing)<0}
 function upd(id,obj,msg){if(!db)return toast("Sign in as the owner to change the tracker");db.doc("applications/"+id).update(obj).then(()=>msg&&toast(msg),()=>toast("Could not save. Try again."))}
@@ -381,7 +458,7 @@ function tracker(){const c=counts(),applied=c.Applied+c.Interview+c.Offer+c.Reje
  <button class="btn" id="add">Add role</button></div>
  <div class="dbar"><select id="dt" aria-label="Date filter type">${DTYPES.map(x=>`<option value="${x[0]}" ${filter.dtype===x[0]?"selected":""}>${x[1]}</option>`).join("")}</select><input type="date" id="dd" value="${esc(filter.date)}" aria-label="Date"><button class="ghost" id="dtoday">Today</button><label><input type="checkbox" id="dall" ${filter.dall?"checked":""}> All dates</label><label><input type="checkbox" id="dnod" ${filter.nodate?"checked":""}> Include roles with no closing date</label><span style="color:var(--muted);font-size:13px">${list.length} of ${apps.length} shown</span></div>
  <div id="addbox" hidden class="bar"><input id="nc" placeholder="Company"><input id="nt" placeholder="Role title"><input id="nu" placeholder="Link (optional, https)"><input id="nd" type="date" aria-label="Closing date"><button class="btn" id="nsave">Save</button></div>
- ${list.length?`<div class="tw"><table><thead><tr><th></th><th>ID</th><th>Company</th><th>Role</th><th>Closes</th><th>Priority</th><th>Status</th><th>Link</th></tr></thead><tbody>${list.map(a=>{const d=daysTo(a.closing),href=safeHref(a.url),short=/to\.indeed\.com/.test(a.url||"");return `<tr><td><button class="star" data-pin="${esc(a.id)}" aria-pressed="${!!a.pinned}" aria-label="Pin">${a.pinned?"★":"☆"}</button></td><td class="id">${esc(a.id)}</td><td>${esc(a.company)}</td><td>${esc(a.title)}<br><small style="color:var(--muted)">${esc(a.location||"")}${a.portalCategory?" · "+esc(a.portalCategory):""}${a.function?" · "+esc(a.function):""}${a.source==="Imported"?" · imported":""}</small></td><td>${a.closing?esc(a.closing)+(d!=null?`<br><small style="color:var(--${d<0?"bad":d<=2?"warn":"muted"})">${d<0?-d+"d ago":d+"d left"}</small>`:""):'<small style="color:var(--warn)">not listed</small>'}</td><td><span class="pill p-${esc(a.priority)}">${esc(a.priority||"")}</span></td><td><select data-st="${esc(a.id)}" aria-label="Status for ${esc(a.id)}">${STATUSES.map(s=>`<option ${a.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td>${href?`<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">Open</a>${short?'<br><small style="color:var(--muted)">via Indeed</small>':""}`:""}<br><a href="${esc(findUrl(a))}" target="_blank" rel="noopener noreferrer"><small>${href?"Find employer page":"Find link"}</small></a><br><button class="ghost sm" data-al="${esc(a.id)}">Paste link</button>${openLink===a.id?`<div class="bar" style="margin:6px 0 0"><input data-linkin="${esc(a.id)}" placeholder="https://..." aria-label="Link for ${esc(a.id)}"><button class="btn sm" data-ls2="${esc(a.id)}">Save</button></div>`:""}${docsHtml(a)}<div class="docs">${shareHtml(a)}</div></td></tr>`}).join("")}</tbody></table></div>`:`<div class="empty">${db?"No roles match.":"Connect your Airtable to see the tracker. This site holds no data of its own."}</div>`}`;
+ ${list.length?`<div class="tw"><table><thead><tr><th></th><th>ID</th><th>Company</th><th>Role</th><th>Closes</th><th>Priority</th><th>Status</th><th>Link</th></tr></thead><tbody>${list.map(a=>{const d=daysTo(a.closing),href=safeHref(a.url),short=/to\.indeed\.com/.test(a.url||"");return `<tr><td><button class="star" data-pin="${esc(a.id)}" aria-pressed="${!!a.pinned}" aria-label="Pin">${a.pinned?"★":"☆"}</button></td><td class="id">${esc(a.id)}</td><td>${esc(a.company)}</td><td>${esc(a.title)}<br><small style="color:var(--muted)">${esc(a.location||"")}${a.portalCategory?" · "+esc(a.portalCategory):""}${a.function?" · "+esc(a.function):""}${a.source==="Imported"?" · imported":""}</small></td><td>${a.closing?esc(a.closing)+(d!=null?`<br><small style="color:var(--${d<0?"bad":d<=2?"warn":"muted"})">${d<0?-d+"d ago":d+"d left"}</small>`:""):'<small style="color:var(--warn)">not listed</small>'}</td><td><span class="pill p-${esc(a.priority)}">${esc(a.priority||"")}</span></td><td><select data-st="${esc(a.id)}" aria-label="Status for ${esc(a.id)}">${STATUSES.map(s=>`<option ${a.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td>${href?`<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">Open</a>${short?'<br><small style="color:var(--muted)">via Indeed</small>':""}`:""}<br><a href="${esc(findUrl(a))}" target="_blank" rel="noopener noreferrer"><small>${href?"Find employer page":"Find link"}</small></a><br><button class="ghost sm" data-al="${esc(a.id)}">Paste link</button>${openLink===a.id?`<div class="bar" style="margin:6px 0 0"><input data-linkin="${esc(a.id)}" placeholder="https://..." aria-label="Link for ${esc(a.id)}"><button class="btn sm" data-ls2="${esc(a.id)}">Save</button></div>`:""}${docsHtml(a)}<div class="docs">${shareHtml(a)}</div></td></tr>`}).join("")}</tbody></table></div>`:`<div class="empty">${apps.length?"No roles match.":"Nothing tracked yet. Use Add role above, or <button class='btn sm' onclick='showConnect()' type='button'>connect your Airtable</button> for a tracker synced across your own browsers."}</div>`}`;
  $("#q").oninput=e=>{filter.q=e.target.value;tracker();const q=$("#q");q.focus();q.setSelectionRange(99,99)};
  document.querySelectorAll("[data-mf]").forEach(c=>c.onchange=()=>{const k=c.dataset.mf,arr=filter[k];filter[k]=c.checked?arr.concat(c.value):arr.filter(x=>x!==c.value);openMenu=k;tracker()});
  document.querySelectorAll("[data-mclr]").forEach(b=>b.onclick=()=>{filter[b.dataset.mclr]=[];openMenu=b.dataset.mclr;tracker()});
@@ -645,6 +722,7 @@ document.querySelectorAll("nav [role=tab]").forEach(b=>b.onclick=()=>{tab=b.data
 $("#theme").onclick=()=>{const r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);r.dataset.theme=d?"light":"dark"};
 prefs=Object.assign(prefs,lsGet("jd-prefs")||{});render();
 fbInit();
+jdShowWelcome();
 (async()=>{try{try{dls=await claude.use("downloads")}catch(e){}db=await getDb();if(!db)return;
  db.doc("meta/refresh").onSnapshot(s=>{refresh=(s.data&&s.data())||null;if(tab==="tracker")render()},()=>{});
  db.collection("documents").onSnapshot(s=>{docs=s.docs.map(d=>({id:d.id,...d.data()}));if(tab==="tracker")render()},()=>{});
