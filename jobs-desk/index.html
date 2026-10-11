@@ -368,19 +368,27 @@ function jdShowWelcome(){
  if(lsGet("jd-welcomed"))return;
  const d=document.createElement("div");
  d.style.cssText="position:fixed;inset:0;background:rgba(10,12,16,.92);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto";
- d.innerHTML='<div style="max-width:480px;width:100%;background:var(--panel,#1c2029);color:var(--ink,#e8e6df);border:1px solid var(--line,#2b303b);border-radius:14px;padding:26px;display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow:auto">'
+ d.innerHTML='<div style="max-width:520px;width:100%;background:var(--panel,#1c2029);color:var(--ink,#e8e6df);border:1px solid var(--line,#2b303b);border-radius:14px;padding:26px;display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow:auto">'
   +'<h2 style="margin:0">Welcome to Job Desk</h2>'
-  +'<p style="margin:0;font-size:14px;opacity:.85">This is the real job search system I built and use for my own search — tracker, resume and ATS check, a curated portal list, and general work rights guidance — shared here so you can run your own copy of it. Your data is yours alone: nothing is stored anywhere but this browser, unless you choose to connect your own Firebase (for an account) or Airtable (for a synced tracker). Neither is required to start.</p>'
+  +'<p style="margin:0;font-size:14px;opacity:.85">This is the real job search system I built and use for my own search, shared here so you can run your own copy of it. What&#39;s inside:</p>'
+  +'<ul style="margin:0;padding-left:18px;font-size:13px;opacity:.85;display:flex;flex-direction:column;gap:4px">'
+  +'<li><b>Tracker</b> — save and follow up on roles you&#39;re applying to</li>'
+  +'<li><b>Resume check</b> — a quick ATS-style pass over your resume</li>'
+  +'<li><b>Portals</b> — a curated list of where to actually look</li>'
+  +'<li><b>Learn</b> &amp; <b>Assistant</b> — work rights guidance and help answering application questions</li>'
+  +'</ul>'
+  +'<p style="margin:0;font-size:13px;opacity:.85">Your data is yours alone: by default everything stays in this browser only, and nothing is ever visible to me. Connecting your own Firebase (for an account) or Airtable (for a synced tracker) is entirely optional and explained step by step in the Setup guide tab.</p>'
   +'<label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;opacity:.85"><input type="checkbox" id="jdAgree" style="margin-top:3px">I understand this is a free template with no warranty, my data is mine alone (this browser, or my own Firebase and Airtable if I connect them, never Madhumitha’s), and anything here about visas or eligibility is general information, not legal or migration advice.</label>'
-  +'<div class="bar"><button class="btn" id="jdSignIn" disabled>Sign up or log in</button><button class="ghost" id="jdSkip" disabled>Just let me browse</button></div>'
-  +'<p style="margin:0;font-size:12px;opacity:.6">Full setup steps for an account, a synced tracker, or running the full automation yourself are in the Setup guide tab any time.</p>'
+  +'<div class="bar"><button class="btn" id="jdSkip" disabled>Start now — no account needed</button><button class="ghost" id="jdSignIn" disabled>Set up an account</button></div>'
+  +'<p style="margin:0;font-size:12px;opacity:.6">"Set up an account" walks you through connecting your own free Firebase project (about 5 minutes, step by step) so your profile follows you to another device — skip it any time and nothing stops working.</p>'
+  +'<p style="margin:0;font-size:11px;opacity:.5">© 2026 Madhumitha Challa. This tool, its design and its code are hers; it&#39;s shared here for you to use freely, not to republish as your own.</p>'
   +'</div>';
  document.body.appendChild(d);
  const agree=d.querySelector("#jdAgree"),bSignIn=d.querySelector("#jdSignIn"),bSkip=d.querySelector("#jdSkip");
  agree.onchange=()=>{bSignIn.disabled=bSkip.disabled=!agree.checked};
  const finish=()=>{lsSet("jd-welcomed",true);d.remove()};
- bSignIn.onclick=()=>{finish();tab="settings";render();setTimeout(()=>{if(!fbCfg())showFbConnect()},50)};
- bSkip.onclick=finish;
+ bSignIn.onclick=()=>{finish();tab="settings";render();toast("Connecting an account needs your own free Firebase project — see below.");setTimeout(()=>{if(!fbCfg())showFbConnect()},300)};
+ bSkip.onclick=()=>{finish();tab="tracker";render();toast("You're set — nothing to connect. Add a role to try it.")};
 }
 
 function guide(){
