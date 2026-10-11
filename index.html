@@ -713,6 +713,8 @@
   .cat-violet .skills-cat-dot{background:var(--violet);}
   .cat-violet .dash.on{background:#9B7EDE;}
   .cat-green .skills-cat-dot{background:var(--green);}
+  .cat-slate .skills-cat-dot{background:var(--slate);}
+  .cat-slate .tag{display:inline-block;}
   .cat-green .dash.on{background:#4ADE80;}
 
   /* chat widget */
@@ -2662,6 +2664,60 @@
         });
       })
       .catch(() => { /* rate-limited or offline — existing hand-written cards still show */ });
+  })();
+
+  // Skills & stack auto-addendum — this is the actual sync logic, not a one-off edit: any
+  // technology named in a Project's tag row, or in an Experience entry's own "Skills:" line,
+  // that isn't already named anywhere in Skills & Stack (by exact match or as a substring of
+  // an existing skill, e.g. "AWS" already covers "AWS Lambda") gets listed in a trailing
+  // "Also showing up in recent work" row, generated fresh on every page load. Add a new
+  // project or a Skills: line to an experience entry and it shows up here with no manual
+  // re-sync of this section ever again.
+  (function(){
+    const skillsGroups = document.querySelector('#skills .skills-groups');
+    if (!skillsGroups) return;
+
+    const existing = new Set();
+    skillsGroups.querySelectorAll('.skill-name, .skills-cat-label').forEach(el => existing.add(el.textContent.trim().toLowerCase()));
+
+    const BLOCKLIST = new Set(['planned', 'graduate technology programs']);
+    const found = new Map();
+
+    function consider(raw){
+      const clean = String(raw).replace(/\s+/g, ' ').trim().replace(/\.$/, '');
+      if (!clean) return;
+      const lc = clean.toLowerCase();
+      if (BLOCKLIST.has(lc)) return;
+      const covered = [...existing].some(e => e === lc || e.includes(lc) || lc.includes(e));
+      if (covered) return;
+      if (!found.has(lc)) found.set(lc, clean);
+    }
+
+    document.querySelectorAll('.project .tags .tag').forEach(el => consider(el.textContent));
+
+    document.querySelectorAll('#experience .exp-detail').forEach(el => {
+      const m = el.innerHTML.match(/<strong>Skills:<\/strong>\s*([^<]+)/i);
+      if (!m) return;
+      const tmp = document.createElement('div');
+      tmp.innerHTML = m[1];
+      tmp.textContent.split(',').forEach(consider);
+    });
+
+    if (!found.size) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'cat-slate';
+    wrap.innerHTML = '<div class="skills-cat-head"><span class="skills-cat-dot"></span><span class="skills-cat-label">Also showing up in recent work</span><span class="skills-cat-line"></span></div>';
+    const row = document.createElement('div');
+    row.className = 'skills-tag-row';
+    [...found.values()].sort((a, b) => a.localeCompare(b)).forEach(label => {
+      const span = document.createElement('span');
+      span.className = 'tag';
+      span.textContent = label;
+      row.appendChild(span);
+    });
+    wrap.appendChild(row);
+    skillsGroups.appendChild(wrap);
   })();
 
   // Coffee calendar tabs — switches between the inline Calendly widget and
