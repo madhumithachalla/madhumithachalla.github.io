@@ -268,6 +268,77 @@ async function getDb(){
  atDisconnectLink();return makeAirtableDb(cfg);
 }
 
+/* Optional account sync: bring-your-own Firebase, used only to carry the Profile tab (work
+   rights, skills, saved answers) across devices. Entirely separate from the Airtable tracker
+   above. Needs the visitor's own free Firebase project; nothing here is Madhumitha's. */
+let fbApp=null, fbAuth=null, fbStore=null, fbMod=null, fbUser=null, fbProfileUnsub=null;
+function fbCfg(){return lsGet("jd-firebase")}
+function fbSaveCfg(cfg){lsSet("jd-firebase",cfg)}
+function fbClearCfg(){try{localStorage.removeItem("jd-firebase")}catch(e){}if(fbProfileUnsub){fbProfileUnsub();fbProfileUnsub=null}fbUser=null;fbApp=null;fbAuth=null;fbStore=null;fbMod=null}
+async function fbInit(){
+ const cfg=fbCfg();if(!cfg||!cfg.apiKey||!cfg.projectId)return false;
+ try{
+  const [{initializeApp},authMod,storeMod]=await Promise.all([
+   import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
+   import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"),
+   import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js")
+  ]);
+  fbApp=initializeApp(cfg,"jobdesk");
+  fbAuth=authMod.getAuth(fbApp);
+  fbStore=storeMod.getFirestore(fbApp);
+  fbMod={doc:storeMod.doc,onSnapshot:storeMod.onSnapshot,setDoc:storeMod.setDoc,
+   createUserWithEmailAndPassword:authMod.createUserWithEmailAndPassword,signInWithEmailAndPassword:authMod.signInWithEmailAndPassword,
+   signOut:authMod.signOut,GoogleAuthProvider:authMod.GoogleAuthProvider,signInWithPopup:authMod.signInWithPopup};
+  authMod.onAuthStateChanged(fbAuth,u=>{fbUser=u;if(u)fbSubscribeProfile();else if(fbProfileUnsub){fbProfileUnsub();fbProfileUnsub=null}if(tab==="settings")render()});
+  return true;
+ }catch(e){toast("Could not load Firebase. Check your config values.");return false}
+}
+function fbSubscribeProfile(){
+ if(!fbUser||!fbStore)return;
+ if(fbProfileUnsub)fbProfileUnsub();
+ const ref=fbMod.doc(fbStore,"users",fbUser.uid,"data","profile");
+ fbProfileUnsub=fbMod.onSnapshot(ref,snap=>{
+  if(snap.exists()){
+   const remote=snap.data(),remoteAt=remote.updatedAt||0,localAt=(prefs.profile&&prefs.profile.updatedAt)||0;
+   if(remoteAt>localAt){prefs.profile=remote;lsSet("jd-prefs",prefs);if(tab==="profile"||tab==="settings")render()}
+  }
+ },()=>{});
+}
+function fbPushProfile(){
+ if(!fbUser||!fbStore||!fbMod)return;
+ prefs.profile=prefs.profile||{};prefs.profile.updatedAt=Date.now();lsSet("jd-prefs",prefs);
+ fbMod.setDoc(fbMod.doc(fbStore,"users",fbUser.uid,"data","profile"),prefs.profile).catch(()=>{});
+}
+async function fbSignUp(email,pw){await fbMod.createUserWithEmailAndPassword(fbAuth,email,pw)}
+async function fbSignIn(email,pw){await fbMod.signInWithEmailAndPassword(fbAuth,email,pw)}
+async function fbGoogle(){await fbMod.signInWithPopup(fbAuth,new fbMod.GoogleAuthProvider())}
+async function fbSignOut(){await fbMod.signOut(fbAuth)}
+function showFbConnect(){
+ const d=document.createElement("div");d.style.cssText="position:fixed;inset:0;background:rgba(10,12,16,.92);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px";
+ d.innerHTML='<form id="fbcf" style="max-width:460px;width:100%;background:var(--panel,#1c2029);color:var(--ink,#e8e6df);border:1px solid var(--line,#2b303b);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:8px;max-height:90vh;overflow:auto"><h2 style="margin:0">Connect your Firebase</h2><p style="margin:0;font-size:13px;opacity:.8">Optional: sign in and your profile (work rights, skills, saved answers) follows you to another device. Needs your own free Firebase project, never Madhumitha&#39;s. In the Firebase console: create a project, turn on Authentication (Email/Password, and Google if you want it) and Firestore, then Project settings &gt; General &gt; Your apps &gt; add a Web app for these values.</p><p style="margin:0;font-size:12px;opacity:.7">Important: in Firestore Database &gt; Rules, paste this so only a signed-in person can read or write their own profile, then Publish:</p><code style="display:block;font-size:11px;background:rgba(0,0,0,.25);padding:6px;border-radius:6px">rules_version=&#39;2&#39;;<br>service cloud.firestore {<br>&nbsp;match /databases/{db}/documents {<br>&nbsp;&nbsp;match /users/{uid}/data/{doc} {<br>&nbsp;&nbsp;&nbsp;allow read, write: if request.auth != null &amp;&amp; request.auth.uid == uid;<br>&nbsp;&nbsp;}<br>&nbsp;}<br>}</code>'
+  +['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId'].map(k=>'<label>'+k+'<input name="'+k+'" required placeholder="'+k+'" style="width:100%;box-sizing:border-box;margin-top:2px"></label>').join("")
+  +'<button class="btn" type="submit">Connect</button><button class="ghost" type="button" id="fbcfCancel">Cancel</button></form>';
+ document.body.appendChild(d);
+ d.querySelector("#fbcfCancel").onclick=()=>d.remove();
+ d.querySelector("form").onsubmit=async e=>{e.preventDefault();const f=e.target,cfg={};
+  ['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId'].forEach(k=>cfg[k]=f[k].value.trim());
+  fbSaveCfg(cfg);d.remove();const ok=await fbInit();if(ok)toast("Firebase connected. Sign in or create an account below.");if(tab==="settings")render()};
+}
+function fbAccountBlock(){
+ const cfg=fbCfg();
+ if(!cfg)return '<h3 style="font:600 18px var(--display);margin:18px 0 6px">Account &amp; cross-device sync (optional)</h3><p class="sub">Sign in to carry your profile (work rights, skills, saved answers) to another browser or device. Needs your own free Firebase project, never Madhumitha&#39;s. Nothing here is required to use the rest of Job Desk.</p><button class="ghost" id="fbConnectBtn" type="button">Connect your Firebase</button>';
+ if(!fbUser)return '<h3 style="font:600 18px var(--display);margin:18px 0 6px">Account &amp; cross-device sync</h3><div class="fm"><label>Email<input id="fbEmail" type="email"></label><label>Password<input id="fbPass" type="password"></label></div><div class="bar"><button class="btn" id="fbSignInBtn" type="button">Sign in</button><button class="ghost" id="fbSignUpBtn" type="button">Create account</button><button class="ghost" id="fbGoogleBtn" type="button">Continue with Google</button></div><button class="ghost sm" id="fbDisconnectBtn" type="button" style="margin-top:6px">Disconnect this Firebase project</button>';
+ return '<h3 style="font:600 18px var(--display);margin:18px 0 6px">Account &amp; cross-device sync</h3><p class="sub">Signed in as '+esc(fbUser.email||fbUser.uid)+'. Your profile follows this account.</p><button class="ghost" id="fbSignOutBtn" type="button">Sign out</button>';
+}
+function fbAccountHandlers(){
+ const c=$("#fbConnectBtn");if(c)c.onclick=showFbConnect;
+ const dc=$("#fbDisconnectBtn");if(dc)dc.onclick=()=>{fbClearCfg();toast("Disconnected");render()};
+ const si=$("#fbSignInBtn");if(si)si.onclick=async()=>{try{await fbSignIn($("#fbEmail").value.trim(),$("#fbPass").value)}catch(e){toast("Sign in failed: check email and password")}};
+ const su=$("#fbSignUpBtn");if(su)su.onclick=async()=>{try{await fbSignUp($("#fbEmail").value.trim(),$("#fbPass").value)}catch(e){toast("Could not create account: "+(e.code||"try a different password"))}};
+ const g=$("#fbGoogleBtn");if(g)g.onclick=async()=>{try{await fbGoogle()}catch(e){toast("Google sign-in failed")}};
+ const so=$("#fbSignOutBtn");if(so)so.onclick=async()=>{await fbSignOut();toast("Signed out")};
+}
+
 function savePrefs(){lsSet("jd-prefs",prefs); if(db){db.doc("prefs/main").set(prefs).catch(()=>{})}}
 function daysTo(d){if(!d)return null;const t=new Date(d+"T00:00:00");return Math.round((t-new Date(new Date().toDateString()))/864e5)}
 function render(){document.querySelectorAll("nav [role=tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===tab));({tracker,portals,learn,profile,check,assistant,ach,respond,reply,settings})[tab]();if(!document.querySelector("#main .foot")){const f=document.createElement("p");f.className="foot";f.textContent="© 2026 Madhumitha Challa. All rights reserved. Private. Your data stays in your own space.";$("#main").appendChild(f)}}
@@ -389,7 +460,7 @@ function profile(){const pr=prefs.profile||{},cats=FAC_CATS[pr.faculty]||[],site
  ${stageAdvice()}${DISCH()}
  <p class="foot">Guidance only. Rules change, so the official site always wins. © 2026 Madhumitha Challa. All rights reserved.</p>`;
  resumeHandlers();profileExtrasHandlers();
- $("#psave").onclick=()=>{const l=[...document.querySelectorAll("[data-pp2]")].filter(c=>c.checked).map(c=>c.dataset.pp2);prefs.profile=Object.assign(prefs.profile||{},{visa:$("#pv").value,hours:$("#ph").value,faculty:$("#pf2").value,city:$("#pc2").value.trim().slice(0,60),looking:l});savePrefs();toast("Profile saved");profile()}}
+ $("#psave").onclick=()=>{const l=[...document.querySelectorAll("[data-pp2]")].filter(c=>c.checked).map(c=>c.dataset.pp2);prefs.profile=Object.assign(prefs.profile||{},{visa:$("#pv").value,hours:$("#ph").value,faculty:$("#pf2").value,city:$("#pc2").value.trim().slice(0,60),looking:l});savePrefs();fbPushProfile();toast("Profile saved");profile()}}
 
 const COMMON_Q=[["notice","Notice period or earliest start date"],["hours","Hours you can work each week"],["worksrights","Work rights statement, in your own words"],["relocate","Willing to relocate?"],["referees","Referees available on request?"],["contact","Preferred way to be contacted"],["licence","Driver's licence"],["salary","Salary expectation (optional)"]];
 function profileExtras(pr){const ans=pr.answers||{},skills=pr.skills||[];
@@ -402,13 +473,13 @@ function profileExtras(pr){const ans=pr.answers||{},skills=pr.skills||[];
  <div class="bar"><input id="aqn" placeholder="Another question" maxlength="80"><input id="aan" placeholder="Your answer" maxlength="200" style="flex:1"><button class="ghost" id="aadd" type="button">Add</button></div>
  <button class="btn" id="asave" type="button">Save answers</button>`}
 function profileExtrasHandlers(){const pr=()=>prefs.profile||(prefs.profile={});
- const add=()=>{const v=$("#sknew").value.trim().slice(0,60);if(!v)return;const p=pr();p.skills=[...new Set((p.skills||[]).concat(v))];savePrefs();profile()};
+ const add=()=>{const v=$("#sknew").value.trim().slice(0,60);if(!v)return;const p=pr();p.skills=[...new Set((p.skills||[]).concat(v))];savePrefs();fbPushProfile();profile()};
  const a=$("#skadd");if(!a)return;a.onclick=add;$("#sknew").onkeydown=e=>{if(e.key==="Enter")add()};
- document.querySelectorAll("[data-skdel]").forEach(b=>b.onclick=()=>{const p=pr();p.skills=(p.skills||[]).filter(x=>x!==b.dataset.skdel);savePrefs();profile()});
+ document.querySelectorAll("[data-skdel]").forEach(b=>b.onclick=()=>{const p=pr();p.skills=(p.skills||[]).filter(x=>x!==b.dataset.skdel);savePrefs();fbPushProfile();profile()});
  const BLOCK=/sponsor|visa status|ethnic|gender|disab|health|religio|criminal|tax file|bank|passport|identity/i;
  $("#aadd").onclick=()=>{const q=$("#aqn").value.trim().slice(0,80),v=$("#aan").value.trim().slice(0,200);if(!q||!v)return toast("Add a question and an answer");if(BLOCK.test(q))return toast("That kind of question is never saved or answered for you");const p=pr();p.answers=Object.assign(p.answers||{},{[q]:v});savePrefs();profile()};
- document.querySelectorAll("[data-ansdel]").forEach(b=>b.onclick=()=>{const p=pr();delete (p.answers||{})[b.dataset.ansdel];savePrefs();profile()});
- $("#asave").onclick=()=>{const p=pr();p.answers=p.answers||{};document.querySelectorAll("[data-ans]").forEach(i=>{const v=i.value.trim();if(v)p.answers[i.dataset.ans]=v;else delete p.answers[i.dataset.ans]});savePrefs();toast("Answers saved")}}
+ document.querySelectorAll("[data-ansdel]").forEach(b=>b.onclick=()=>{const p=pr();delete (p.answers||{})[b.dataset.ansdel];savePrefs();fbPushProfile();profile()});
+ $("#asave").onclick=()=>{const p=pr();p.answers=p.answers||{};document.querySelectorAll("[data-ans]").forEach(i=>{const v=i.value.trim();if(v)p.answers[i.dataset.ans]=v;else delete p.answers[i.dataset.ans]});savePrefs();fbPushProfile();toast("Answers saved")}}
 
 const RESP=[["Approve","Approve this role","status","Approved"],["Approve, with a change (say what)","Approve, with a change (say what)",null,null,true],["Skip","Skip this role","status","Skipped"],["Hold","Hold: do not submit yet","hold"],["I already applied","I already applied","applied"],["Deadline moved","The deadline moved","moved"],["Got an interview","I got an interview","status","Interview"],["Got an offer","I got an offer","status","Offer"],["Not successful","Not successful","status","Rejected"],["Change my resume","Change my resume (say what)",null,null,true],["Change my cover letter","Change my cover letter (say what)",null,null,true],["I have a question","I have a question (say what)",null,null,true],["Snooze 3 days","Snooze for 3 days",null,null],["Other (say what)","Other (add a comment)",null,null,true]];
 let rf={role:"",action:"",comment:"",date:""};
@@ -568,11 +639,12 @@ function reply(){$("#main").innerHTML=`<h2>Reply guide</h2><p class="sub">Reply 
  document.querySelectorAll("[data-cp]").forEach(b=>b.onclick=()=>copyText(REPLIES[+b.dataset.cp][0].split(" / ")[0]))}
 function settings(){const c=prefs.consent;$("#main").innerHTML=`<h2>Privacy and consent</h2><p class="sub">This project and everything in it belongs to Madhumitha Challa. Her data is private to her account. Anyone else who uses a copy of these tools starts with an empty profile, sees only their own data, and chooses below what the tools may use. The automation reads these switches before it touches anything.</p>
  <div class="cons">${CONSENTS.map(x=>`<label><input type="checkbox" data-c="${x[0]}" ${c[x[0]]?"checked":""}><span><b>${x[1]}</b><br><small style="color:var(--muted)">${x[2]}</small></span></label>`).join("")}</div>
- <div class="note" style="margin-top:12px">Sign-in to job sites and Google happens on those sites, in your own browser. No passwords or codes are stored here.</div><p class="sub">© 2026 Madhumitha Challa. All rights reserved.</p>`;
- document.querySelectorAll("[data-c]").forEach(i=>i.onchange=()=>{prefs.consent[i.dataset.c]=i.checked;savePrefs()})}
+ <div class="note" style="margin-top:12px">Sign-in to job sites and Google happens on those sites, in your own browser. No passwords or codes are stored here.</div>${fbAccountBlock()}<p class="sub">© 2026 Madhumitha Challa. All rights reserved.</p>`;
+ document.querySelectorAll("[data-c]").forEach(i=>i.onchange=()=>{prefs.consent[i.dataset.c]=i.checked;savePrefs()});fbAccountHandlers()}
 document.querySelectorAll("nav [role=tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;render()});
 $("#theme").onclick=()=>{const r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);r.dataset.theme=d?"light":"dark"};
 prefs=Object.assign(prefs,lsGet("jd-prefs")||{});render();
+fbInit();
 (async()=>{try{try{dls=await claude.use("downloads")}catch(e){}db=await getDb();if(!db)return;
  db.doc("meta/refresh").onSnapshot(s=>{refresh=(s.data&&s.data())||null;if(tab==="tracker")render()},()=>{});
  db.collection("documents").onSnapshot(s=>{docs=s.docs.map(d=>({id:d.id,...d.data()}));if(tab==="tracker")render()},()=>{});
