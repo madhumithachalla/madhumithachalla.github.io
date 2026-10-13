@@ -1903,11 +1903,11 @@
           </div>
           <h3>CloudPose: pose-estimation microservice on a self-built Kubernetes cluster</h3>
           <div class="role">Role: full stack, solo (coursework)</div>
-          <p>A FastAPI + OpenCV pose-detection service I containerised and deployed to a Kubernetes cluster I built by hand across three Oracle Cloud Infrastructure VMs, then load-tested for concurrency.</p>
+          <p>A FastAPI + OpenCV pose-detection service I containerised and deployed to a Kubernetes cluster I built by hand across three Oracle Cloud Infrastructure VMs, then load-tested for concurrency. Started from my own Monash assignment submission, then substantially rewritten and extended with production features the assignment didn't require.</p>
           <ul>
-            <li>Built an async FastAPI service with Pydantic models; OpenCV for image decode/encode, with CPU-bound detection offloaded via <code>asyncio.to_thread</code> so the event loop stays responsive under load.</li>
-            <li>Manually configured an OCI VCN (subnets, security lists, route tables) and three Oracle Linux VMs, then built a Kubernetes cluster from scratch with <code>kubeadm</code>, <code>containerd</code> as the runtime and Flannel as the CNI — no managed Kubernetes offering.</li>
-            <li>Built and pushed the service's Docker image to OCI Container Registry, deployed it with explicit CPU/memory resource requests, exposed it via a NodePort service, scaled it to 3 replicas, and verified throughput under concurrent load with a thread-pool client and Locust.</li>
+            <li>Rebuilt the service: the model now loads once at startup instead of per-request, keypoints are confidence-filtered before being drawn or returned, and a new concurrent batch endpoint processes up to 32 images at once with <code>asyncio.gather</code>.</li>
+            <li>Added the production basics the original skipped: a health-check endpoint, structured logging, and proper HTTP status codes instead of a bare catch-all exception handler.</li>
+            <li>Manually configured an OCI VCN (subnets, security lists, route tables) and three Oracle Linux VMs, then built a Kubernetes cluster from scratch with <code>kubeadm</code>, <code>containerd</code> as the runtime and Flannel as the CNI — no managed Kubernetes offering, scaled to 3 replicas and load-tested with Locust.</li>
           </ul>
           <div class="tags"><span class="tag">FastAPI</span><span class="tag">OpenCV</span><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Oracle Cloud Infrastructure (OCI)</span><span class="tag">Locust (load testing)</span><span class="tag">Python</span></div>
         </div>
