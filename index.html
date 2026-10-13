@@ -1906,14 +1906,14 @@
           <p>A FastAPI + OpenCV pose-detection service I containerised and deployed to a Kubernetes cluster I built by hand across three Oracle Cloud Infrastructure VMs, then load-tested for concurrency.</p>
           <ul>
             <li>Built an async FastAPI service with Pydantic models; OpenCV for image decode/encode, with CPU-bound detection offloaded via <code>asyncio.to_thread</code> so the event loop stays responsive under load.</li>
-            <li>Manually configured an OCI VCN (subnets, security lists, route tables) and three Oracle Linux VMs, then built a Kubernetes cluster from scratch with <code>kubeadm</code> and Calico as the CNI — no managed Kubernetes offering.</li>
-            <li>Built and pushed the service's Docker image to OCI Container Registry, then verified throughput under concurrent load with a thread-pool client and Locust.</li>
+            <li>Manually configured an OCI VCN (subnets, security lists, route tables) and three Oracle Linux VMs, then built a Kubernetes cluster from scratch with <code>kubeadm</code>, <code>containerd</code> as the runtime and Flannel as the CNI — no managed Kubernetes offering.</li>
+            <li>Built and pushed the service's Docker image to OCI Container Registry, deployed it with explicit CPU/memory resource requests, exposed it via a NodePort service, scaled it to 3 replicas, and verified throughput under concurrent load with a thread-pool client and Locust.</li>
           </ul>
           <div class="tags"><span class="tag">FastAPI</span><span class="tag">OpenCV</span><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Oracle Cloud Infrastructure (OCI)</span><span class="tag">Locust (load testing)</span><span class="tag">Python</span></div>
         </div>
         <div class="project-side">
           <div class="metric"><span class="n" data-target="3">0</span><span class="l">VMs forming the K8s cluster</span></div>
-          <div class="metric"><span class="n" data-target="1">0</span><span class="l">pod network CNI (Calico)</span></div>
+          <div class="metric"><span class="n" data-target="3">0</span><span class="l">replicas scaled to under load</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/cloudpose-pipeline" target="_blank" rel="noopener">View code &amp; writeup ↗</a>
           <a class="project-link" href="projects/demos/cloudpose-demo.html" target="_blank" rel="noopener" style="margin-top:6px;">Try live pose-detection demo ↗</a>
         </div>
