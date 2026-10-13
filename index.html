@@ -1364,6 +1364,7 @@
         <a href="#projects" class="nav-dropdown-trigger" id="nav-dropdown-trigger">Projects <span class="caret">▾</span></a>
         <div class="nav-dropdown-menu">
           <a href="#proj-birdtag">BirdTag</a>
+          <a href="#proj-cloudpose">CloudPose</a>
           <a href="#proj-spotify">Spotify Analysis</a>
           <a href="#proj-esaver">ESaver</a>
           <a href="#proj-ocr">Document Pipeline</a>
@@ -1891,6 +1892,30 @@
           <div class="metric"><span class="n" data-target="100" data-suffix="%">0%</span><span class="l">protected routes on Cognito auth</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/birdtag" target="_blank" rel="noopener">View code (my part) ↗</a>
           <a class="project-link" href="projects/demos/birdtag-demo.html" target="_blank" rel="noopener" style="margin-top:6px;">Try interactive walkthrough ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-cloudpose">
+        <div>
+          <div class="project-top">
+            <span class="pill">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Deployed on OCI Kubernetes</span>
+          </div>
+          <h3>CloudPose: pose-estimation microservice on a self-built Kubernetes cluster</h3>
+          <div class="role">Role: full stack, solo (coursework)</div>
+          <p>A FastAPI + OpenCV pose-detection service I containerised and deployed to a Kubernetes cluster I built by hand across three Oracle Cloud Infrastructure VMs, then load-tested for concurrency.</p>
+          <ul>
+            <li>Built an async FastAPI service with Pydantic models; OpenCV for image decode/encode, with CPU-bound detection offloaded via <code>asyncio.to_thread</code> so the event loop stays responsive under load.</li>
+            <li>Manually configured an OCI VCN (subnets, security lists, route tables) and three Oracle Linux VMs, then built a Kubernetes cluster from scratch with <code>kubeadm</code> and Calico as the CNI — no managed Kubernetes offering.</li>
+            <li>Built and pushed the service's Docker image to OCI Container Registry, then verified throughput under concurrent load with a thread-pool client and Locust.</li>
+          </ul>
+          <div class="tags"><span class="tag">FastAPI</span><span class="tag">OpenCV</span><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Oracle Cloud Infrastructure (OCI)</span><span class="tag">Locust (load testing)</span><span class="tag">Python</span></div>
+        </div>
+        <div class="project-side">
+          <div class="metric"><span class="n" data-target="3">0</span><span class="l">VMs forming the K8s cluster</span></div>
+          <div class="metric"><span class="n" data-target="1">0</span><span class="l">pod network CNI (Calico)</span></div>
+          <a class="project-link" href="https://github.com/madhumithachalla/projects/tree/main/cloudpose-pipeline" target="_blank" rel="noopener">View code &amp; writeup ↗</a>
+          <a class="project-link" href="projects/demos/cloudpose-demo.html" target="_blank" rel="noopener" style="margin-top:6px;">Try live pose-detection demo ↗</a>
         </div>
       </div>
 
@@ -3443,7 +3468,7 @@
       { keys: ['stack','skill','tech','language','tool','framework'], a: "Her core stack spans enterprise cloud & systems (Genesys Cloud CX, AWS, Microsoft 365, Google Cloud), IT operations (incident & SLA management, ITSM, Netcool), infrastructure (Windows/Linux, Active Directory, Azure MFA, CyberArk, SailPoint), and programming (COBOL, JCL, Java, SQL, Kotlin, Firebase). See the Skills & Stack section on this page for the full breakdown." },
       { keys: ['visa','sponsor','485','subclass','graduate visa'], a: "She's currently on a Student Visa (Subclass 500) and will transition onto a 485 Temporary Graduate Visa after graduating in December 2026, giving her full working rights in Australia. Happy to talk sponsorship or graduate pathways." },
       { keys: ['relocat','move','melbourne','sydney','brisbane','perth','adelaide','location','based','where is she'], a: "She's based in Melbourne, VIC, and open to relocating anywhere across Australia for the right role." },
-      { keys: ['project','built','build','portfolio','birdtag','spotify','esaver','ocr','ielts'], a: "She's built BirdTag (serverless wildlife tagging on AWS), a statistical analysis of 114K Spotify tracks, ESaver (an Android energy-saving app in Kotlin), a document/OCR extraction pipeline, an IELTS mock exam tool in React, and even this site's own LinkedIn banner generator. Scroll down to Projects for the full writeups." },
+      { keys: ['project','built','build','portfolio','birdtag','spotify','esaver','ocr','ielts','cloudpose','kubernetes','docker','pose'], a: "She's built BirdTag (serverless wildlife tagging on AWS), CloudPose (a FastAPI pose-estimation service on a self-built OCI Kubernetes cluster), a statistical analysis of 114K Spotify tracks, ESaver (an Android energy-saving app in Kotlin), a document/OCR extraction pipeline, an IELTS mock exam tool in React, and even this site's own LinkedIn banner generator. Scroll down to Projects for the full writeups." },
       { keys: ['education','degree','university','monash','study','gpa','wam'], a: "She's finishing a Master of Information Technology at Monash University (graduating Dec 2026, 65.7 WAM) and holds a Bachelor of Computer Applications from the University of Madras (First Class)." },
       { keys: ['experience','background','cognizant','work history','career'], a: "3+ years at Cognizant Technology Solutions supporting healthcare platforms for EmblemHealth & ConnectiCare (3.2M members): production support and incident management across multiple countries, plus a contact center transition from Avaya to Genesys Cloud CX. Full timeline is in the Experience section below." },
       { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She's currently a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture), supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
