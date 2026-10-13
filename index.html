@@ -2960,69 +2960,114 @@
     });
   })();
 
-  // Live sync with the madhumitha/projects GitHub repo — the hand-written
-  // cards above stay the primary content, but on load we check the repo's
-  // real top-level folders and surface a small fallback card for anything
-  // that doesn't have a hand-written card yet, so a new project can never
-  // silently go unlisted again. Uses the public unauthenticated GitHub
-  // Contents API (~60 req/hour/IP) and fails completely silently on error,
-  // rate-limit, or offline — visitors just see the existing cards.
+  // Live sync with GitHub — the hand-written cards above stay the primary
+  // content, but on load we check two things and surface a small fallback
+  // card for anything that doesn't have a hand-written card yet, so a new
+  // project can never silently go unlisted:
+  //   1. New top-level folders in the madhumithachalla/projects monorepo.
+  //   2. New standalone public repos on the account (e.g. a project that
+  //      gets its own repo instead of a projects/ subfolder).
+  // Uses the public unauthenticated GitHub API (~60 req/hour/IP) and fails
+  // completely silently on error, rate-limit, or offline — visitors just
+  // see the existing cards. To keep a repo out of this entirely (a fork,
+  // an empty placeholder, something not meant for the portfolio), add its
+  // name (lowercase) to EXCLUDED_REPOS below.
   (function(){
     const list = document.querySelector('.project-list');
     if (!list) return;
 
-    const knownSlugs = new Set();
+    const EXCLUDED_REPOS = new Set(['madhumithachalla.github.io', 'projects']);
+
+    function buildFallbackCard(pillText, title, description, linkHref, linkText){
+      const card = document.createElement('div');
+      card.className = 'project project-sync-fallback in';
+
+      const main = document.createElement('div');
+      const top = document.createElement('div');
+      top.className = 'project-top';
+      const pill = document.createElement('span');
+      pill.className = 'pill new-sync';
+      pill.textContent = pillText;
+      top.appendChild(pill);
+      main.appendChild(top);
+
+      const h3 = document.createElement('h3');
+      h3.textContent = title;
+      main.appendChild(h3);
+
+      const p = document.createElement('p');
+      p.textContent = description;
+      main.appendChild(p);
+
+      const side = document.createElement('div');
+      side.className = 'project-side';
+      const link = document.createElement('a');
+      link.className = 'project-link';
+      link.href = linkHref;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = linkText;
+      side.appendChild(link);
+
+      card.appendChild(main);
+      card.appendChild(side);
+      return card;
+    }
+
+    // --- 1. New folders inside the projects monorepo ---
+    const knownFolderSlugs = new Set();
     list.querySelectorAll('a.project-link[href*="github.com/madhumithachalla/projects/tree/main/"]').forEach(a => {
       const m = a.getAttribute('href').match(/tree\/main\/([^/?#]+)/);
-      if (m) knownSlugs.add(m[1]);
+      if (m) knownFolderSlugs.add(m[1]);
     });
-    if (!knownSlugs.size) return;
 
-    fetch('https://api.github.com/repos/madhumithachalla/projects/contents/')
+    const foldersPromise = knownFolderSlugs.size
+      ? fetch('https://api.github.com/repos/madhumithachalla/projects/contents/')
+          .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+          .then(entries => {
+            if (!Array.isArray(entries)) return [];
+            return entries
+              .filter(e => e.type === 'dir' && !e.name.startsWith('.') && !knownFolderSlugs.has(e.name))
+              .map(dir => buildFallbackCard(
+                'New in the projects repo',
+                dir.name.replace(/[-_]/g, ' '),
+                "This folder just landed in the projects repo and doesn't have a full writeup here yet — check it out on GitHub in the meantime.",
+                `https://github.com/madhumithachalla/projects/tree/main/${encodeURIComponent(dir.name)}`,
+                'View on GitHub ↗'
+              ));
+          })
+          .catch(() => [])
+      : Promise.resolve([]);
+
+    // --- 2. New standalone public repos on the account ---
+    const knownRepoNames = new Set(EXCLUDED_REPOS);
+    list.querySelectorAll('a.project-link[href^="https://github.com/madhumithachalla/"]').forEach(a => {
+      const m = a.getAttribute('href').match(/^https:\/\/github\.com\/madhumithachalla\/([^/?#]+)\/?$/);
+      if (m) knownRepoNames.add(m[1].toLowerCase());
+    });
+
+    const reposPromise = fetch('https://api.github.com/users/madhumithachalla/repos?per_page=100&type=public')
       .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then(entries => {
-        if (!Array.isArray(entries)) return;
-        const newDirs = entries.filter(e => e.type === 'dir' && !e.name.startsWith('.') && !knownSlugs.has(e.name));
-        if (!newDirs.length) return;
-
-        const upcoming = list.querySelector('.project.upcoming');
-        newDirs.forEach(dir => {
-          const card = document.createElement('div');
-          card.className = 'project project-sync-fallback in';
-
-          const main = document.createElement('div');
-          const top = document.createElement('div');
-          top.className = 'project-top';
-          const pill = document.createElement('span');
-          pill.className = 'pill new-sync';
-          pill.textContent = 'New in the projects repo';
-          top.appendChild(pill);
-          main.appendChild(top);
-
-          const h3 = document.createElement('h3');
-          h3.textContent = dir.name.replace(/[-_]/g, ' ');
-          main.appendChild(h3);
-
-          const p = document.createElement('p');
-          p.textContent = "This folder just landed in the projects repo and doesn't have a full writeup here yet — check it out on GitHub in the meantime.";
-          main.appendChild(p);
-
-          const side = document.createElement('div');
-          side.className = 'project-side';
-          const link = document.createElement('a');
-          link.className = 'project-link';
-          link.href = `https://github.com/madhumithachalla/projects/tree/main/${encodeURIComponent(dir.name)}`;
-          link.target = '_blank';
-          link.rel = 'noopener';
-          link.textContent = 'View on GitHub ↗';
-          side.appendChild(link);
-
-          card.appendChild(main);
-          card.appendChild(side);
-          list.insertBefore(card, upcoming || null);
-        });
+      .then(repos => {
+        if (!Array.isArray(repos)) return [];
+        return repos
+          .filter(r => !r.fork && !r.archived && r.size > 0 && !knownRepoNames.has(r.name.toLowerCase()))
+          .map(r => buildFallbackCard(
+            'New public repo',
+            r.name.replace(/[-_]/g, ' '),
+            r.description || "A new public repo that doesn't have a full writeup here yet — check it out on GitHub in the meantime.",
+            r.homepage || r.html_url,
+            r.has_pages ? 'View live ↗' : 'View on GitHub ↗'
+          ));
       })
-      .catch(() => { /* rate-limited or offline — existing hand-written cards still show */ });
+      .catch(() => []);
+
+    Promise.all([foldersPromise, reposPromise]).then(([folderCards, repoCards]) => {
+      const cards = [...folderCards, ...repoCards];
+      if (!cards.length) return;
+      const upcoming = list.querySelector('.project.upcoming');
+      cards.forEach(card => list.insertBefore(card, upcoming || null));
+    });
   })();
 
   // Skills & stack auto-addendum — this is the actual sync logic, not a one-off edit: any
