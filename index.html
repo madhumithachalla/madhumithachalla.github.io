@@ -520,6 +520,31 @@
   .project-empty{display:none; color:var(--slate); font-size:15px; padding:20px 0;}
   .project-empty.show{display:block;}
   .project.filtered-out{display:none;}
+
+  .timeline{position:relative; margin:0 0 30px; padding-left:22px;}
+  .timeline::before{content:''; position:absolute; left:5px; top:4px; bottom:4px; width:1px; background:var(--line);}
+  .timeline-item{position:relative; padding-bottom:18px;}
+  .timeline-item:last-child{padding-bottom:0;}
+  .timeline-item::before{
+    content:''; position:absolute; left:-22px; top:5px; width:9px; height:9px; border-radius:50%;
+    background:var(--bg-panel); border:2px solid var(--violet);
+  }
+  .timeline-link{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; text-decoration:none; color:inherit;
+  }
+  .timeline-date{
+    font-family:'IBM Plex Mono'; font-size:11.5px; color:var(--slate); white-space:nowrap; min-width:112px;
+  }
+  .timeline-title{font-size:15px; color:var(--ink); transition:color .15s ease;}
+  .timeline-link:hover .timeline-title{color:var(--violet);}
+  .timeline-undated{margin-top:4px; font-size:12.5px; color:var(--slate); line-height:1.6;}
+  .timeline-undated a{color:var(--slate); text-decoration:underline; text-decoration-color:var(--line);}
+  .timeline-undated a:hover{color:var(--violet);}
+  .timeline-note{font-size:11.5px; color:var(--slate); margin:-6px 0 20px; font-style:italic;}
+  @media (max-width:480px){
+    .timeline-link{flex-direction:column; gap:2px;}
+    .timeline-date{min-width:0;}
+  }
   .project-list{display:flex; flex-direction:column; gap:18px;}
   .project{
     border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-panel);
@@ -1879,6 +1904,40 @@
       <h2>Things I've actually built</h2>
       <p>A mix of team builds and solo work. Team contributions are scoped to what was mine. The rest belonged to teammates.</p>
     </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <a class="timeline-link" href="#proj-birdtag"><span class="timeline-date">Apr – Jun 2025</span><span class="timeline-title">BirdTag: serverless media tagging platform</span></a>
+      </div>
+      <div class="timeline-item">
+        <a class="timeline-link" href="#proj-cloudpose"><span class="timeline-date">Apr – May 2025</span><span class="timeline-title">CloudPose: pose-estimation microservice</span></a>
+      </div>
+      <div class="timeline-item">
+        <a class="timeline-link" href="#proj-spotify"><span class="timeline-date">Jun – Nov 2025</span><span class="timeline-title">Spotify success analysis</span></a>
+      </div>
+      <div class="timeline-item">
+        <a class="timeline-link" href="#proj-esaver"><span class="timeline-date">Feb – Jun 2026</span><span class="timeline-title">ESaver: energy dashboard &amp; community app</span></a>
+      </div>
+      <div class="timeline-item">
+        <a class="timeline-link" href="#proj-ocr"><span class="timeline-date">Jun – Jul 2026</span><span class="timeline-title">Document extraction pipeline</span></a>
+      </div>
+      <div class="timeline-item">
+        <a class="timeline-link" href="#proj-banner"><span class="timeline-date">Jun – Aug 2026</span><span class="timeline-title">LinkedIn banner generator</span></a>
+      </div>
+      <div class="timeline-item">
+        <a class="timeline-link" href="#proj-ielts"><span class="timeline-date">Jul 2026</span><span class="timeline-title">IELTS mock test practice tool</span></a>
+      </div>
+      <div class="timeline-item">
+        <a class="timeline-link" href="https://github.com/madhumithachalla/CliMaze" target="_blank" rel="noopener"><span class="timeline-date">Sep – Oct 2026</span><span class="timeline-title">CliMaze (ShelfShift) — COP31 competition build ↗</span></a>
+      </div>
+    </div>
+    <p class="timeline-undated">
+      Also built, dates not confirmed yet: <a href="#proj-focuslens">FocusLens</a>,
+      <a href="#proj-job-automation">stuplyin (Job Desk)</a>,
+      <a href="#proj-contact-icons">Contact link icons</a>,
+      <a href="#proj-logo">Logo mark</a>, and this portfolio site itself.
+    </p>
+    <p class="timeline-note">Dates are from GitHub/LinkedIn project history — only shown where actually confirmed.</p>
 
     <div class="project-filters" id="projectFilters" role="group" aria-label="Filter projects by category">
       <button type="button" class="project-filter active" data-filter="all">All</button>
