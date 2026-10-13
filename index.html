@@ -509,6 +509,17 @@
   .leader-card.in:hover, .rec-card.in:hover, .juggle-card.in:hover, .cert-card.in:hover{transform:translateY(-3px); box-shadow:0 14px 28px -16px rgba(0,0,0,0.5);}
 
   /* projects */
+  .project-filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px;}
+  .project-filter{
+    font-family:'IBM Plex Mono'; font-size:12px; text-transform:uppercase; letter-spacing:0.04em;
+    padding:6px 14px; border-radius:20px; border:1px solid var(--line); background:transparent;
+    color:var(--slate); cursor:pointer; transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .project-filter:hover{color:var(--ink); border-color:var(--slate);}
+  .project-filter.active{color:var(--violet); border-color:var(--violet); background:rgba(155,126,222,0.14);}
+  .project-empty{display:none; color:var(--slate); font-size:15px; padding:20px 0;}
+  .project-empty.show{display:block;}
+  .project.filtered-out{display:none;}
   .project-list{display:flex; flex-direction:column; gap:18px;}
   .project{
     border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-panel);
@@ -1673,7 +1684,7 @@
       <h2>Where the hours actually went</h2>
     </div>
     <div class="exp-grid">
-      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
+      <div class="exp-tile exp-minor" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Aug 2026 — Oct 2026</div>
         <div class="exp-role">HR Administrative Officer</div>
         <div class="exp-org">Monash University · HR Projects, Office of the COO &amp; Senior VP</div>
@@ -1705,7 +1716,7 @@
         <div class="exp-detail-wrap"><div><p class="exp-detail">A front-line retail role at a busy Melbourne service station: handling point-of-sale transactions and digital payments for a steady stream of customers, troubleshooting issues as they came up in real time, and pitching in on general store operations. A fast-paced, people-facing counterpoint to the more desk-based IT and admin work elsewhere on this list.</p></div></div>
         <span class="exp-toggle-label">Read more <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>
-      <div class="exp-tile exp-minor" role="button" tabindex="0" aria-expanded="false">
+      <div class="exp-tile" role="button" tabindex="0" aria-expanded="false">
         <div class="exp-time mono">Jul 2026 — Aug 2026</div>
         <div class="exp-role">T&amp;A FLEX Data Entry Assistant (HEW 4)</div>
         <div class="exp-org">Monash University · Peninsula Campus</div>
@@ -1869,9 +1880,21 @@
       <p>A mix of team builds and solo work. Team contributions are scoped to what was mine. The rest belonged to teammates.</p>
     </div>
 
-    <div class="project-list">
+    <div class="project-filters" id="projectFilters" role="group" aria-label="Filter projects by category">
+      <button type="button" class="project-filter active" data-filter="all">All</button>
+      <button type="button" class="project-filter" data-filter="cloud">Cloud</button>
+      <button type="button" class="project-filter" data-filter="mobile">Mobile</button>
+      <button type="button" class="project-filter" data-filter="web">Web</button>
+      <button type="button" class="project-filter" data-filter="data">Data &amp; Analytics</button>
+      <button type="button" class="project-filter" data-filter="automation">Automation</button>
+      <button type="button" class="project-filter" data-filter="design">Design</button>
+      <button type="button" class="project-filter" data-filter="team">Team projects</button>
+    </div>
+    <p class="project-empty" id="projectEmpty">No projects match that filter.</p>
 
-      <div class="project" id="proj-birdtag">
+    <div class="project-list" id="projectList">
+
+      <div class="project" id="proj-birdtag" data-categories="cloud team">
         <div>
           <div class="project-top">
             <span class="pill team">Team · 4</span>
@@ -1895,7 +1918,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-cloudpose">
+      <div class="project" id="proj-cloudpose" data-categories="cloud">
         <div>
           <div class="project-top">
             <span class="pill">Solo</span>
@@ -1919,7 +1942,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-spotify">
+      <div class="project" id="proj-spotify" data-categories="data">
         <div>
           <div class="project-top">
             <span class="pill solo">Solo</span>
@@ -1943,7 +1966,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-esaver">
+      <div class="project" id="proj-esaver" data-categories="mobile team">
         <div>
           <div class="project-top">
             <span class="pill team">Team · 4</span>
@@ -1968,7 +1991,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-focuslens">
+      <div class="project" id="proj-focuslens" data-categories="mobile">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -1994,7 +2017,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-job-automation">
+      <div class="project" id="proj-job-automation" data-categories="automation">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -2017,7 +2040,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-ocr">
+      <div class="project" id="proj-ocr" data-categories="automation">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -2040,7 +2063,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-ielts">
+      <div class="project" id="proj-ielts" data-categories="web">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -2066,7 +2089,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-banner">
+      <div class="project" id="proj-banner" data-categories="web design">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -2093,7 +2116,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-contact-icons">
+      <div class="project" id="proj-contact-icons" data-categories="design">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -2109,7 +2132,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-portfolio">
+      <div class="project" id="proj-portfolio" data-categories="web">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -2131,7 +2154,7 @@
         </div>
       </div>
 
-      <div class="project" id="proj-logo">
+      <div class="project" id="proj-logo" data-categories="design">
         <div>
           <div class="project-top">
             <span class="pill indie">Solo</span>
@@ -3359,7 +3382,7 @@
   })();
 
   // "Show N more roles" — reveals the casual/lower-relevance experience
-  // tiles (retail, short-term data entry, maintenance coordination) that
+  // tiles (a short-term admin role, retail, maintenance coordination) that
   // are hidden by default so the IT/cloud-relevant roles lead the grid.
   (function(){
     const btn = document.getElementById('expMoreToggle');
@@ -3371,6 +3394,37 @@
       grid.classList.toggle('show-minor', expanded);
       btn.setAttribute('aria-expanded', String(expanded));
       if (label) label.textContent = expanded ? 'Show fewer roles' : 'Show 3 more roles';
+    });
+  })();
+
+  // Project filters — each .project card declares its own
+  // data-categories (space-separated); clicking a chip shows only cards
+  // whose categories include it, or everything for "all".
+  (function(){
+    const filterBar = document.getElementById('projectFilters');
+    const list = document.getElementById('projectList');
+    const empty = document.getElementById('projectEmpty');
+    if (!filterBar || !list) return;
+    const buttons = Array.from(filterBar.querySelectorAll('.project-filter'));
+    const cards = Array.from(list.querySelectorAll('.project'));
+
+    function applyFilter(filter){
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const cats = (card.getAttribute('data-categories') || '').split(' ');
+        const show = filter === 'all' || cats.includes(filter);
+        card.classList.toggle('filtered-out', !show);
+        if (show) visibleCount++;
+      });
+      if (empty) empty.classList.toggle('show', visibleCount === 0);
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.getAttribute('data-filter'));
+      });
     });
   })();
 
