@@ -70,7 +70,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -1185,7 +1185,7 @@
         <a class="timeline-link" href="#proj-colorcompass"><span class="timeline-date">Oct 2026</span><span class="timeline-title">ColorCompass: AI colour &amp; style advisor</span></a>
       </div>
       <div class="timeline-item">
-        <a class="timeline-link" href="#proj-job-automation"><span class="timeline-date">Oct 2026</span><span class="timeline-title">stuplyin: job search automation &amp; tracker</span></a>
+        <a class="timeline-link" href="#proj-stuplying"><span class="timeline-date">Oct 2026</span><span class="timeline-title">Stuplying: job-search workspace &amp; automation</span></a>
       </div>
     </div>
       </div>
@@ -1209,14 +1209,25 @@
       <div class="project" id="proj-stuplying" data-categories="web automation" data-portfolio-repo="careerlaunch">
         <div>
           <div class="project-top">
-            <span class="pill indie">Personal project</span>
+            <span class="pill indie">Solo</span>
             <span class="pill new-sync">Live app</span>
           </div>
-          <h3>Stuplying (Career Launch)</h3>
-          <p>A job-search workspace for graduates to track opportunities, save research, and prepare application documents.</p>
-          <div class="tags"><span class="tag">Web app</span><span class="tag">Job search</span><span class="tag">Automation</span></div>
+          <h3>Stuplying: job-search workspace &amp; automation</h3>
+          <div class="role">Role: sole builder</div>
+          <p class="project-summary">A job-search workspace for graduates — plus a nightly automation that searches, drafts previews, and only ever applies after explicit approval.</p>
+          <div class="project-more" id="more-stuplying" hidden>
+            <p>Tracks opportunities, saves research, and preps application documents in one place. Behind it, a nightly automation searches for roles matching set criteria, drafts a preview to review, and only applies after explicit approval — nothing goes out on its own. Approved applications land in a timestamped tracker synced to Notion, so the whole search stays in one place instead of scattered across job boards and email.</p>
+            <ul>
+              <li>Runs on a schedule, searches, and stops at a human review step every time — there's no "fully autonomous apply" mode, by design.</li>
+              <li>Built around swappable connectors (job sources, the tracker, Notion) rather than anything hardcoded, so pointing it at a different search means different connected accounts, not different code.</li>
+            </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-stuplying">Read more</button>
+          <div class="tags"><span class="tag">Claude Agent SDK</span><span class="tag">Automation</span><span class="tag">Notion API</span><span class="tag">Web app</span></div>
         </div>
         <div class="project-side">
+          <div class="metric"><span class="n">Nightly</span><span class="l">automated search + preview</span></div>
+          <div class="metric"><span class="n">Approval-gated</span><span class="l">nothing applies without review</span></div>
           <a class="project-link" href="https://stuplying.vercel.app/" target="_blank" rel="noopener noreferrer">Try Stuplying ↗</a>
         </div>
       </div>
@@ -1230,11 +1241,14 @@
           <h3>BirdTag: serverless media tagging platform</h3>
           <div class="role">Role: authentication &amp; backend API</div>
           <p>A serverless system for automatically tagging and retrieving wildlife media using ML-based species detection. I owned identity and access, plus four of the eight backend functions.</p>
-          <ul>
+          <div class="project-more" id="more-birdtag" hidden>
+            <ul>
             <li>Designed and configured Cognito authentication end to end, then wired it into API Gateway authorizers across every protected route with CORS handled properly.</li>
             <li>Co-built the core tag-query function (file handling, tagging logic, DynamoDB filtering) with a teammate.</li>
             <li>Independently built species search, tag editing, file deletion, and secure signed-upload functions.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-birdtag">Read more</button>
           <div class="tags"><span class="tag">AWS Lambda</span><span class="tag">API Gateway</span><span class="tag">Cognito</span><span class="tag">DynamoDB</span><span class="tag">S3</span><span class="tag">Python</span><span class="tag">Identity &amp; Access Management</span><span class="tag">Serverless Architecture</span></div>
         </div>
         <div class="project-side">
@@ -1254,11 +1268,14 @@
           <h3>CloudPose: pose-estimation microservice on a self-built Kubernetes cluster</h3>
           <div class="role">Role: full stack, solo (coursework)</div>
           <p>A FastAPI + OpenCV pose-detection service I containerised and deployed to a Kubernetes cluster I built by hand across three Oracle Cloud Infrastructure VMs, then load-tested for concurrency. Started from my own Monash assignment submission, then substantially rewritten and extended with production features the assignment didn't require.</p>
-          <ul>
+          <div class="project-more" id="more-cloudpose" hidden>
+            <ul>
             <li>Rebuilt the service: the model now loads once at startup instead of per-request, keypoints are confidence-filtered before being drawn or returned, and a new concurrent batch endpoint processes up to 32 images at once with <code>asyncio.gather</code>.</li>
             <li>Added the production basics the original skipped: a health-check endpoint, structured logging, and proper HTTP status codes instead of a bare catch-all exception handler.</li>
             <li>Manually configured an OCI VCN (subnets, security lists, route tables) and three Oracle Linux VMs, then built a Kubernetes cluster from scratch with <code>kubeadm</code>, <code>containerd</code> as the runtime and Flannel as the CNI — no managed Kubernetes offering, scaled to 3 replicas and load-tested with Locust.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-cloudpose">Read more</button>
           <div class="tags"><span class="tag">FastAPI</span><span class="tag">OpenCV</span><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Oracle Cloud Infrastructure (OCI)</span><span class="tag">Locust (load testing)</span><span class="tag">Python</span></div>
         </div>
         <div class="project-side">
@@ -1278,11 +1295,14 @@
           <h3>What actually predicts an independent artist's success</h3>
           <div class="role">Role: sole analyst</div>
           <p>Analysis of 114,000 real Spotify tracks (Kaggle dataset) to test which factors — genre, audio features, artist reputation — actually predict an independent artist's success on the platform. A topic I chose myself: first proposed as a business case study for a Monash assignment, then demonstrated with a real R Markdown analysis against the full dataset.</p>
-          <ul>
+          <div class="project-more" id="more-spotify" hidden>
+            <ul>
             <li>Wrote the R Markdown analysis myself: profiled the real 114K-track dataset and compared genre, individual audio features, and artist reputation as predictors of track popularity.</li>
             <li>Found genre alone carried roughly 26.8x more predictive weight than any single audio feature (every audio-feature correlation to popularity came in below |r| = 0.1). That's the headline finding.</li>
             <li>Also confirmed algorithmic gatekeeping in the data (under 1% of tracks reach "hit" status) and that artist reputation, not audio quality, drives repeat success.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-spotify">Read more</button>
           <div class="tags"><span class="tag">R</span><span class="tag">tidyverse</span><span class="tag">ggplot2</span><span class="tag">R Markdown</span><span class="tag">Statistical Modeling</span><span class="tag">Data Analytics</span></div>
         </div>
         <div class="project-side">
@@ -1302,12 +1322,15 @@
           <h3>ESaver: energy dashboard &amp; community app</h3>
           <div class="role">Role: API integration &amp; real-time data</div>
           <p>An Android app pairing live weather data with practical energy-saving tips, plus a real-time community chat for users to share their own.</p>
-          <ul>
+          <div class="project-more" id="more-esaver" hidden>
+            <ul>
             <li>Built the home dashboard and integrated live weather data via a Retrofit REST client.</li>
             <li>Built the recommendation logic that turns current weather conditions into actionable tips.</li>
             <li>Wired up Firestore for real-time chat sync across users.</li>
             <li>The live demo below extends this with a few original additions built specifically for it: a Weekly Eco Challenge with a streak, and a gamified Eco Score.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-esaver">Read more</button>
           <div class="tags"><span class="tag">Kotlin</span><span class="tag">Retrofit</span><span class="tag">Firebase Firestore</span><span class="tag">REST API Integration</span><span class="tag">Agile</span></div>
         </div>
         <div class="project-side">
@@ -1327,12 +1350,15 @@
           <h3>FocusLens: screen-time &amp; focus app</h3>
           <div class="role">Role: sole builder</div>
           <p>A phone-habit app that reads real Android usage data (the same source Digital Wellbeing uses) instead of estimating it, blocks specific apps or just their most distracting sections with a challenge that gets harder the more it's triggered, and ships a companion web app so people without an Android device still get the non-blocking half: journaling, cycle/wellness tracking, and a weekly usage report.</p>
-          <ul>
+          <div class="project-more" id="more-focuslens" hidden>
+            <ul>
             <li>Android app (Kotlin/Jetpack Compose): per-app and per-section blocking — e.g. just Instagram Reels or YouTube Shorts, not the whole app — via an AccessibilityService, with an escalating pause-screen challenge.</li>
             <li>Its own Room-backed usage history snapshots daily and hourly totals before Android's raw event log ages out (about a week), so a "Today by hour" chart and month/year views stay exact instead of degrading into coarse buckets.</li>
             <li>A rule-based weekly report (not AI) turns that data into specific suggestions — a busiest-hour call-out, a top-app flag — each tied to an actual in-app control, not just a number restated back.</li>
             <li>Firebase Auth (Google + email) and Firestore shared across both apps, with Health Connect and device-Contacts import wired up as opt-in, permission-gated data sources.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-focuslens">Read more</button>
           <div class="tags"><span class="tag">Kotlin</span><span class="tag">Jetpack Compose</span><span class="tag">Room</span><span class="tag">AccessibilityService</span><span class="tag">Firebase Auth</span><span class="tag">Firestore</span><span class="tag">JavaScript (PWA)</span><span class="tag">GitHub Actions CI</span></div>
         </div>
         <div class="project-side">
@@ -1353,11 +1379,14 @@
           <h3>CliMaze (ShelfShift): freshness-aware food waste prevention</h3>
           <div class="role">Role: team lead — demand &amp; stock planning, integration, pitch</div>
           <p>A food-waste prevention tool built with a 4-person team for a COP31 (Zero Waste &amp; Methane Reduction) brief. Food businesses usually rotate stock by date alone; ShelfShift plans against a batch's real remaining quality instead, pairing demand and stock planning (mine) with a teammate's temperature-history "Expiry Twin," so stock gets used, sold or donated before it becomes landfill methane.</p>
-          <ul>
+          <div class="project-more" id="more-climaze" hidden>
+            <ul>
             <li>Owned demand forecasting and stock planning: a 7-day observed-day baseline, waste-risk scenarios ranked against ordinary rotation, and the rescue-ladder logic recommending the next best action (use first, donate, inspect, or compost) for each at-risk batch.</li>
             <li>Built the integration between stock planning and the Expiry Twin's freshness curves, and led the COP31/SDG framing, the climate-impact lens (modelled CO₂-e kept strictly separate from recorded outcomes), and the team's pitch.</li>
             <li>Shipped with a six-step guided in-app demo, a printable impact report, and 40 unit/UI tests plus a real-browser end-to-end check in CI.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-climaze">Read more</button>
           <div class="tags"><span class="tag">JavaScript</span><span class="tag">ES Modules</span><span class="tag">Demand Forecasting</span><span class="tag">Node.js</span><span class="tag">GitHub Actions CI</span><span class="tag">Data Visualization</span></div>
         </div>
         <div class="project-side">
@@ -1377,11 +1406,14 @@
           <h3>ColorCompass: AI colour &amp; style advisor</h3>
           <div class="role">Role: sole builder</div>
           <p>A client-side web app that turns a selfie into a full seasonal colour and style report. Real HSL colour-wheel math — not ad hoc RGB thresholds — maps your skin tone into one of the 12 standard seasonal-analysis categories, then renders a palette, outfit ideas, makeup/hair guidance, and live weather-aware styling suggestions. Everything runs in the browser; no photo ever leaves the device.</p>
-          <ul>
+          <div class="project-more" id="more-colorcompass" hidden>
+            <ul>
             <li>Built the colour classification from scratch: converts sampled skin/hair pixels to HSL, applies a skin-tone-calibrated warm/cool hue threshold (a generic half-wheel split misclassifies real skin tones as warm), and scores depth, contrast and clarity to land on one of 12 seasons.</li>
             <li>Added a getUserMedia live camera capture path alongside file upload, so it works in in-app/embedded browsers that ignore the native capture attribute.</li>
             <li>Pulls live weather via Open-Meteo (no API key) for climate-aware outfit suggestions, with geolocation as an optional shortcut.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-colorcompass">Read more</button>
           <div class="tags"><span class="tag">JavaScript</span><span class="tag">Canvas API</span><span class="tag">HSL Colour Theory</span><span class="tag">Open-Meteo API</span><span class="tag">getUserMedia</span><span class="tag">Zero dependencies</span></div>
         </div>
         <div class="project-side">
@@ -1389,29 +1421,6 @@
           <div class="metric"><span class="n" data-target="0">0</span><span class="l">photos ever leave your device</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/colorcompass" target="_blank" rel="noopener">View source ↗</a>
           <a class="project-link" href="https://madhumithachalla.github.io/colorcompass/" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
-        </div>
-      </div>
-
-      <div class="project" id="proj-job-automation" data-categories="automation">
-        <div>
-          <div class="project-top">
-            <span class="pill indie">Solo</span>
-            <span class="pill" style="color:var(--slate);border-color:var(--line);">Personal automation</span>
-          </div>
-          <h3>stuplyin: job search automation &amp; tracker</h3>
-          <div class="role">Role: sole builder</div>
-          <p>A nightly automation that searches for roles matching my own criteria, drafts a preview for me to review, and only ever applies after I explicitly approve — nothing goes out on its own. Approved applications land in a timestamped tracker that syncs to a dashboard and Notion, so the whole search stays in one place instead of scattered across job boards and email.</p>
-          <ul>
-            <li>Runs on a schedule, searches, and stops at a human review step every time — there's no "fully autonomous apply" mode, by design.</li>
-            <li>Built around swappable connectors (job sources, the tracker, Notion) rather than anything hardcoded, so pointing it at a different search means different connected accounts, not different code.</li>
-            <li>My own dashboard isn't linked here — it runs against my real accounts and applications, which isn't something to publish. Instead there's a free public template below: a generic tracker, resume/ATS checker and portal list that runs on your own Airtable account, with none of my data in it.</li>
-          </ul>
-          <div class="tags"><span class="tag">Claude Agent SDK</span><span class="tag">Automation</span><span class="tag">Notion API</span><span class="tag">Scheduled Tasks</span></div>
-        </div>
-        <div class="project-side">
-          <div class="metric"><span class="n">Nightly</span><span class="l">automated search + preview</span></div>
-          <div class="metric"><span class="n">Approval-gated</span><span class="l">nothing applies without my review</span></div>
-          <a class="project-link" href="https://madhumithachalla.github.io/jobs-desk/" target="_blank" rel="noopener">Try the free template ↗</a>
         </div>
       </div>
 
@@ -1424,10 +1433,13 @@
           <h3>Automated document data-extraction pipeline</h3>
           <div class="role">Role: sole builder</div>
           <p>A Python pipeline that pulls specific data rows out of scanned, multi-page PDFs automatically. I built it because doing it by hand was slow and error-prone.</p>
-          <ul>
+          <div class="project-more" id="more-ocr" hidden>
+            <ul>
             <li>Used OCR plus pixel-level bounding-box detection to locate target rows across large scanned documents.</li>
             <li>Applied pattern matching to validate and flag records, then reassembled results into an annotated output PDF.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-ocr">Read more</button>
           <div class="tags"><span class="tag">Python</span><span class="tag">pytesseract</span><span class="tag">PIL</span><span class="tag">pdf2image</span><span class="tag">Process Automation</span></div>
         </div>
         <div class="project-side">
@@ -1447,12 +1459,15 @@
           <h3>Full IELTS mock test practice tool</h3>
           <div class="role">Role: sole builder</div>
           <p>Built for my own IELTS prep: a browser-based mock exam covering all four sections (Listening, Reading, Writing, Speaking), because paid mock-test platforms were expensive and I wanted something I could rerun as many times as I needed.</p>
-          <ul>
+          <div class="project-more" id="more-ielts" hidden>
+            <ul>
             <li>Listening and Reading auto-score against the official IELTS raw-score-to-band conversion tables, with a live results breakdown by question type (form completion, multiple choice, map labelling, matching).</li>
             <li>Listening plays each transcript aloud using the browser's built-in text-to-speech, with adjustable playback speed. No audio files to host.</li>
             <li>Writing gives timed Task 1 &amp; 2 practice with live word count; Speaking has per-part countdown timers plus an in-browser voice recorder to play back your own spoken answers.</li>
             <li>A Feedback dashboard aggregates results across sections, flags strong vs. weak question types with targeted tips, and tracks average band against a target score.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-ielts">Read more</button>
           <div class="tags"><span class="tag">React</span><span class="tag">Web Speech API</span><span class="tag">MediaRecorder API</span><span class="tag">Recharts</span></div>
         </div>
         <div class="project-side">
@@ -1473,12 +1488,15 @@
           <h3>LinkedIn banner generator</h3>
           <div class="role">Role: sole builder</div>
           <p>My own LinkedIn banner, built as code instead of a design tool: plain HTML/CSS rendered to an exact, pixel-perfect PNG with Playwright, so it matches this site's own palette and typography exactly rather than approximating it in Canva.</p>
-          <ul>
+          <div class="project-more" id="more-banner" hidden>
+            <ul>
             <li>Every element (name, tagline, tech pills, contact line, the meteor streaks) is positioned in code, not dragged into place.</li>
             <li>A dedicated clear-zone keeps LinkedIn's profile-photo circle from overlapping text on both desktop and mobile.</li>
             <li>Rendered at 2x resolution for crisp text, then resized to LinkedIn's exact 1584×396 spec.</li>
             <li>A live in-browser editor (click-to-edit text, add/remove pills) exports the result as PNG, JPEG, or PDF, no code editing required.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-banner">Read more</button>
           <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">Playwright</span><span class="tag">Node.js</span></div>
         </div>
         <div class="project-side">
@@ -1516,11 +1534,14 @@
           <h3>Portfolio site: hand-coded, framework-free</h3>
           <div class="role">Role: sole builder</div>
           <p>The site you're on right now: a single-file, hand-coded portfolio with no framework or build step — theming, animations, the built-in chat assistant, the live project-repo sync, and every section on this page written directly in HTML/CSS/JS.</p>
-          <ul>
+          <div class="project-more" id="more-portfolio" hidden>
+            <ul>
             <li>Light/dark theming, scroll-reveal animations, and an animated starfield/meteor backdrop, all built from scratch.</li>
             <li>A built-in FAQ chat assistant answering questions about my background with static keyword matching, no backend or API key.</li>
             <li>Live-syncs with my <code>projects</code> GitHub repo so a new project folder never goes unlisted, even before I've written a full card for it here.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-portfolio">Read more</button>
           <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">SVG</span><span class="tag">GitHub Pages</span></div>
         </div>
         <div class="project-side">
@@ -1538,11 +1559,14 @@
           <h3>Logo mark</h3>
           <div class="role">Role: sole builder</div>
           <p>My own personal mark, sitting in the nav bar at the top of this page: an "M" and a "C" drawn as one continuous flowing line that reads as an infinity loop, traced from my own handwriting.</p>
-          <ul>
+          <div class="project-more" id="more-logo" hidden>
+            <ul>
             <li>Traced from photos of my own hand-drawn M/C infinity loop into a single smooth cubic-bezier SVG path — hours of nudging control points to match my actual pen strokes, so it's genuinely my handwriting but stays crisp at any size.</li>
             <li>A glowing "photon" orbits the loop continuously, trailed by a small fading dust trail, all driven by native SVG <code>animateMotion</code>.</li>
             <li>The nav version sits on a small hand-drawn cosmic badge (a tiny Mars and Saturn scene) for a bit of personality at a size most logos wouldn't bother with.</li>
           </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-logo">Read more</button>
           <div class="tags"><span class="tag">SVG</span><span class="tag">CSS Animation</span></div>
         </div>
         <div class="project-side">
@@ -2034,7 +2058,7 @@
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 <script src="portfolio-sync.js?v=1"></script>
 
 </body>

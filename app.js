@@ -960,3 +960,22 @@
     window.addEventListener('resize', updateUI);
     updateUI();
   })();
+
+  // Project card "Read more" expand/collapse: keeps each card's visible
+  // summary short, with the fuller description and bullets revealed on
+  // demand. Delegated on .project-list so it also covers cards added later
+  // by portfolio-sync.js.
+  (function(){
+    const list = document.getElementById('projectList');
+    if (!list) return;
+    list.addEventListener('click', (e) => {
+      const btn = e.target.closest('.project-expand');
+      if (!btn) return;
+      const more = btn.previousElementSibling;
+      if (!more || !more.classList.contains('project-more')) return;
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      more.hidden = expanded;
+      btn.setAttribute('aria-expanded', String(!expanded));
+      btn.textContent = expanded ? 'Read more' : 'Show less';
+    });
+  })();
