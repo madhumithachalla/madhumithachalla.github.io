@@ -259,160 +259,6 @@
     });
   })();
 
-  // Live sync with GitHub — the hand-written cards above stay the primary
-  // content, but on load we check two things and surface a small fallback
-  // card for anything that doesn't have a hand-written card yet, so a new
-  // project can never silently go unlisted:
-  //   1. New top-level folders in the madhumithachalla/projects monorepo.
-  //   2. New standalone public repos on the account (e.g. a project that
-  //      gets its own repo instead of a projects/ subfolder).
-  // Uses the public unauthenticated GitHub API (~60 req/hour/IP) and fails
-  // completely silently on error, rate-limit, or offline — visitors just
-  // see the existing cards. To keep a repo out of this entirely (a fork,
-  // an empty placeholder, something not meant for the portfolio), add its
-  // name (lowercase) to EXCLUDED_REPOS below.
-  (function(){
-    const list = document.querySelector('.project-list');
-    if (!list) return;
-
-    const EXCLUDED_REPOS = new Set(['madhumithachalla.github.io', 'projects']);
-    const SYNC_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6h — keeps us well under GitHub's 60 req/hr unauthenticated limit on repeat visits
-
-    function cacheGet(key){
-      try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return null;
-        const { at, data } = JSON.parse(raw);
-        if (Date.now() - at > SYNC_CACHE_TTL_MS) return null;
-        return data;
-      } catch (e) { return null; }
-    }
-    function cacheSet(key, data){
-      try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), data })); } catch (e) {}
-    }
-    // Falls back to a stale cached copy (even past TTL) if the live fetch fails —
-    // e.g. the unauthenticated GitHub API rate limit (60 req/hr/IP) being hit on a
-    // shared corporate network — so a successful earlier load still shows.
-    function cacheGetStale(key){
-      try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return null;
-        return JSON.parse(raw).data;
-      } catch (e) { return null; }
-    }
-
-    function buildFallbackCard(pillText, title, description, linkHref, linkText){
-      const card = document.createElement('div');
-      card.className = 'project project-sync-fallback in';
-
-      const main = document.createElement('div');
-      const top = document.createElement('div');
-      top.className = 'project-top';
-      const pill = document.createElement('span');
-      pill.className = 'pill new-sync';
-      pill.textContent = pillText;
-      top.appendChild(pill);
-      main.appendChild(top);
-
-      const h3 = document.createElement('h3');
-      h3.textContent = title;
-      main.appendChild(h3);
-
-      const p = document.createElement('p');
-      p.textContent = description;
-      main.appendChild(p);
-
-      const side = document.createElement('div');
-      side.className = 'project-side';
-      const link = document.createElement('a');
-      link.className = 'project-link';
-      link.href = linkHref;
-      link.target = '_blank';
-      link.rel = 'noopener';
-      link.textContent = linkText;
-      side.appendChild(link);
-
-      card.appendChild(main);
-      card.appendChild(side);
-      return card;
-    }
-
-    // --- 1. New folders inside the projects monorepo ---
-    const knownFolderSlugs = new Set();
-    list.querySelectorAll('a.project-link[href*="github.com/madhumithachalla/projects/tree/main/"]').forEach(a => {
-      const m = a.getAttribute('href').match(/tree\/main\/([^/?#]+)/);
-      if (m) knownFolderSlugs.add(m[1]);
-    });
-
-    function entriesToFolderCards(entries){
-      if (!Array.isArray(entries)) return [];
-      return entries
-        .filter(e => e.type === 'dir' && !e.name.startsWith('.') && !knownFolderSlugs.has(e.name))
-        .map(dir => buildFallbackCard(
-          'New in the projects repo',
-          dir.name.replace(/[-_]/g, ' '),
-          "This folder just landed in the projects repo and doesn't have a full writeup here yet — check it out on GitHub in the meantime.",
-          `https://github.com/madhumithachalla/projects/tree/main/${encodeURIComponent(dir.name)}`,
-          'View on GitHub ↗'
-        ));
-    }
-
-    const FOLDERS_CACHE_KEY = 'jd-sync-folders';
-    const cachedFolders = cacheGet(FOLDERS_CACHE_KEY);
-
-    const foldersPromise = !knownFolderSlugs.size
-      ? Promise.resolve([])
-      : cachedFolders
-        ? Promise.resolve(entriesToFolderCards(cachedFolders))
-        : fetch('https://api.github.com/repos/madhumithachalla/projects/contents/')
-            .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-            .then(entries => {
-              if (Array.isArray(entries)) cacheSet(FOLDERS_CACHE_KEY, entries);
-              return entriesToFolderCards(entries);
-            })
-            .catch(() => entriesToFolderCards(cacheGetStale(FOLDERS_CACHE_KEY)));
-
-    // --- 2. New standalone public repos on the account ---
-    const knownRepoNames = new Set(EXCLUDED_REPOS);
-    list.querySelectorAll('a.project-link[href^="https://github.com/madhumithachalla/"]').forEach(a => {
-      const m = a.getAttribute('href').match(/^https:\/\/github\.com\/madhumithachalla\/([^/?#]+)\/?$/);
-      if (m) knownRepoNames.add(m[1].toLowerCase());
-    });
-
-    function reposToCards(repos){
-      if (!Array.isArray(repos)) return [];
-      return repos
-        .filter(r => !r.fork && !r.archived && r.size > 0 && !knownRepoNames.has(r.name.toLowerCase()))
-        .map(r => buildFallbackCard(
-          'New public repo',
-          r.name.replace(/[-_]/g, ' '),
-          r.description || "A new public repo that doesn't have a full writeup here yet — check it out on GitHub in the meantime.",
-          r.homepage || r.html_url,
-          r.has_pages ? 'View live ↗' : 'View on GitHub ↗'
-        ));
-    }
-
-    const REPOS_CACHE_KEY = 'jd-sync-repos';
-    const cachedRepos = cacheGet(REPOS_CACHE_KEY);
-
-    const reposPromise = cachedRepos
-      ? Promise.resolve(reposToCards(cachedRepos))
-      : fetch('https://api.github.com/users/madhumithachalla/repos?per_page=100&type=public')
-          .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-          .then(repos => {
-            if (Array.isArray(repos)) cacheSet(REPOS_CACHE_KEY, repos);
-            return reposToCards(repos);
-          })
-          .catch(() => reposToCards(cacheGetStale(REPOS_CACHE_KEY)));
-
-    Promise.all([foldersPromise, reposPromise]).then(([folderCards, repoCards]) => {
-      const cards = [...folderCards, ...repoCards];
-      if (!cards.length) return;
-      const upcoming = list.querySelector('.project.upcoming');
-      cards.forEach(card => list.insertBefore(card, upcoming || null));
-    });
-  })();
-
   // Skills & stack auto-addendum — this is the actual sync logic, not a one-off edit: any
   // technology named in a Project's tag row, or in an Experience entry's own "Skills:" line,
   // that isn't already named anywhere in Skills & Stack (by exact match or as a substring of
@@ -862,11 +708,10 @@
     const empty = document.getElementById('projectEmpty');
     if (!filterBar || !list) return;
     const buttons = Array.from(filterBar.querySelectorAll('.project-filter'));
-    const cards = Array.from(list.querySelectorAll('.project'));
 
     function applyFilter(filter){
       let visibleCount = 0;
-      cards.forEach(card => {
+      list.querySelectorAll('.project').forEach(card => {
         const cats = (card.getAttribute('data-categories') || '').split(' ');
         const show = filter === 'all' || cats.includes(filter);
         card.classList.toggle('filtered-out', !show);
@@ -874,6 +719,10 @@
       });
       if (empty) empty.classList.toggle('show', visibleCount === 0);
     }
+
+    list.addEventListener('portfolio:updated', () => {
+      applyFilter(filterBar.querySelector('.active')?.getAttribute('data-filter') || 'all');
+    });
 
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
