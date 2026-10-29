@@ -1125,6 +1125,9 @@
 
     const clone = realBadge.cloneNode(true);
     clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+    // The splash shows just the loop and initials — no cosmic/planet
+    // backdrop, kept for the small corner badge only.
+    clone.querySelector('.nav-cosmic-bg')?.remove();
     inner.appendChild(clone);
     document.body.classList.add('intro-playing');
 
