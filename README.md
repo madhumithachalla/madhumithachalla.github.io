@@ -77,7 +77,7 @@ Everything is in one file on purpose — no build tools, no dependencies beyond 
 
 - **Colors/fonts** — edit the CSS custom properties on `:root` at the top of the `<style>` block (`--coral`, `--amber`, `--teal`, `--violet`, `--green`, etc.).
 - **Content** — text lives directly in the HTML; search for the relevant heading to find it.
-- **Add a project** — copy one `<div class="project">...</div>` block and edit it.
+- **Add a project** — public personal repositories and new folders in the public `projects` collection appear automatically. See [automatic project tiles](./docs/07-automatic-project-tiles.md) for metadata, academic exclusions, and approved private-project summaries. You can still copy a handwritten `<div class="project">...</div>` for a fuller showcase.
 - **Add an experience entry** — copy one `<div class="exp-tile">...</div>` block inside `.exp-grid`.
 - **Stats strip** — edit the `data-target` / `data-prefix` / `data-suffix` attributes on `.stat-num` elements.
 - **Skill proficiency** — edit how many `<span class="dash on">` vs `<span class="dash">` each `.skill-item` has (5 total).
