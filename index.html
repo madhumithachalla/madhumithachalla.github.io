@@ -70,11 +70,13 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
 
 <a class="skip-link" href="#hero">Skip to content</a>
+
+<div id="logoIntro" aria-hidden="true"><div class="logo-intro-inner"></div></div>
 
 <canvas id="starfield" aria-hidden="true"></canvas>
 
@@ -119,9 +121,16 @@
             <path d="M 49.5 11 A 9.5 1.4 0 0 0 68.5 11" fill="none" stroke="#C9B48C" stroke-width="0.5"/>
           </g>
         </svg>
+      <div class="nav-logo-fg">
       <svg class="nav-logo-static" viewBox="70 55 1060 410" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 
       <defs>
+
+          <radialGradient id="mcBackdropGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFC56B" stop-opacity="0.55"/>
+              <stop offset="55%" stop-color="#FF6F5E" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#FF6F5E" stop-opacity="0"/>
+          </radialGradient>
 
           <linearGradient id="infinityGradient"
                           x1="120" y1="150"
@@ -301,6 +310,8 @@
           stroke-width="42"
           opacity=".10"
           filter="url(#strongGlow)"
+          pathLength="1"
+          class="mc-loop-draw"
       />
 
       <path
@@ -326,6 +337,8 @@
           stroke-linecap="round"
           stroke-linejoin="round"
           filter="url(#strongGlow)"
+          pathLength="1"
+          class="mc-loop-draw"
       />
 
       <path
@@ -350,6 +363,8 @@
           stroke-linecap="round"
           stroke-linejoin="round"
           filter="url(#cometTexture)"
+          pathLength="1"
+          class="mc-loop-draw"
       />
 
       <path
@@ -373,9 +388,12 @@
           stroke-opacity=".45"
           stroke-width="2.2"
           stroke-linecap="round"
+          pathLength="1"
+          class="mc-loop-draw"
       />
 
-      <g transform="translate(233.0,160.0) scale(0.2367)">
+      <ellipse class="mc-backdrop" id="mcBackdrop" cx="300" cy="260" rx="0" ry="0" fill="url(#mcBackdropGrad)"/>
+      <g class="mc-letters" transform="translate(233.0,160.0) scale(0.2367)">
                 <g transform="translate(0.000000,845.000000) scale(0.100000,-0.100000)" fill="url(#letterGradient)" stroke="none"><path d="M6733 7377 c-23 -18 -42 -35 -42 -40 -1 -4 -13 -26 -27 -49 -27 -42
       -30 -99 -9 -165 6 -19 4 -23 -16 -23 -21 0 -27 -9 -43 -62 -11 -35 -28 -80
       -38 -100 -11 -22 -18 -59 -18 -92 0 -50 -3 -56 -27 -68 -18 -9 -29 -24 -34
@@ -615,13 +633,15 @@
       </g>
 
       </svg>
-      <svg class="nav-logo-spark" viewBox="0 0 86 40" aria-hidden="true">
-        <circle r="2.1" fill="#FFC56B">
-          <animateMotion dur="3.2s" repeatCount="indefinite"
-            path="M43,20 C52,13 62,13 62,20 C62,27 52,27 43,20 C34,27 24,27 24,20 C24,13 34,13 43,20 Z"/>
-          <animate attributeName="opacity" values="0.2;1;0.2" dur="3.2s" repeatCount="indefinite"/>
+      <svg class="nav-logo-spark" viewBox="70 55 1060 410" aria-hidden="true">
+        <circle r="10" fill="#FFC56B">
+          <animateMotion dur="4.5s" repeatCount="indefinite"
+            path="M130,260 C190,105 365,105 500,220 C545,258 570,278 600,290 C635,276 660,250 705,215 C840,105 1010,120 1060,260 C1010,400 840,415 705,305 C660,270 635,244 600,230 C570,242 545,262 500,300 C365,415 190,415 130,260"/>
+          <animate attributeName="opacity" values="0.25;1;0.25" dur="4.5s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="7;11;7" dur="4.5s" repeatCount="indefinite"/>
         </circle>
       </svg>
+      </div>
       </div>
       <div class="nav-name">Madhumitha Challa</div>
     </div>
@@ -2079,7 +2099,7 @@
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 <script src="portfolio-sync.js?v=1"></script>
 
 </body>

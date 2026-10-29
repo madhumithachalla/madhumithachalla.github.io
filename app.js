@@ -834,7 +834,7 @@
       { keys: ['hr administrative','hew','coo','senior vp','clayton'], a: "She's also a casual HR Administrative Officer (HEW 4, ~10 hrs/week) with the HR Projects team in Monash's Office of the COO & Senior VP at Clayton Campus." },
       { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentors 40+ postgraduate IT students at Monash, works as a Student Adviser through Monash Student Communities advising 45+ students, and runs IT infrastructure for the Monash Data & AI Society (1,600+ members)." },
       { keys: ['australia','open to','available','job','role','opportunit','internship'], a: "Yes — she's open to IT roles across the board at the grad and entry level (cloud, systems, data, software, support), available part-time now and full-time from December 2026. She's on a Student Visa (Subclass 500) now, moving to a 485 Temporary Graduate Visa after graduating, and open to relocating anywhere across Australia." },
-      { keys: ['contact','reach','email','coffee','talk','chat with her','meet'], a: "Best way in is the coffee catch-up scheduler further down this page, or email her directly at rchmadhumitha@gmail.com. She replies fast." },
+      { keys: ['contact','reach','email','talk','meet'], a: "Best way in is the coffee catch-up scheduler further down this page, or email her directly at rchmadhumitha@gmail.com. She replies fast. Ask me \"how do I schedule\" for the exact options." },
       { keys: ['astronomy','photon','hobby','fun fact','space','pen name','poetry','writing','poem'], a: "She writes poetry under the pen name \"Female Photon\" on the side, a nod to her science-enthusiast streak. Ask her about it, she loves the topic." },
       { keys: ['certif','award','aws ccp','cloud practitioner','sapphire','amber','csat'], a: "AWS Certified Cloud Practitioner, plus IT Help Desk for Beginners and Agile Fundamentals (Scrum) from LinkedIn Learning/Udemy. From her time at Cognizant: the Cheers Sapphire and Amber awards (peer-nominated for technical excellence and professional growth) and CSAT Champion for a 100 customer-satisfaction score. Full list is in the Certifications section below." },
       { keys: ['linkedin','github','profile','social','find her online'], a: "GitHub: github.com/madhumithachalla — LinkedIn: linkedin.com/in/madhumitha-challa. Both linked in the footer of this page too." },
@@ -850,7 +850,12 @@
       { keys: ['sing','singing','music'], a: "She sings on the side, alongside the poetry — jack of all trades, as the hero section puts it." },
       { keys: ['genesys','call center','contact center','avaya','telephony'], a: "She led a contact centre platform transition from Avaya to Genesys Cloud CX at Cognizant, across multiple countries, alongside her production-support work." },
       { keys: ['python','java','kotlin','sql','coding language','programming language','code in'], a: "Kotlin (Android, in ESaver and FocusLens), Python (CloudPose, the OCR pipeline), SQL, Java, JavaScript, R, and COBOL/JCL from her mainframe background. See Skills & Stack for the complete list." },
-      { keys: ['this site','portfolio built','how was this made','claude','ai build','vibe cod'], a: "This site is hand-coded HTML/CSS/JS with no framework — she built it herself, project card by project card, with some AI-assisted iteration along the way. It's actually one of the projects listed below (\"Portfolio site: hand-coded, framework-free\")." }
+      { keys: ['this site','portfolio built','how was this made','claude','ai build','vibe cod'], a: "This site is hand-coded HTML/CSS/JS with no framework — she built it herself, project card by project card, with some AI-assisted iteration along the way. It's actually one of the projects listed below (\"Portfolio site: hand-coded, framework-free\")." },
+      { keys: ['schedule','book','calendly','calendar','catch-up','catch up','booking','how to meet','set up a call','set up a chat'], a: "Scroll down to the Coffee section — pick a time straight off her real open calendar, in person around Melbourne or virtual, no back-and-forth emailing. Three lengths once you're in: a 15-min Quick Intro, a 20-min Coffee & Code, or a 30-min Deep Dive. Prefer email instead? There's a pre-filled \"send me one directly\" link right there too, or just email rchmadhumitha@gmail.com." },
+      { keys: ['birdtag details','cognito','identity and access','api gateway'], a: "On BirdTag she owned identity and access end to end: designed and configured Cognito authentication, then wired it into API Gateway authorizers across every protected route with CORS handled properly. She also independently built species search, tag editing, file deletion, and secure signed-upload functions, plus co-built the core tag-query function with a teammate." },
+      { keys: ['cloudpose details','kubernetes details','kubeadm','oci vcn','self-built cluster'], a: "CloudPose started as a Monash assignment, but she rebuilt and extended it well past what the assignment asked for: the model now loads once at startup instead of per-request, a batch endpoint processes up to 32 images concurrently, and she manually configured an OCI VCN and built a 3-VM Kubernetes cluster from scratch with kubeadm (no managed Kubernetes offering), then load-tested it with Locust." },
+      { keys: ['colorcompass details','hsl','colour wheel','seasonal analysis'], a: "ColorCompass does real seasonal colour analysis from scratch: it converts sampled skin/hair pixels to actual HSL colour-wheel coordinates and classifies into one of the 12 standard seasonal categories. Worth noting: her first pass used a generic half-wheel warm/cool split and it was wrong — real skin tones cluster in a narrow hue band, so that split called everyone \"warm.\" She caught it, rebuilt it with a skin-tone-calibrated threshold instead." },
+      { keys: ['issue','challenge','obstacle','difficult','hardest part','problem she faced','mistake','went wrong','failure'], a: "A concrete one: building ColorCompass's colour classifier, her first warm/cool split used a generic 90°-half division of the colour wheel — technically reasonable-sounding, but wrong for skin tones specifically, since real skin hues all cluster in one narrow band. It made every test case come back \"warm.\" She caught it through actual testing (not just assuming the math was right) and rebuilt it with a calibrated threshold. More broadly: she's run four roles at once (Monash studies, mentoring 40+ students, advising 45+ more, two part-time IT/HR jobs) — the real challenge there is just disciplined prioritisation, not any one dramatic problem." }
     ];
     const fallback = "I'm just a lightweight assistant built into this page (no live AI backend), so I don't have a good answer for that one. Try asking about her skills, projects, experience, education, or availability, or email her directly at rchmadhumitha@gmail.com.";
 
@@ -1073,4 +1078,60 @@
     closeBtn?.addEventListener('click', closePreview);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closePreview(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closePreview(); });
+  })();
+
+  // Size the nav logo's soft backdrop glow to the real bounding box of the
+  // hand-traced M/C letters, so it sits centered behind them regardless of
+  // the exact path geometry.
+  (function(){
+    const letters = document.querySelector('.mc-letters');
+    const backdrop = document.getElementById('mcBackdrop');
+    if (!letters || !backdrop || !letters.getBBox) return;
+    try {
+      const box = letters.getBBox();
+      const cx = box.x + box.width / 2;
+      const cy = box.y + box.height / 2;
+      const rx = box.width / 2 + 60;
+      const ry = box.height / 2 + 50;
+      backdrop.setAttribute('cx', cx);
+      backdrop.setAttribute('cy', cy);
+      backdrop.setAttribute('rx', rx);
+      backdrop.setAttribute('ry', ry);
+    } catch (e) {}
+  })();
+
+  // Intro splash: clones the real nav logo into a big centered overlay on
+  // load, lets its draw-in sequence play out, then docks it into the real
+  // badge's measured position/size and fades it, revealing the small
+  // corner logo already settled in place.
+  (function(){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const overlay = document.getElementById('logoIntro');
+    const inner = overlay?.querySelector('.logo-intro-inner');
+    const realBadge = document.querySelector('.nav-logo-badge');
+    if (!overlay || !inner || !realBadge) return;
+
+    const clone = realBadge.cloneNode(true);
+    clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+    inner.appendChild(clone);
+    document.body.classList.add('intro-playing');
+
+    setTimeout(() => {
+      const realRect = realBadge.getBoundingClientRect();
+      const introRect = inner.getBoundingClientRect();
+      if (realRect.width === 0 || introRect.width === 0){
+        overlay.remove();
+        document.body.classList.remove('intro-playing');
+        return;
+      }
+      const dx = (realRect.left + realRect.width / 2) - (introRect.left + introRect.width / 2);
+      const dy = (realRect.top + realRect.height / 2) - (introRect.top + introRect.height / 2);
+      const scale = realRect.width / introRect.width;
+      inner.style.setProperty('--dock-x', dx + 'px');
+      inner.style.setProperty('--dock-y', dy + 'px');
+      inner.style.setProperty('--dock-scale', scale);
+      inner.classList.add('leaving');
+      document.body.classList.remove('intro-playing');
+      setTimeout(() => overlay.remove(), 800);
+    }, 2950);
   })();
