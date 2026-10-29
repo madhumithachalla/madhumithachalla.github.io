@@ -966,7 +966,19 @@
       });
       items.forEach((item, i) => item.classList.toggle('active', i === closest));
       ticks.forEach((tick, i) => tick.classList.toggle('active', i === closest));
-      if (ticks[closest]) ticks[closest].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+      // Keep the active tick in view within the ruler's own horizontal strip
+      // only — never scrollIntoView, which can drag the whole page vertically
+      // to follow it and fights the user's own scroll on mobile.
+      const activeTick = ticks[closest];
+      if (activeTick && ruler){
+        const tickLeft = activeTick.offsetLeft;
+        const tickRight = tickLeft + activeTick.offsetWidth;
+        const viewLeft = ruler.scrollLeft;
+        const viewRight = viewLeft + ruler.clientWidth;
+        if (tickLeft < viewLeft || tickRight > viewRight){
+          ruler.scrollTo({ left: tickLeft - ruler.clientWidth / 2 + activeTick.offsetWidth / 2, behavior: 'smooth' });
+        }
+      }
     }
 
     function updateUI(){
