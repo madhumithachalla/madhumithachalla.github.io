@@ -1131,7 +1131,16 @@
       <p>A mix of team builds and solo work. Team contributions are scoped to what was mine. The rest belonged to teammates.</p>
     </div>
 
+    <div class="timeline-wrap">
+      <button type="button" class="timeline-nav prev" id="timelinePrev" aria-label="Scroll timeline left" aria-controls="projectTimeline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="timeline-nav next" id="timelineNext" aria-label="Scroll timeline right" aria-controls="projectTimeline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <div class="timeline-scroll" id="projectTimeline" tabindex="0" role="group" aria-label="Project timeline — scroll or drag horizontally, oldest to newest">
     <div class="timeline">
+      <div class="timeline-progress" id="timelineProgress"></div>
       <div class="timeline-item">
         <a class="timeline-link" href="#proj-birdtag"><span class="timeline-date">Apr – Jun 2025</span><span class="timeline-title">BirdTag: serverless media tagging platform</span></a>
       </div>
@@ -1163,16 +1172,21 @@
         <a class="timeline-link" href="#proj-logo"><span class="timeline-date">Sep 2026</span><span class="timeline-title">Logo mark</span></a>
       </div>
       <div class="timeline-item">
-        <a class="timeline-link" href="https://github.com/madhumithachalla/CliMaze" target="_blank" rel="noopener"><span class="timeline-date">Sep – Oct 2026</span><span class="timeline-title">CliMaze (ShelfShift) — COP31 competition build ↗</span></a>
+        <a class="timeline-link" href="#proj-climaze"><span class="timeline-date">Sep – Oct 2026</span><span class="timeline-title">CliMaze (ShelfShift): COP31 competition build</span></a>
       </div>
       <div class="timeline-item">
         <a class="timeline-link" href="#proj-focuslens"><span class="timeline-date">Oct 2026</span><span class="timeline-title">FocusLens: screen-time &amp; focus app</span></a>
       </div>
       <div class="timeline-item">
+        <a class="timeline-link" href="#proj-colorcompass"><span class="timeline-date">Oct 2026</span><span class="timeline-title">ColorCompass: AI colour &amp; style advisor</span></a>
+      </div>
+      <div class="timeline-item">
         <a class="timeline-link" href="#proj-job-automation"><span class="timeline-date">Oct 2026</span><span class="timeline-title">stuplyin: job search automation &amp; tracker</span></a>
       </div>
     </div>
-    <p class="timeline-note">Dates are from GitHub commit history and LinkedIn's GitHub-synced project history, except the portfolio site's own start date, which predates its current repo.</p>
+      </div>
+    </div>
+    <p class="timeline-note">Drag, scroll, or use the arrows to see the full build history — oldest to newest. Dates are from GitHub commit history and LinkedIn's GitHub-synced project history, except the portfolio site's own start date, which predates its current repo.</p>
 
     <div class="project-filters" id="projectFilters" role="group" aria-label="Filter projects by category">
       <button type="button" class="project-filter active" data-filter="all">All</button>
@@ -1311,6 +1325,54 @@
         </div>
       </div>
 
+      <div class="project" id="proj-climaze" data-categories="web team data">
+        <div>
+          <div class="project-top">
+            <span class="pill team">Team · 5</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">COP31 competition build</span>
+          </div>
+          <h3>CliMaze (ShelfShift): freshness-aware food waste prevention</h3>
+          <div class="role">Role: team lead — demand &amp; stock planning, integration, pitch</div>
+          <p>A food-waste prevention tool built with a 4-person team for a COP31 (Zero Waste &amp; Methane Reduction) brief. Food businesses usually rotate stock by date alone; ShelfShift plans against a batch's real remaining quality instead, pairing demand and stock planning (mine) with a teammate's temperature-history "Expiry Twin," so stock gets used, sold or donated before it becomes landfill methane.</p>
+          <ul>
+            <li>Owned demand forecasting and stock planning: a 7-day observed-day baseline, waste-risk scenarios ranked against ordinary rotation, and the rescue-ladder logic recommending the next best action (use first, donate, inspect, or compost) for each at-risk batch.</li>
+            <li>Built the integration between stock planning and the Expiry Twin's freshness curves, and led the COP31/SDG framing, the climate-impact lens (modelled CO₂-e kept strictly separate from recorded outcomes), and the team's pitch.</li>
+            <li>Shipped with a six-step guided in-app demo, a printable impact report, and 40 unit/UI tests plus a real-browser end-to-end check in CI.</li>
+          </ul>
+          <div class="tags"><span class="tag">JavaScript</span><span class="tag">ES Modules</span><span class="tag">Demand Forecasting</span><span class="tag">Node.js</span><span class="tag">GitHub Actions CI</span><span class="tag">Data Visualization</span></div>
+        </div>
+        <div class="project-side">
+          <div class="metric"><span class="n">5-person</span><span class="l">team, COP31 build</span></div>
+          <div class="metric"><span class="n">24 → 0</span><span class="l">kg at-risk stock in the demo scenario</span></div>
+          <a class="project-link" href="https://github.com/madhumithachalla/CliMaze" target="_blank" rel="noopener">View source ↗</a>
+          <a class="project-link" href="https://madhumithachalla.github.io/climaze/" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-colorcompass" data-categories="web design">
+        <div>
+          <div class="project-top">
+            <span class="pill indie">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Personal build</span>
+          </div>
+          <h3>ColorCompass: AI colour &amp; style advisor</h3>
+          <div class="role">Role: sole builder</div>
+          <p>A client-side web app that turns a selfie into a full seasonal colour and style report. Real HSL colour-wheel math — not ad hoc RGB thresholds — maps your skin tone into one of the 12 standard seasonal-analysis categories, then renders a palette, outfit ideas, makeup/hair guidance, and live weather-aware styling suggestions. Everything runs in the browser; no photo ever leaves the device.</p>
+          <ul>
+            <li>Built the colour classification from scratch: converts sampled skin/hair pixels to HSL, applies a skin-tone-calibrated warm/cool hue threshold (a generic half-wheel split misclassifies real skin tones as warm), and scores depth, contrast and clarity to land on one of 12 seasons.</li>
+            <li>Added a getUserMedia live camera capture path alongside file upload, so it works in in-app/embedded browsers that ignore the native capture attribute.</li>
+            <li>Pulls live weather via Open-Meteo (no API key) for climate-aware outfit suggestions, with geolocation as an optional shortcut.</li>
+          </ul>
+          <div class="tags"><span class="tag">JavaScript</span><span class="tag">Canvas API</span><span class="tag">HSL Colour Theory</span><span class="tag">Open-Meteo API</span><span class="tag">getUserMedia</span><span class="tag">Zero dependencies</span></div>
+        </div>
+        <div class="project-side">
+          <div class="metric"><span class="n" data-target="12">0</span><span class="l">colour seasons, real HSL math</span></div>
+          <div class="metric"><span class="n" data-target="0">0</span><span class="l">photos ever leave your device</span></div>
+          <a class="project-link" href="https://github.com/madhumithachalla/colorcompass" target="_blank" rel="noopener">View source ↗</a>
+          <a class="project-link" href="https://madhumithachalla.github.io/colorcompass/" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
+        </div>
+      </div>
+
       <div class="project" id="proj-job-automation" data-categories="automation">
         <div>
           <div class="project-top">
@@ -1330,7 +1392,7 @@
         <div class="project-side">
           <div class="metric"><span class="n">Nightly</span><span class="l">automated search + preview</span></div>
           <div class="metric"><span class="n">Approval-gated</span><span class="l">nothing applies without my review</span></div>
-          <a class="project-link" href="jobs-desk/" target="_blank" rel="noopener">Try the free template ↗</a>
+          <a class="project-link" href="https://madhumithachalla.github.io/jobs-desk/" target="_blank" rel="noopener">Try the free template ↗</a>
         </div>
       </div>
 

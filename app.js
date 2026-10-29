@@ -1040,3 +1040,67 @@
       panel.classList.contains('open') ? closePanel() : openPanel();
     });
   })();
+
+  // Horizontal drag-to-scroll project timeline: mouse drag, native touch scroll,
+  // arrow-button nudge, keyboard arrow keys, and a progress line that fills as
+  // you scroll through so the "oldest to newest" build history reads at a glance.
+  (function(){
+    const scroller = document.getElementById('projectTimeline');
+    if (!scroller) return;
+    const track = scroller.querySelector('.timeline');
+    const progress = document.getElementById('timelineProgress');
+    const prevBtn = document.getElementById('timelinePrev');
+    const nextBtn = document.getElementById('timelineNext');
+
+    function maxScroll(){ return scroller.scrollWidth - scroller.clientWidth; }
+
+    function updateUI(){
+      const max = maxScroll();
+      const pct = max > 0 ? Math.min(1, Math.max(0, scroller.scrollLeft / max)) : 1;
+      if (progress) progress.style.width = (pct * 100) + '%';
+      if (prevBtn) prevBtn.disabled = scroller.scrollLeft <= 30;
+      if (nextBtn) nextBtn.disabled = scroller.scrollLeft >= max - 2;
+    }
+
+    function nudge(dir){
+      const item = track?.querySelector('.timeline-item');
+      const step = item ? item.getBoundingClientRect().width + 20 : 200;
+      scroller.scrollBy({ left: dir * step * 2, behavior: 'smooth' });
+    }
+
+    prevBtn?.addEventListener('click', () => nudge(-1));
+    nextBtn?.addEventListener('click', () => nudge(1));
+
+    scroller.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); nudge(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); nudge(-1); }
+    });
+
+    // Mouse drag-to-scroll (touch already scrolls natively via overflow-x)
+    let dragging = false, dragged = false, startX = 0, startScroll = 0;
+    scroller.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') return;
+      dragging = true; dragged = false;
+      startX = e.clientX; startScroll = scroller.scrollLeft;
+      scroller.classList.add('dragging');
+      scroller.setPointerCapture(e.pointerId);
+    });
+    scroller.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) dragged = true;
+      scroller.scrollLeft = startScroll - dx;
+    });
+    function endDrag(){ dragging = false; scroller.classList.remove('dragging'); }
+    scroller.addEventListener('pointerup', endDrag);
+    scroller.addEventListener('pointercancel', endDrag);
+    scroller.addEventListener('pointerleave', endDrag);
+    // Suppress the click-through navigation when a drag actually moved the track
+    scroller.addEventListener('click', (e) => {
+      if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; }
+    }, true);
+
+    scroller.addEventListener('scroll', updateUI, { passive: true });
+    window.addEventListener('resize', updateUI);
+    updateUI();
+  })();
