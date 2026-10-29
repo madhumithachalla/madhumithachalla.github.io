@@ -845,12 +845,19 @@
       return hit ? hit.a : fallback;
     }
 
+    const avatar = document.getElementById('chatAvatar');
+
     function addMsg(text, who){
       const div = document.createElement('div');
       div.className = `chat-msg ${who}`;
       div.textContent = text;
       body.appendChild(div);
       body.scrollTop = body.scrollHeight;
+      if (who === 'bot' && avatar){
+        avatar.classList.add('talking');
+        const talkMs = Math.min(3200, Math.max(900, text.length * 22));
+        setTimeout(() => avatar.classList.remove('talking'), talkMs);
+      }
     }
 
     function openPanel(){

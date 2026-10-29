@@ -109,7 +109,7 @@
     padding:16px 28px; max-width:var(--maxw); margin:0 auto;
   }
   .nav-brand{display:flex; align-items:center; gap:9px;}
-  .nav-logo-badge{position:relative; width:68px; height:32px; flex:none; animation:logoLaunch 900ms cubic-bezier(.22,1,.36,1) both;}
+  .nav-logo-badge{position:relative; width:86px; height:40px; flex:none; animation:logoLaunch 900ms cubic-bezier(.22,1,.36,1) both;}
   @keyframes logoLaunch{
     0%{opacity:0; transform:scale(.35) rotate(-18deg);}
     55%{opacity:1; transform:scale(1.1) rotate(4deg);}
@@ -119,7 +119,7 @@
   .nav-cosmic-bg{position:absolute; inset:0; width:100%; height:100%; border-radius:8px;}
   .nav-logo-static{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:52px; height:auto; flex:none;
+    width:66px; height:auto; flex:none;
   }
   .footer-signature{display:flex; justify-content:flex-start; margin-top:18px;}
   .footer-mark{width:84px; height:auto; flex:none;}
@@ -786,6 +786,17 @@
     padding:14px 16px; border-bottom:1px solid var(--line);
     background:linear-gradient(120deg, rgba(255,111,94,0.14), rgba(155,126,222,0.1));
   }
+  .chat-head-who{display:flex; align-items:center; gap:10px;}
+  .chat-avatar{width:40px; height:40px; flex:none;}
+  .chat-avatar--mini{width:34px; height:34px; animation:avatarIdleBob 2.4s ease-in-out infinite;}
+  .chat-avatar-eyes{animation:avatarBlink 4.5s ease-in-out infinite; transform-origin:32px 32px;}
+  .chat-avatar-mouth{transform-origin:32px 42px;}
+  .chat-avatar.talking .chat-avatar-mouth{animation:avatarTalk .28s ease-in-out infinite;}
+  .chat-avatar.talking{animation:avatarTalkBob .28s ease-in-out infinite;}
+  @keyframes avatarBlink{0%, 90%, 100%{transform:scaleY(1);} 94%{transform:scaleY(0.12);}}
+  @keyframes avatarTalk{0%, 100%{transform:scaleY(1);} 50%{transform:scaleY(2.4);}}
+  @keyframes avatarTalkBob{0%, 100%{transform:translateY(0);} 50%{transform:translateY(-2px);}}
+  @keyframes avatarIdleBob{0%, 100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-1.5px) rotate(-2deg);}}
   .chat-head-title{font-family:'Inter'; font-weight:600; font-size:14px;}
   .chat-head-sub{display:flex; align-items:center; gap:6px; font-size:11px; color:var(--slate); margin-top:2px;}
   .chat-head-sub .dot{width:6px; height:6px; box-shadow:none;}
