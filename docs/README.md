@@ -17,6 +17,7 @@ so each topic is its own file:
 | [`04-javascript-features.md`](./04-javascript-features.md) | Every JS feature explained: smooth scroll, mobile nav, count-up stats, the canvas animations, the scheduler tabs, the FAQ chatbot, and more |
 | [`05-resume-and-deployment.md`](./05-resume-and-deployment.md) | How the resume download system works, and how the site is deployed to GitHub Pages |
 | [`06-reproducing-and-limitations.md`](./06-reproducing-and-limitations.md) | A step-by-step guide if you wanted to build something similar, plus what was deliberately left out of scope |
+| [`07-automatic-project-tiles.md`](./07-automatic-project-tiles.md) | Automatic public project discovery, academic exclusions, private-project summaries, metadata and checks |
 
 For the quick-start (running it locally, editing basics), see the
 [repo root README](../README.md) instead — this folder is the detailed
