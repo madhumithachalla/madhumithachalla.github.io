@@ -1146,7 +1146,8 @@
       inner.style.setProperty('--dock-y', dy + 'px');
       inner.style.setProperty('--dock-scale', scale);
       inner.classList.add('leaving');
+      overlay.classList.add('leaving');
       document.body.classList.remove('intro-playing');
-      setTimeout(() => overlay.remove(), 800);
-    }, 2950);
+      setTimeout(() => overlay.remove(), 1000);
+    }, 3900);
   })();

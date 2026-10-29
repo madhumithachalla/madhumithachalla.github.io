@@ -185,18 +185,36 @@
   }
   @keyframes mcFadeIn{to{opacity:1;}}
 
-  /* Intro splash: a big centered copy of the nav logo plays its full
-     draw-in once on page load, then docks into the real corner badge's
-     exact position/size (computed in JS) and fades, so it reads as the
-     logo arriving and settling into place rather than just appearing. */
+  /* Intro splash: a full-screen takeover on page load — the page itself
+     isn't visible behind it. A big centered copy of the nav logo plays its
+     full draw-in (slowed down from the small nav version so the trace
+     actually reads), breathes gently while it holds, then the whole
+     backdrop fades as the mark docks into the real corner badge's exact
+     measured position/size, so it reads as the logo arriving and settling
+     into place rather than an image just popping up. */
   #logoIntro{
     position:fixed; inset:0; z-index:300; display:flex;
     align-items:center; justify-content:center; pointer-events:none;
+    background:radial-gradient(circle at 50% 46%, var(--bg-panel) 0%, var(--bg) 72%);
+    opacity:1; transition:opacity .85s ease;
   }
-  .logo-intro-inner{width:min(50vw, 320px); transform-origin:center center;}
-  .logo-intro-inner .nav-logo-badge{width:100%; height:auto; aspect-ratio:86/40;}
+  #logoIntro.leaving{opacity:0;}
+  .logo-intro-inner{
+    width:min(78vw, 560px); transform-origin:center center;
+    filter:drop-shadow(0 0 70px rgba(255,197,107,0.3)) drop-shadow(0 0 140px rgba(255,111,94,0.18));
+    animation:introBreathe 2.2s ease-in-out 2.9s infinite;
+  }
+  .logo-intro-inner .nav-logo-badge{width:100%; height:auto; aspect-ratio:86/40; animation:none;}
+  .logo-intro-inner .nav-logo-static{width:78%;}
+  .logo-intro-inner .mc-loop-draw{animation-duration:1.5s;}
+  .logo-intro-inner .mc-backdrop{animation-delay:1.65s;}
+  .logo-intro-inner .mc-letters{animation-duration:1.4s; animation-delay:1.7s;}
+  @keyframes introBreathe{
+    0%, 100%{transform:scale(1);}
+    50%{transform:scale(1.035);}
+  }
   .logo-intro-inner.leaving{
-    animation:logoDock .75s cubic-bezier(.45,0,.2,1) forwards;
+    animation:logoDock 1s cubic-bezier(.45,0,.2,1) forwards;
   }
   @keyframes logoDock{
     to{ transform:translate(var(--dock-x, 0), var(--dock-y, 0)) scale(var(--dock-scale, 0.1)); opacity:0; }
