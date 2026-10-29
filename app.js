@@ -907,8 +907,47 @@
     const progress = document.getElementById('timelineProgress');
     const prevBtn = document.getElementById('timelinePrev');
     const nextBtn = document.getElementById('timelineNext');
+    const ruler = document.getElementById('timelineRuler');
+    const items = [...track.querySelectorAll('.timeline-item')];
+
+    // Ruler: one tick per project, built from the map's own items so it never
+    // drifts out of sync. Clicking a tick scrolls that project to view.
+    if (ruler){
+      items.forEach((item, i) => {
+        const date = item.querySelector('.timeline-date')?.textContent || '';
+        const title = item.querySelector('.timeline-title')?.textContent || '';
+        const tick = document.createElement('button');
+        tick.type = 'button';
+        tick.className = 'timeline-tick';
+        tick.setAttribute('role', 'tab');
+        tick.setAttribute('aria-label', `Jump to ${title}`);
+        tick.innerHTML = `<span class="timeline-tick-mark"></span><span class="timeline-tick-label">${date}</span>`;
+        tick.addEventListener('click', () => {
+          const target = items[i];
+          scroller.scrollTo({
+            left: target.offsetLeft - 24,
+            behavior: 'smooth'
+          });
+        });
+        ruler.appendChild(tick);
+      });
+    }
+    const ticks = ruler ? [...ruler.querySelectorAll('.timeline-tick')] : [];
 
     function maxScroll(){ return scroller.scrollWidth - scroller.clientWidth; }
+
+    function updateActive(){
+      if (!items.length) return;
+      const center = scroller.scrollLeft + scroller.clientWidth / 2;
+      let closest = 0, closestDist = Infinity;
+      items.forEach((item, i) => {
+        const dist = Math.abs((item.offsetLeft + item.offsetWidth / 2) - center);
+        if (dist < closestDist){ closestDist = dist; closest = i; }
+      });
+      items.forEach((item, i) => item.classList.toggle('active', i === closest));
+      ticks.forEach((tick, i) => tick.classList.toggle('active', i === closest));
+      if (ticks[closest]) ticks[closest].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    }
 
     function updateUI(){
       const max = maxScroll();
@@ -916,6 +955,7 @@
       if (progress) progress.style.width = (pct * 100) + '%';
       if (prevBtn) prevBtn.disabled = scroller.scrollLeft <= 30;
       if (nextBtn) nextBtn.disabled = scroller.scrollLeft >= max - 2;
+      updateActive();
     }
 
     function nudge(dir){
@@ -978,4 +1018,44 @@
       btn.setAttribute('aria-expanded', String(!expanded));
       btn.textContent = expanded ? 'Read more' : 'Show less';
     });
+  })();
+
+  // Mobile-view preview: loads the current page inside a real iframe at
+  // phone width, so the page's own @media breakpoints apply for real
+  // (a resized container alone won't trigger them) instead of faking it
+  // with a CSS transform. A query flag stops the preview itself from
+  // offering a preview-within-a-preview.
+  (function(){
+    const btn = document.getElementById('device-view-btn');
+    const overlay = document.getElementById('device-preview');
+    const closeBtn = document.getElementById('device-preview-close');
+    const frame = document.getElementById('device-preview-iframe');
+    if (!btn || !overlay || !frame) return;
+
+    if (new URLSearchParams(location.search).get('deviceview') === 'mobile'){
+      btn.style.display = 'none';
+      return;
+    }
+
+    function openPreview(){
+      const url = new URL(location.href);
+      url.searchParams.set('deviceview', 'mobile');
+      frame.src = url.toString();
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      btn.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closePreview(){
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      btn.classList.remove('active');
+      document.body.style.overflow = '';
+      frame.src = 'about:blank';
+    }
+
+    btn.addEventListener('click', openPreview);
+    closeBtn?.addEventListener('click', closePreview);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closePreview(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closePreview(); });
   })();
