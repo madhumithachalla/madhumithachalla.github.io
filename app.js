@@ -902,8 +902,44 @@
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let w, h, dpr, stars = [], links = [], planets = [], glyphs = [];
+    let w, h, dpr, stars = [], links = [], planets = [], glyphs = [], nebula = null;
     const GLYPHS = ['</>', '{ }', '☁', '⌘', '< >'];
+    // Star colours: mostly cool white, with some blue-white and warm stars, as in real star fields.
+    const STAR_TINTS = ['231,223,247', '196,214,255', '255,226,198'];
+
+    // Deep-sky backdrop, drawn once per resize and reused every frame: a faint
+    // Milky-Way-style haze plus soft nebula clouds in the site's accent colours.
+    function buildNebula(){
+      const off = document.createElement('canvas');
+      off.width = Math.round(w * dpr); off.height = Math.round(h * dpr);
+      const n = off.getContext('2d');
+      n.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const span = Math.max(w, h);
+      n.save();
+      n.translate(w / 2, h / 2); n.rotate(-0.4);
+      const haze = n.createLinearGradient(0, -span * 0.12, 0, span * 0.12);
+      haze.addColorStop(0, 'rgba(155,126,222,0)');
+      haze.addColorStop(0.5, 'rgba(155,126,222,0.13)');
+      haze.addColorStop(1, 'rgba(155,126,222,0)');
+      n.fillStyle = haze;
+      n.fillRect(-span * 1.5, -span * 1.5, span * 3, span * 3);
+      n.restore();
+      const CLOUDS = [[155, 126, 222], [45, 212, 191], [255, 111, 94], [96, 130, 235]];
+      const clouds = Math.max(4, Math.round((w * h) / 160000));
+      for (let i = 0; i < clouds; i++){
+        const [r, g, b] = CLOUDS[i % CLOUDS.length];
+        const x = Math.random() * w, y = Math.random() * h;
+        const rad = span * (0.15 + Math.random() * 0.2);
+        const a = 0.08 + Math.random() * 0.08;
+        const cloud = n.createRadialGradient(x, y, 0, x, y, rad);
+        cloud.addColorStop(0, `rgba(${r},${g},${b},${a.toFixed(3)})`);
+        cloud.addColorStop(0.45, `rgba(${r},${g},${b},${(a * 0.4).toFixed(3)})`);
+        cloud.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        n.fillStyle = cloud;
+        n.fillRect(0, 0, w, h);
+      }
+      return off;
+    }
 
     function resize(){
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -912,10 +948,13 @@
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const count = Math.round((w * h) / 9000);
+      nebula = buildNebula();
       stars = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        r: Math.random() * 1.3 + 0.3,
+        // Most stars are faint; a few are bright, as in a real sky.
+        r: Math.random() * 0.4 + 0.3 + Math.pow(Math.random(), 4) * 1.4,
+        c: STAR_TINTS[Math.floor(Math.random() * STAR_TINTS.length)],
         phase: Math.random() * Math.PI * 2,
         speed: 0.015 + Math.random() * 0.02
       }));
@@ -1002,6 +1041,7 @@
 
     function drawStatic(){
       ctx.clearRect(0, 0, w, h);
+      if (nebula) ctx.drawImage(nebula, 0, 0, w, h);
       drawLinks(1);
       planets.forEach(drawPlanet);
       glyphs.forEach(g => {
@@ -1012,7 +1052,7 @@
       stars.forEach(s => {
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(231,223,247,0.3)';
+        ctx.fillStyle = `rgba(${s.c},0.3)`;
         ctx.fill();
       });
     }
@@ -1022,6 +1062,7 @@
     function tick(){
       t++;
       ctx.clearRect(0, 0, w, h);
+      if (nebula) ctx.drawImage(nebula, 0, 0, w, h);
       drawLinks(0.7 + 0.3 * Math.sin(t * 0.004));
       planets.forEach(drawPlanet);
       drawGlyphs(t);
@@ -1029,7 +1070,7 @@
         const alpha = 0.22 + 0.4 * Math.pow(Math.sin(t * s.speed + s.phase), 2);
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(231,223,247,${alpha.toFixed(2)})`;
+        ctx.fillStyle = `rgba(${s.c},${alpha.toFixed(2)})`;
         ctx.fill();
       });
       requestAnimationFrame(tick);

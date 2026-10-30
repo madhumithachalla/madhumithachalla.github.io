@@ -18,6 +18,7 @@
     --slate:#9E90B8;
     --line:rgba(255,255,255,0.14);
     --line-dark:#4A3968;
+    --timeline-line:rgba(74,57,104,0.55);
     --tile-tint:rgba(255,255,255,0.02);
     --pill-team-tint:rgba(255,255,255,0.08);
     --radius:2px;
@@ -39,6 +40,7 @@
     --slate:#6B5F82;
     --line:rgba(27,17,48,0.14);
     --line-dark:#C9BEDD;
+    --timeline-line:rgba(62,44,100,0.85);
     --tile-tint:rgba(27,17,48,0.03);
     --pill-team-tint:rgba(27,17,48,0.06);
   }
@@ -639,8 +641,7 @@
   .timeline{position:relative; display:flex; align-items:flex-start; width:max-content; padding-top:12px;}
   .timeline::before{
     content:''; position:absolute; left:0; right:0; top:19px; height:1px;
-    background:linear-gradient(90deg, transparent, var(--line-dark) 4%, var(--line-dark) 96%, transparent);
-    opacity:0.55;
+    background:linear-gradient(90deg, transparent, var(--timeline-line) 4%, var(--timeline-line) 96%, transparent);
   }
   .timeline-progress{position:absolute; left:0; top:19px; height:1px; background:linear-gradient(90deg, var(--coral), var(--violet)); transition:width .2s ease; box-shadow:0 0 6px 0 rgba(255,197,107,0.5);}
   .timeline-item{position:relative; flex:0 0 auto; width:188px; padding-right:20px; scroll-snap-align:start;}
@@ -659,7 +660,7 @@
   }
   .timeline-item::after{
     content:''; position:absolute; left:4px; top:19px; width:1px; height:0;
-    background:linear-gradient(to bottom, var(--line-dark), transparent);
+    background:linear-gradient(to bottom, var(--timeline-line), transparent);
     transition:height .2s ease, top .2s ease; z-index:0;
   }
   .timeline-item:nth-child(odd)::before{top:3px;}
