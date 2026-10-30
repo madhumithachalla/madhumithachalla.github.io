@@ -472,24 +472,69 @@
     tick();
   })();
 
-  // Meteor shower — ambient signature animation in the hero
+  // Meteor shower — ambient signature animation in the hero. Also carries its
+  // own constellation backdrop (stars + nearest-neighbour link lines), since
+  // the hero has its own opaque background and the page-wide #starfield
+  // canvas can't show through it.
   (function(){
     const canvas = document.getElementById('meteor-canvas');
     const hero = document.querySelector('.hero');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!canvas || !hero) return;
-    if (reduced) { canvas.remove(); return; }
     const ctx = canvas.getContext('2d');
-    let w, h, dpr;
+    let w, h, dpr, heroStars = [], heroLinks = [];
     function resize(){
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = hero.offsetWidth; h = hero.offsetHeight;
       canvas.width = w * dpr; canvas.height = h * dpr;
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const count = Math.round((w * h) / 7000);
+      heroStars = Array.from({ length: count }, () => ({
+        x: Math.random() * w, y: Math.random() * h,
+        r: Math.random() * 1.3 + 0.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.015 + Math.random() * 0.02
+      }));
+      heroLinks = [];
+      const maxDist = Math.min(w, h) * 0.1;
+      for (let i = 0; i < heroStars.length; i++){
+        if (Math.random() > 0.4) continue;
+        let best = -1, bestD = maxDist;
+        for (let j = 0; j < heroStars.length; j++){
+          if (i === j) continue;
+          const dx = heroStars[i].x - heroStars[j].x, dy = heroStars[i].y - heroStars[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < bestD){ bestD = d; best = j; }
+        }
+        if (best !== -1) heroLinks.push([i, best]);
+      }
     }
     resize();
     window.addEventListener('resize', resize);
+
+    function drawHeroConstellation(t){
+      ctx.save();
+      ctx.strokeStyle = 'rgba(155,126,222,0.14)';
+      ctx.lineWidth = 1;
+      heroLinks.forEach(([a, b]) => {
+        ctx.beginPath();
+        ctx.moveTo(heroStars[a].x, heroStars[a].y);
+        ctx.lineTo(heroStars[b].x, heroStars[b].y);
+        ctx.stroke();
+      });
+      ctx.restore();
+      heroStars.forEach(s => {
+        const alpha = t == null ? 0.3 : 0.22 + 0.4 * Math.pow(Math.sin(t * s.speed + s.phase), 2);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(231,223,247,${alpha.toFixed(2)})`;
+        ctx.fill();
+      });
+    }
+
+    if (reduced) { drawHeroConstellation(null); return; }
 
     const colors = ['255,111,94', '155,126,222', '45,212,191', '245,166,35'];
     let meteors = [];
@@ -512,6 +557,7 @@
     function tick(){
       frame++;
       ctx.clearRect(0,0,w,h);
+      drawHeroConstellation(frame);
 
       if (frame % 95 === 0 && meteors.length < 3) spawnMeteor();
 
@@ -590,18 +636,68 @@
       el.appendChild(a);
     }
 
-    // Made much bigger on request, and now a genuinely huge incoming hit.
-    head.setAttribute('r', 36);
-    tail.setAttribute('rx', 86); tail.setAttribute('ry', 14);
-    e1.setAttribute('r', 13);
-    e2.setAttribute('r', 16);
+    // Made much bigger again on request — a wide, dramatic incoming hit.
+    head.setAttribute('r', 48);
+    tail.setAttribute('rx', 128); tail.setAttribute('ry', 20);
+    e1.setAttribute('r', 18);
+    e2.setAttribute('r', 22);
+    // The impact flash belongs at the actual destination point the paths
+    // below converge on (the portrait's center in this 244x244 viewBox),
+    // not the old fixed (122,15) left over from an earlier layout.
+    flash.setAttribute('cx', 122);
+    flash.setAttribute('cy', 122);
+
+    // Base paths (quadratic curves ending near the portrait's center,
+    // 122,122). Rotated at runtime around that same center so the meteor
+    // always streaks in from whichever screen direction the nav logo
+    // actually sits in, instead of a hardcoded corner.
+    const BASE = {
+      head: 'M-70,-55 Q50,-15 118,118',
+      tail: 'M-70,-55 Q50,-15 118,118',
+      e1:   'M-90,15 Q30,25 108,132',
+      e2:   'M-55,100 Q70,70 130,134'
+    };
+    const CENTER = { x: 122, y: 122 };
+
+    function rotatePath(path, angle){
+      if (!angle) return path;
+      const cos = Math.cos(angle), sin = Math.sin(angle);
+      return path.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, (m, xs, ys) => {
+        const x = parseFloat(xs) - CENTER.x, y = parseFloat(ys) - CENTER.y;
+        const rx = CENTER.x + (x * cos - y * sin);
+        const ry = CENTER.y + (x * sin + y * cos);
+        return `${rx.toFixed(1)},${ry.toFixed(1)}`;
+      });
+    }
+
+    function approachAngle(){
+      const logoEl = document.querySelector('header.nav .nav-logo-badge');
+      const portraitEl = document.querySelector('.portrait-wrap');
+      if (!logoEl || !portraitEl) return 0;
+      const logoRect = logoEl.getBoundingClientRect();
+      const portraitRect = portraitEl.getBoundingClientRect();
+      if (!logoRect.width || !portraitRect.width) return 0;
+      const logoCx = logoRect.left + logoRect.width / 2;
+      const logoCy = logoRect.top + logoRect.height / 2;
+      const portraitCx = portraitRect.left + portraitRect.width / 2;
+      const portraitCy = portraitRect.top + portraitRect.height / 2;
+      // Direction from the portrait toward the logo — the meteor should
+      // appear to originate from that side.
+      const desired = Math.atan2(logoCy - portraitCy, logoCx - portraitCx);
+      // The baseline path above already approaches from upper-left; its
+      // own angle (start point relative to the shared center) is the zero
+      // point the rotation is measured against.
+      const baseline = Math.atan2(-55 - CENTER.y, -70 - CENTER.x);
+      return desired - baseline;
+    }
 
     function launch(){
+      const angle = approachAngle();
       [head, tail, e1, e2].forEach(el => el.setAttribute('opacity', 1));
-      addMotion(head, 'M-70,-55 Q50,-15 118,118', '0.95s');
-      addMotion(tail, 'M-70,-55 Q50,-15 118,118', '0.95s');
-      addMotion(e1, 'M-90,15 Q30,25 108,132', '0.95s', '0.05s');
-      addMotion(e2, 'M-55,100 Q70,70 130,134', '0.95s', '0.1s');
+      addMotion(head, rotatePath(BASE.head, angle), '0.95s');
+      addMotion(tail, rotatePath(BASE.tail, angle), '0.95s');
+      addMotion(e1, rotatePath(BASE.e1, angle), '0.95s', '0.05s');
+      addMotion(e2, rotatePath(BASE.e2, angle), '0.95s', '0.1s');
 
       setTimeout(() => {
         [head, tail, e1, e2].forEach(el => {
@@ -609,12 +705,12 @@
           el.setAttribute('opacity', 0);
         });
         flash.style.transition = 'none';
-        flash.setAttribute('stroke-width', 9);
+        flash.setAttribute('stroke-width', 11);
         flash.setAttribute('opacity', 1);
-        flash.setAttribute('r', 12);
+        flash.setAttribute('r', 14);
         requestAnimationFrame(() => {
           flash.style.transition = 'r .6s ease-out, opacity .6s ease-out';
-          flash.setAttribute('r', 190);
+          flash.setAttribute('r', 240);
           flash.setAttribute('opacity', 0);
         });
         charm.style.transition = 'opacity .5s ease';
@@ -691,7 +787,7 @@
   // Scroll reveal for section headings, project cards, experience tiles, and a
   // few other card grids — so headings feel less like a static wall of text.
   (function(){
-    const items = document.querySelectorAll('.section-head, .project, .exp-tile, .leader-card, .rec-card, .juggle-card, .cert-card');
+    const items = document.querySelectorAll('.section-head, .project, .exp-tile, .leader-card, .rec-card, .juggle-card, .cert-card, .service-card');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { items.forEach(i => i.classList.add('in')); return; }
     const io = new IntersectionObserver((entries) => {
@@ -1009,6 +1105,19 @@
         const talkMs = Math.min(3200, Math.max(900, text.length * 22));
         setTimeout(() => avatar.classList.remove('talking'), talkMs);
       }
+      return div;
+    }
+
+    // A quick nod from the avatar the instant a message is sent, so sending
+    // feels acknowledged even before the reply arrives, plus a "typing"
+    // bubble while she (the bot) is "composing" the actual answer.
+    function showTyping(){
+      const div = document.createElement('div');
+      div.className = 'chat-msg bot chat-typing';
+      div.innerHTML = '<span></span><span></span><span></span>';
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+      return div;
     }
 
     function openPanel(){
@@ -1032,7 +1141,17 @@
     function ask(text){
       if (!text.trim()) return;
       addMsg(text, 'user');
-      setTimeout(() => addMsg(answer(text), 'bot'), 350);
+      if (avatar){
+        avatar.classList.add('nodded');
+        setTimeout(() => avatar.classList.remove('nodded'), 420);
+      }
+      sendBtn.classList.add('sent');
+      setTimeout(() => sendBtn.classList.remove('sent'), 300);
+      const typingEl = showTyping();
+      setTimeout(() => {
+        typingEl.remove();
+        addMsg(answer(text), 'bot');
+      }, 650);
     }
 
     sendBtn.addEventListener('click', () => { ask(input.value); input.value = ''; });
