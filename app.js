@@ -787,7 +787,7 @@
   // Scroll reveal for section headings, project cards, experience tiles, and a
   // few other card grids — so headings feel less like a static wall of text.
   (function(){
-    const items = document.querySelectorAll('.section-head, .project, .exp-tile, .leader-card, .rec-card, .juggle-card, .cert-card, .service-card');
+    const items = document.querySelectorAll('.section-head, .project, .exp-tile, .leader-card, .rec-card, .juggle-card, .cert-card, .service-card, .writeup-card');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { items.forEach(i => i.classList.add('in')); return; }
     const io = new IntersectionObserver((entries) => {
@@ -1062,7 +1062,7 @@
       { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentored 40+ postgraduate IT students at Monash (Jan–Oct 2026), works as a Student Adviser through Monash Student Communities advising 45+ students, and runs IT infrastructure for the Monash Data & AI Society (1,600+ members)." },
       { keys: ['australia','open to','available','job','role','opportunit','internship'], a: "Yes — she's open to IT roles across the board at the grad and entry level (cloud, systems, data, software, support), available part-time now and full-time from December 2026. She's on a Student Visa (Subclass 500) now, moving to a 485 Temporary Graduate Visa after graduating, and open to relocating anywhere across Australia." },
       { keys: ['contact','reach','email','talk','meet'], a: "Best way in is the coffee catch-up scheduler further down this page, or email her directly at rchmadhumitha@gmail.com. She replies fast. Ask me \"how do I schedule\" for the exact options." },
-      { keys: ['astronomy','photon','hobby','fun fact','space','pen name','poetry','writing','poem'], a: "She writes poetry under the pen name \"Female Photon\" on the side, a nod to her science-enthusiast streak. Ask her about it, she loves the topic." },
+      { keys: ['astronomy','photon','hobby','fun fact','space','pen name','poetry','writing','poem','medium','writeup'], a: "She writes poetry under the pen name \"Female Photon\" on the side, a nod to her science-enthusiast streak, and also writes longer-form pieces on Medium. See the Writeups section on this page for the poem, her Medium, and her LinkedIn articles." },
       { keys: ['certif','award','aws ccp','cloud practitioner','sapphire','amber','csat'], a: "AWS Certified Cloud Practitioner, plus IT Help Desk for Beginners and Agile Fundamentals (Scrum) from LinkedIn Learning/Udemy. From her time at Cognizant: the Cheers Sapphire and Amber awards (peer-nominated for technical excellence and professional growth) and CSAT Champion for a 100 customer-satisfaction score. Full list is in the Certifications section below." },
       { keys: ['linkedin','github','profile','social','find her online'], a: "GitHub: github.com/madhumithachalla — LinkedIn: linkedin.com/in/madhumitha-challa. Both linked in the footer of this page too." },
       { keys: ['resume','cv','download'], a: "Yes — PDF and DOCX versions are both linked right at the top of this page, next to \"View Projects.\"" },
