@@ -1,3 +1,6 @@
+/* © 2026 Madhumitha Challa. All rights reserved.
+   This stylesheet is hers; shared publicly to be read, not reused as
+   someone else's own. */
 :root{
     --paper:#F3EEFA;
     --bg:#100D18;
@@ -156,6 +159,11 @@
   .nav-logo-fg{position:absolute; inset:0;}
   .nav-logo-link{display:block; text-decoration:none; border-radius:8px;}
   .nav-logo-link:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+  .logo-copyright{
+    position:absolute; right:3px; bottom:2px; z-index:2;
+    font-family:'IBM Plex Mono', monospace; font-size:7px; color:rgba(255,255,255,0.55);
+    text-shadow:0 1px 2px rgba(0,0,0,0.6); pointer-events:none;
+  }
   .nav-logo-static{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
     width:86px; height:auto; flex:none;
@@ -323,11 +331,11 @@
     display:grid; grid-template-columns:1fr 244px; gap:44px; align-items:start;
   }
   .hero-portrait{display:flex; flex-direction:column; align-items:center; gap:14px; padding-top:8px;}
-  .portrait-wrap{position:relative; width:190px; height:190px;}
-  .comet-orbit, .infinity-charm-svg{position:absolute; inset:-27px; width:244px; height:244px; pointer-events:none;}
+  .portrait-wrap{position:relative; width:230px; height:230px;}
+  .comet-orbit, .infinity-charm-svg{position:absolute; inset:-33px; width:296px; height:296px; pointer-events:none;}
   .comet-orbit{z-index:0;} .infinity-charm-svg{z-index:3;}
   .portrait-ring{
-    width:190px; height:190px; border-radius:50%; padding:5px;
+    width:230px; height:230px; border-radius:50%; padding:5px;
     background:conic-gradient(from 210deg, var(--coral), var(--amber), var(--teal), var(--violet), var(--coral));
     display:flex; align-items:center; justify-content:center;
     position:relative; z-index:1;
@@ -408,10 +416,10 @@
   @media(max-width:760px){
     .hero-grid{grid-template-columns:1fr;}
     .hero-portrait{flex-direction:row; flex-wrap:wrap; justify-content:flex-start; padding-top:0;}
-    .portrait-wrap{width:96px; height:96px;}
-    .comet-orbit, .infinity-charm-svg{inset:-16px; width:128px; height:128px;}
-    .portrait-ring{width:96px; height:96px;}
-    .portrait-fallback{font-size:26px;}
+    .portrait-wrap{width:126px; height:126px;}
+    .comet-orbit, .infinity-charm-svg{inset:-21px; width:168px; height:168px;}
+    .portrait-ring{width:126px; height:126px;}
+    .portrait-fallback{font-size:34px;}
     .portrait-caption{text-align:left; max-width:none;}
     .portrait-intro{
       width:100%; text-align:left; max-width:none; margin-top:10px; padding-top:12px;

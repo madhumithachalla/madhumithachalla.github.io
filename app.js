@@ -1,3 +1,6 @@
+// © 2026 Madhumitha Challa. All rights reserved.
+// This code is hers; shared publicly to be read, not reused as someone else's own.
+
 // Count up any number on the page marked with data-target, once it scrolls
   // into view — leadership and project metrics, so numbers throughout the
   // site feel alive rather than static. Each element observes and animates
@@ -793,12 +796,18 @@
 
   // Ambient starfield — sits behind the whole page (visible wherever a section
   // has no opaque background of its own), a quieter companion to the hero's meteors.
+  // Enhanced into a full backdrop: faint constellation lines between nearby
+  // stars, a couple of drifting planets echoing the nav logo's cosmic badge,
+  // and a scattering of tech glyphs (</>,  {}, cloud) nodding to her field --
+  // all very low-opacity so it reads as atmosphere, not decoration fighting
+  // the actual content.
   (function(){
     const canvas = document.getElementById('starfield');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let w, h, dpr, stars = [];
+    let w, h, dpr, stars = [], links = [], planets = [], glyphs = [];
+    const GLYPHS = ['</>', '{ }', '☁', '⌘', '< >'];
 
     function resize(){
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -814,12 +823,96 @@
         phase: Math.random() * Math.PI * 2,
         speed: 0.015 + Math.random() * 0.02
       }));
+
+      // Constellation lines: each star joins its nearest neighbour within
+      // reach, skipped on tiny/dense clusters so it never turns into a mesh.
+      links = [];
+      const maxDist = Math.min(w, h) * 0.07;
+      for (let i = 0; i < stars.length; i++){
+        if (Math.random() > 0.35) continue;
+        let best = -1, bestD = maxDist;
+        for (let j = 0; j < stars.length; j++){
+          if (i === j) continue;
+          const dx = stars[i].x - stars[j].x, dy = stars[i].y - stars[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < bestD){ bestD = d; best = j; }
+        }
+        if (best !== -1) links.push([i, best]);
+      }
+
+      planets = [
+        { x: w * 0.92, y: h * 0.08, r: Math.max(18, w * 0.018), kind: 'mars' },
+        { x: w * 0.05, y: h * 0.82, r: Math.max(22, w * 0.022), kind: 'saturn' }
+      ];
+
+      glyphs = Array.from({ length: Math.round(w / 420) + 2 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        text: GLYPHS[Math.floor(Math.random() * GLYPHS.length)],
+        size: 11 + Math.random() * 7,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.01 + Math.random() * 0.012
+      }));
     }
     resize();
     window.addEventListener('resize', resize);
 
+    function drawPlanet(p){
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      const grad = ctx.createRadialGradient(p.x - p.r * 0.3, p.y - p.r * 0.3, p.r * 0.1, p.x, p.y, p.r);
+      if (p.kind === 'mars'){
+        grad.addColorStop(0, '#D9885F'); grad.addColorStop(0.5, '#B85732'); grad.addColorStop(1, '#3A1A0C');
+      } else {
+        grad.addColorStop(0, '#EFE3C4'); grad.addColorStop(0.55, '#C9B489'); grad.addColorStop(1, '#5A4A2E');
+      }
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
+      if (p.kind === 'saturn'){
+        ctx.strokeStyle = 'rgba(201,180,137,0.55)';
+        ctx.lineWidth = Math.max(1.5, p.r * 0.08);
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, p.r * 1.7, p.r * 0.45, -0.3, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawLinks(alphaMul){
+      ctx.save();
+      ctx.strokeStyle = `rgba(155,126,222,${0.1 * alphaMul})`;
+      ctx.lineWidth = 1;
+      links.forEach(([a, b]) => {
+        ctx.beginPath();
+        ctx.moveTo(stars[a].x, stars[a].y);
+        ctx.lineTo(stars[b].x, stars[b].y);
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    function drawGlyphs(t){
+      ctx.save();
+      ctx.font = '11px "IBM Plex Mono", monospace';
+      ctx.fillStyle = 'rgba(155,126,222,0.22)';
+      ctx.textBaseline = 'middle';
+      glyphs.forEach(g => {
+        ctx.font = `${g.size}px "IBM Plex Mono", monospace`;
+        const alpha = 0.1 + 0.14 * (0.5 + 0.5 * Math.sin(t * g.speed + g.phase));
+        ctx.fillStyle = `rgba(155,126,222,${alpha.toFixed(2)})`;
+        ctx.fillText(g.text, g.x, g.y);
+      });
+      ctx.restore();
+    }
+
     function drawStatic(){
       ctx.clearRect(0, 0, w, h);
+      drawLinks(1);
+      planets.forEach(drawPlanet);
+      glyphs.forEach(g => {
+        ctx.font = `${g.size}px "IBM Plex Mono", monospace`;
+        ctx.fillStyle = 'rgba(155,126,222,0.18)';
+        ctx.fillText(g.text, g.x, g.y);
+      });
       stars.forEach(s => {
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
@@ -833,6 +926,9 @@
     function tick(){
       t++;
       ctx.clearRect(0, 0, w, h);
+      drawLinks(0.7 + 0.3 * Math.sin(t * 0.004));
+      planets.forEach(drawPlanet);
+      drawGlyphs(t);
       stars.forEach(s => {
         const alpha = 0.22 + 0.4 * Math.pow(Math.sin(t * s.speed + s.phase), 2);
         ctx.beginPath();
