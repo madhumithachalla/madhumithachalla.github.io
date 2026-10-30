@@ -439,6 +439,12 @@
     -webkit-background-clip:text; background-clip:text; color:transparent;
     filter:drop-shadow(0 6px 26px rgba(245,166,35,0.18));
   }
+  /* Held back while the intro splash plays, then rises in right after it
+     clears -- the deliberate "next beat" of splash -> name -> meteor. */
+  .hero-name.pre-reveal{opacity:0; transform:translateY(18px);}
+  .hero-name.name-reveal{animation:heroNameIn .85s cubic-bezier(.22,1,.36,1) both;}
+  @keyframes heroNameIn{0%{opacity:0; transform:translateY(18px);} 100%{opacity:1; transform:translateY(0);}}
+  @media(prefers-reduced-motion: reduce){ .hero-name.pre-reveal{opacity:1; transform:none;} }
   .hero-tagline{
     font-family:'Inter'; font-size:clamp(18px,2.4vw,23px); font-weight:500;
     color:#E7DFF7; max-width:640px; line-height:1.35; margin:0 0 14px;

@@ -624,11 +624,27 @@
     // The intro splash covers the whole screen for a few seconds on load --
     // firing the meteor before it clears meant it hit the portrait while
     // nobody could see it. Wait for the splash to actually finish (with a
-    // safety-net timeout in case that event is somehow never dispatched).
+    // safety-net timeout in case that event is somehow never dispatched),
+    // then give the hero name its own moment first before the meteor hits --
+    // splash, then name, then meteor, not all three stacked on each other.
     let fired = false;
-    function fireOnce(){ if (fired) return; fired = true; launch(); }
+    function fireOnce(){ if (fired) return; fired = true; setTimeout(launch, 550); }
     document.addEventListener('intro:done', fireOnce, { once: true });
     setTimeout(fireOnce, 6000);
+  })();
+
+  // Reveal the hero name right as the intro splash clears (it's held back
+  // with .pre-reveal only when the splash actually starts, so if the splash
+  // never runs for any reason the name was never hidden in the first place).
+  (function(){
+    const name = document.querySelector('.hero-name');
+    if (!name) return;
+    function reveal(){
+      name.classList.remove('pre-reveal');
+      name.classList.add('name-reveal');
+    }
+    document.addEventListener('intro:done', reveal, { once: true });
+    setTimeout(reveal, 6000);
   })();
 
   // Freeze the corner footer mark's orbiting photon under prefers-reduced-motion —
@@ -1155,6 +1171,7 @@
     clone.querySelector('.nav-cosmic-bg')?.remove();
     inner.appendChild(clone);
     document.body.classList.add('intro-playing');
+    document.querySelector('.hero-name')?.classList.add('pre-reveal');
 
     setTimeout(() => {
       const realRect = realBadge.getBoundingClientRect();
