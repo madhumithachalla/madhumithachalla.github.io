@@ -18,7 +18,9 @@
     --slate:#9E90B8;
     --line:rgba(255,255,255,0.14);
     --line-dark:#4A3968;
-    --timeline-line:rgba(74,57,104,0.55);
+    --map-cloud:#2DD4BF;
+    --map-web:#FF6F5E;
+    --map-design:#F5A623;
     --tile-tint:rgba(255,255,255,0.02);
     --pill-team-tint:rgba(255,255,255,0.08);
     --radius:2px;
@@ -40,7 +42,9 @@
     --slate:#6B5F82;
     --line:rgba(27,17,48,0.14);
     --line-dark:#C9BEDD;
-    --timeline-line:rgba(62,44,100,0.85);
+    --map-cloud:#0E8C7A;
+    --map-web:#C9473A;
+    --map-design:#B87100;
     --tile-tint:rgba(27,17,48,0.03);
     --pill-team-tint:rgba(27,17,48,0.06);
   }
@@ -611,110 +615,28 @@
   .project-empty.show{display:block;}
   .project.filtered-out{display:none;}
 
-  .timeline-wrap{position:relative; margin:0 0 20px;}
-  .timeline-scroll{
-    overflow-x:auto; overflow-y:hidden; cursor:grab; -webkit-overflow-scrolling:touch;
-    scroll-snap-type:x proximity; scrollbar-width:thin; scrollbar-color:var(--violet) transparent;
-    -webkit-mask-image:linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
-    mask-image:linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%);
-    padding:30px 28px 18px;
-  }
-  .timeline-scroll.dragging{cursor:grabbing; scroll-snap-type:none; user-select:none;}
-  .timeline-scroll::-webkit-scrollbar{height:5px;}
-  .timeline-scroll::-webkit-scrollbar-thumb{background:var(--line-dark); border-radius:4px;}
-  .timeline-scroll::-webkit-scrollbar-track{background:transparent;}
-  /* Constellation theme: a faint starfield dusting behind the whole strip,
-     each project is a small star joined to the next by a thin connecting
-     line, and every star twinkles gently and continuously -- no "road". */
-  .timeline-scroll{
-    background-image:
-      radial-gradient(1px 1px at 8% 20%, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 22% 70%, rgba(255,255,255,0.35), transparent),
-      radial-gradient(1.5px 1.5px at 38% 15%, rgba(255,255,255,0.45), transparent),
-      radial-gradient(1px 1px at 55% 80%, rgba(255,255,255,0.3), transparent),
-      radial-gradient(1.5px 1.5px at 70% 25%, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 85% 65%, rgba(255,255,255,0.35), transparent),
-      radial-gradient(1px 1px at 95% 12%, rgba(255,255,255,0.4), transparent);
-    background-repeat:no-repeat;
-  }
-  :root[data-theme="light"] .timeline-scroll{background-image:none;}
-  .timeline{position:relative; display:flex; align-items:flex-start; width:max-content; padding-top:12px;}
-  .timeline::before{
-    content:''; position:absolute; left:0; right:0; top:19px; height:1px;
-    background:linear-gradient(90deg, transparent, var(--timeline-line) 4%, var(--timeline-line) 96%, transparent);
-  }
-  .timeline-progress{position:absolute; left:0; top:19px; height:1px; background:linear-gradient(90deg, var(--coral), var(--violet)); transition:width .2s ease; box-shadow:0 0 6px 0 rgba(255,197,107,0.5);}
-  .timeline-item{position:relative; flex:0 0 auto; width:188px; padding-right:20px; scroll-snap-align:start;}
-  .timeline-item::before{
-    content:''; position:absolute; left:-2px; top:11px; width:14px; height:14px; border-radius:50%;
-    background:radial-gradient(circle, #fff 0%, var(--violet) 45%, transparent 75%);
-    z-index:1; animation:starTwinkle 3.4s ease-in-out infinite;
-    transition:transform .15s ease, top .2s ease;
-  }
-  .timeline-item:nth-child(3n+1)::before{animation-delay:0s;}
-  .timeline-item:nth-child(3n+2)::before{animation-delay:1.1s;}
-  .timeline-item:nth-child(3n+3)::before{animation-delay:2.2s;}
-  @keyframes starTwinkle{
-    0%, 100%{opacity:0.55; transform:scale(0.8);}
-    50%{opacity:1; transform:scale(1);}
-  }
-  .timeline-item::after{
-    content:''; position:absolute; left:4px; top:19px; width:1px; height:0;
-    background:linear-gradient(to bottom, var(--timeline-line), transparent);
-    transition:height .2s ease, top .2s ease; z-index:0;
-  }
-  .timeline-item:nth-child(odd)::before{top:3px;}
-  .timeline-item:nth-child(odd)::after{top:11px; height:8px;}
-  .timeline-item:nth-child(even)::before{top:27px;}
-  .timeline-item:nth-child(even)::after{top:19px; height:8px;}
-  .timeline-link{
-    display:flex; flex-direction:column; gap:6px; text-decoration:none; color:inherit; padding-top:46px;
-  }
-  .timeline-link:hover .timeline-item, .timeline-link:focus-visible .timeline-item{outline:none;}
-  .timeline-item:has(.timeline-link:hover)::before, .timeline-item:has(.timeline-link:focus-visible)::before{
-    animation-play-state:paused; opacity:1; transform:scale(1.5);
-    background:radial-gradient(circle, #fff 0%, var(--coral) 45%, transparent 75%);
-  }
-  .timeline-item.active::before{
-    animation-play-state:paused; opacity:1; transform:scale(1.4);
-    background:radial-gradient(circle, #fff 0%, var(--amber) 45%, transparent 75%);
-    box-shadow:0 0 12px 2px rgba(255,197,107,0.5);
-  }
-  .timeline-date{
-    font-family:'IBM Plex Mono'; font-size:11px; color:var(--slate); white-space:nowrap;
-  }
-  .timeline-title{font-size:14px; line-height:1.35; color:var(--paper); transition:color .15s ease;}
-  .timeline-link:hover .timeline-title, .timeline-link:focus-visible .timeline-title{color:var(--coral);}
-  .timeline-nav{
-    position:absolute; top:3px; width:30px; height:30px; border-radius:50%; z-index:2;
-    background:var(--bg-panel); border:1px solid var(--line); color:var(--paper); cursor:pointer;
-    display:flex; align-items:center; justify-content:center; transition:opacity .15s ease, border-color .15s ease;
-  }
-  .timeline-nav:hover{border-color:var(--violet); color:var(--violet);}
-  .timeline-nav:disabled{opacity:0; pointer-events:none;}
-  .timeline-nav.prev{left:-6px;}
-  .timeline-nav.next{right:-6px;}
-  .timeline-ruler{
-    display:flex; gap:2px; margin:4px 28px 0; padding-top:10px; border-top:1px solid var(--line);
-    overflow-x:auto; scrollbar-width:none;
-  }
-  .timeline-ruler::-webkit-scrollbar{display:none;}
-  .timeline-tick{
-    flex:1 0 auto; min-width:64px; display:flex; flex-direction:column; align-items:center; gap:4px;
-    background:none; border:none; cursor:pointer; padding:4px 2px 8px; color:var(--slate);
-  }
-  .timeline-tick-mark{width:1px; height:8px; background:var(--line-dark); transition:height .15s ease, background .15s ease;}
-  .timeline-tick-label{font-family:'IBM Plex Mono'; font-size:9.5px; white-space:nowrap; letter-spacing:0.01em;}
-  .timeline-tick:hover{color:var(--paper);}
-  .timeline-tick:hover .timeline-tick-mark{background:var(--violet); height:12px;}
-  .timeline-tick.active{color:var(--amber);}
-  .timeline-tick.active .timeline-tick-mark{background:var(--amber); height:14px;}
-  @media(max-width:640px){ .timeline-ruler{margin:4px 10px 0;} }
-  .timeline-note{font-size:11.5px; color:var(--slate); margin:0 0 20px; font-style:italic;}
-  @media (max-width:640px){
-    .timeline-nav{display:none;}
-    .timeline-scroll{padding:30px 10px 18px;}
-  }
+  /* Project map: three lines by kind of work, each station placed by the month it was built.
+     It is drawn at a readable size and scrolls sideways on small screens. */
+  .metro-map{overflow-x:auto; -webkit-overflow-scrolling:touch; padding:6px 0 10px; margin:0 0 6px;}
+  .metro-map svg{display:block; width:2440px; height:auto; max-width:none;}
+  .mm-grid{stroke:var(--line); stroke-width:1; stroke-dasharray:3 6;}
+  .mm-axis{font-family:'IBM Plex Mono',monospace; font-size:15px; fill:var(--slate);}
+  .mm-lane{stroke-width:10; stroke-linecap:round;}
+  .mm-lane-cloud, .mm-dot-cloud, .mm-tube-cloud{stroke:var(--map-cloud);}
+  .mm-lane-web, .mm-dot-web, .mm-tube-web{stroke:var(--map-web);}
+  .mm-lane-design, .mm-dot-design, .mm-tube-design{stroke:var(--map-design);}
+  .mm-tube{stroke-width:24; stroke-linecap:round; opacity:.3; fill:none;}
+  .mm-lane-name{font-family:'IBM Plex Mono',monospace; font-size:14px; fill:var(--paper); letter-spacing:.04em; text-transform:uppercase;}
+  .mm-route{fill:none; stroke:var(--paper); stroke-width:1.5; stroke-dasharray:2 7; opacity:.35;}
+  .mm-dot{fill:var(--bg); stroke-width:5; transition:transform .15s ease; transform-box:fill-box; transform-origin:center;}
+  .mm-station{cursor:pointer; text-decoration:none;}
+  .mm-station:hover .mm-dot, .mm-station:focus-visible .mm-dot{transform:scale(1.35);}
+  .mm-station:hover .mm-name, .mm-station:focus-visible .mm-name{fill:var(--amber);}
+  .mm-station:focus-visible{outline:none;}
+  .mm-name{font-family:'Inter',sans-serif; font-size:17px; font-weight:600; fill:var(--paper);}
+  .mm-date{font-family:'IBM Plex Mono',monospace; font-size:13px; fill:var(--slate);}
+  .map-note{font-size:14px; color:var(--slate); margin:0 0 20px; font-style:italic;}
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
   .project-list{display:flex; flex-direction:column; gap:18px;}
   .project{
     position:relative; overflow:hidden;

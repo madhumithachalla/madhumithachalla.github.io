@@ -8,7 +8,7 @@
   const OWNER = 'madhumithachalla';
   const API = 'https://api.github.com';
   const EXCLUDED_REPOS = new Set(['projects', 'madhumithachalla.github.io', 'birdtag', 'esaver', 'cloudpose-pipeline', 'spotify-success-analysis']);
-  const EXCLUDED_FOLDERS = new Set(['birdtag', 'esaver', 'cloudpose-pipeline', 'spotify-success-analysis', 'docs', 'assets', 'images', 'tests', 'scripts', 'node_modules']);
+  const EXCLUDED_FOLDERS = new Set(['birdtag', 'esaver', 'cloudpose-pipeline', 'spotify-success-analysis', 'docs', 'assets', 'images', 'tests', 'scripts', 'node_modules', 'ielts-mock-practice-tool']);
   const EXCLUDED_TOPICS = new Set(['academic', 'coursework', 'assignment', 'homework', 'university-project', 'portfolio-exclude']);
   const ACADEMIC = /\b(?:academic|coursework|assignments?|homework|capstone|university project|FIT\d{4})\b/i;
   // Existing collection READMEs declare "Solo/Team project · Monash University".

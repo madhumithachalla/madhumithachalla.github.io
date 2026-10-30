@@ -545,9 +545,9 @@
       const startX = Math.random() * w * 0.9;
       meteors.push({
         x: startX, y: -20,
-        vx: 2.4 + Math.random()*1.6,
-        vy: 3.4 + Math.random()*2,
-        len: 60 + Math.random()*50,
+        vx: 3.6 + Math.random()*2,
+        vy: 5 + Math.random()*2.5,
+        len: 240 + Math.random()*200,
         color,
         life: 1
       });
@@ -559,7 +559,7 @@
       ctx.clearRect(0,0,w,h);
       drawHeroConstellation(frame);
 
-      if (frame % 95 === 0 && meteors.length < 3) spawnMeteor();
+      if (frame % 120 === 0 && meteors.length < 3) spawnMeteor();
 
       meteors.forEach(m => {
         m.x += m.vx; m.y += m.vy;
@@ -569,7 +569,7 @@
         grad.addColorStop(0, `rgba(${m.color},0)`);
         grad.addColorStop(1, `rgba(${m.color},0.9)`);
         ctx.strokeStyle = grad;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 4;
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(tailX, tailY);
@@ -577,23 +577,27 @@
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(m.x, m.y, 1.8, 0, Math.PI*2);
+        ctx.arc(m.x, m.y, 11, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${m.color},0.25)`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 4.5, 0, Math.PI*2);
         ctx.fillStyle = `rgba(${m.color},1)`;
         ctx.fill();
 
         if (m.y > h * 0.72 && m.life === 1){
           m.life = 0;
-          bursts.push({x: m.x, y: m.y, r: 1, color: m.color, alpha: 0.8});
+          bursts.push({x: m.x, y: m.y, r: 2, color: m.color, alpha: 0.9});
         }
       });
       meteors = meteors.filter(m => m.y < h + 40 && m.x < w + 40);
 
       bursts.forEach(b => {
-        b.r += 1.1; b.alpha -= 0.025;
+        b.r += 1.8; b.alpha -= 0.02;
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
         ctx.strokeStyle = `rgba(${b.color},${Math.max(b.alpha,0)})`;
-        ctx.lineWidth = 1.2;
+        ctx.lineWidth = 2.2;
         ctx.stroke();
       });
       bursts = bursts.filter(b => b.alpha > 0);
@@ -728,8 +732,136 @@
     // splash, then name, then meteor, not all three stacked on each other.
     let fired = false;
     function fireOnce(){ if (fired) return; fired = true; setTimeout(launch, 550); }
-    document.addEventListener('intro:done', fireOnce, { once: true });
-    setTimeout(fireOnce, 6000);
+    document.addEventListener('comet:done', fireOnce, { once: true });
+    setTimeout(fireOnce, 11000);
+  })();
+
+  // Opening comet: once the intro splash clears, a large comet streaks in from the
+  // top-right and strikes the hero name. The impact throws a shockwave, sparks and a
+  // short shake, then the portrait meteor and the hero shower carry on.
+  (function(){
+    const target = document.querySelector('.hero-name');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!target) return;
+    let ran = false;
+    function runComet(){
+      if (ran) return;
+      ran = true;
+      if (reduced) { document.dispatchEvent(new Event('comet:done')); return; }
+
+      const canvas = document.createElement('canvas');
+      canvas.setAttribute('aria-hidden', 'true');
+      canvas.style.cssText = 'position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:250;';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = window.innerWidth, h = window.innerHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const rect = target.getBoundingClientRect();
+      const tx = rect.left + rect.width / 2, ty = rect.top + rect.height / 2;
+      const sx = w + 120, sy = -120;
+      const dist = Math.hypot(tx - sx, ty - sy);
+      const ux = (tx - sx) / dist, uy = (ty - sy) / dist;
+      const headR = Math.max(16, Math.min(w, h) * 0.03);
+      const tailLen = Math.max(320, Math.min(w, h) * 0.6);
+      const FLY = 1000;
+      const SPARK = ['255,255,255', '255,197,107', '255,111,94', '155,126,222'];
+      const sparks = [];
+      const ringMax = Math.max(w, h) * 0.22;
+      let impactAt = null, flash = 0, ring = 0;
+      const start = performance.now();
+
+      function drawComet(x, y){
+        const tailX = x - ux * tailLen, tailY = y - uy * tailLen;
+        const body = ctx.createLinearGradient(x, y, tailX, tailY);
+        body.addColorStop(0, 'rgba(255,244,222,0.95)');
+        body.addColorStop(0.25, 'rgba(255,197,107,0.6)');
+        body.addColorStop(1, 'rgba(255,111,94,0)');
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = body;
+        ctx.lineWidth = headR * 1.1;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(tailX, tailY); ctx.stroke();
+        ctx.lineWidth = headR * 0.35;
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - ux * tailLen * 0.35, y - uy * tailLen * 0.35); ctx.stroke();
+        ctx.restore();
+        const head = ctx.createRadialGradient(x, y, 0, x, y, headR);
+        head.addColorStop(0, 'rgba(255,255,255,1)');
+        head.addColorStop(0.45, 'rgba(255,220,160,0.95)');
+        head.addColorStop(1, 'rgba(255,111,94,0)');
+        ctx.save();
+        ctx.shadowColor = 'rgba(255,190,120,0.9)';
+        ctx.shadowBlur = 40;
+        ctx.fillStyle = head;
+        ctx.beginPath(); ctx.arc(x, y, headR, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      function strike(now){
+        impactAt = now;
+        flash = 1;
+        for (let i = 0; i < 90; i++){
+          const a = Math.random() * Math.PI * 2, v = 3 + Math.random() * 10;
+          sparks.push({ x: tx, y: ty, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2, life: 1, c: SPARK[Math.floor(Math.random() * SPARK.length)] });
+        }
+        if (target.animate) target.animate([
+          { transform: 'translate(0,0)' }, { transform: 'translate(-7px,4px)' }, { transform: 'translate(6px,-5px)' },
+          { transform: 'translate(-3px,2px)' }, { transform: 'translate(0,0)' }
+        ], { duration: 480, easing: 'ease-out' });
+      }
+
+      function drawImpact(now){
+        if (impactAt === null) return;
+        const age = now - impactAt;
+        ring = ringMax * (1 - Math.exp(-age / 260));
+        const ringA = Math.max(0, 1 - ring / ringMax);
+        if (ringA > 0) {
+          ctx.beginPath();
+          ctx.arc(tx, ty, ring, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(255,197,107,${(ringA * 0.9).toFixed(3)})`;
+          ctx.lineWidth = 2 + 4 * ringA;
+          ctx.stroke();
+        }
+        if (flash > 0.01) {
+          ctx.fillStyle = `rgba(255,240,220,${(flash * 0.3).toFixed(3)})`;
+          ctx.fillRect(0, 0, w, h);
+          flash *= 0.88;
+        }
+        for (const p of sparks){
+          p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.vx *= 0.99; p.life -= 0.018;
+          if (p.life <= 0) continue;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 1.2 + 2 * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.c},${p.life.toFixed(2)})`;
+          ctx.fill();
+        }
+        for (let i = sparks.length - 1; i >= 0; i--) if (sparks[i].life <= 0) sparks.splice(i, 1);
+      }
+
+      function frame(now){
+        ctx.clearRect(0, 0, w, h);
+        const t = Math.min((now - start) / FLY, 1);
+        if (t < 1) {
+          const e = t * t;
+          drawComet(sx + (tx - sx) * e, sy + (ty - sy) * e);
+        } else if (impactAt === null) {
+          strike(now);
+        }
+        drawImpact(now);
+        if (impactAt !== null && now - impactAt > 1600) {
+          canvas.remove();
+          document.dispatchEvent(new Event('comet:done'));
+          return;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+    document.addEventListener('intro:done', runComet, { once: true });
+    setTimeout(runComet, 7000);
   })();
 
   // Reveal the hero name right as the intro splash clears (it's held back
@@ -1095,7 +1227,7 @@
       { keys: ['stack','skill','tech','programming language','coding language','tool','framework'], a: "Her core stack spans enterprise cloud & systems (Genesys Cloud CX, AWS, Microsoft 365, Google Cloud), IT operations (incident & SLA management, ITSM, Netcool), infrastructure (Windows/Linux, Active Directory, Azure MFA, CyberArk, SailPoint), and programming (COBOL, JCL, Java, SQL, Kotlin, Firebase). See the Skills & Stack section on this page for the full breakdown." },
       { keys: ['visa','sponsor','485','subclass','graduate visa'], a: "She's currently on a Student Visa (Subclass 500) and will transition onto a 485 Temporary Graduate Visa after graduating in December 2026, giving her full working rights in Australia. Happy to talk sponsorship or graduate pathways." },
       { keys: ['relocat','move','melbourne','sydney','brisbane','perth','adelaide','location','based','where is she'], a: "She's based in Melbourne, VIC, and open to relocating anywhere across Australia for the right role." },
-      { keys: ['project','built','build','portfolio','birdtag','spotify','esaver','ocr','ielts','cloudpose','kubernetes','docker','pose'], a: "She's built BirdTag (serverless wildlife tagging on AWS), CloudPose (a FastAPI pose-estimation service on a self-built OCI Kubernetes cluster), a statistical analysis of 114K Spotify tracks, ESaver (an Android energy-saving app in Kotlin), a document/OCR extraction pipeline, an IELTS mock exam tool in React, and even this site's own LinkedIn banner generator. Scroll down to Projects for the full writeups." },
+      { keys: ['project','built','build','portfolio','birdtag','spotify','esaver','ocr','cloudpose','kubernetes','docker','pose'], a: "She's built BirdTag (serverless wildlife tagging on AWS), CloudPose (a FastAPI pose-estimation service on a self-built OCI Kubernetes cluster), a statistical analysis of 114K Spotify tracks, ESaver (an Android energy-saving app in Kotlin), a document/OCR extraction pipeline, and even this site's own LinkedIn banner generator. Scroll down to Projects for the full writeups." },
       { keys: ['education','degree','university','monash','study','gpa','wam'], a: "She's finishing a Master of Information Technology at Monash University (graduating Dec 2026, 65.7 WAM) and holds a Bachelor of Computer Applications from the University of Madras (First Class)." },
       { keys: ['experience','background','cognizant','work history','career'], a: "3+ years at Cognizant Technology Solutions supporting healthcare platforms for EmblemHealth & ConnectiCare (3.2M members): production support and incident management across multiple countries, plus a contact center transition from Avaya to Genesys Cloud CX. Full timeline is in the Experience section below." },
       { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from Sep to Oct 2026, supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
@@ -1206,122 +1338,6 @@
     document.getElementById('nav-chat-btn')?.addEventListener('click', () => {
       panel.classList.contains('open') ? closePanel() : openPanel();
     });
-  })();
-
-  // Horizontal drag-to-scroll project timeline: mouse drag, native touch scroll,
-  // arrow-button nudge, keyboard arrow keys, and a progress line that fills as
-  // you scroll through so the "oldest to newest" build history reads at a glance.
-  (function(){
-    const scroller = document.getElementById('projectTimeline');
-    if (!scroller) return;
-    const track = scroller.querySelector('.timeline');
-    const progress = document.getElementById('timelineProgress');
-    const prevBtn = document.getElementById('timelinePrev');
-    const nextBtn = document.getElementById('timelineNext');
-    const ruler = document.getElementById('timelineRuler');
-    const items = [...track.querySelectorAll('.timeline-item')];
-
-    // Ruler: one tick per project, built from the map's own items so it never
-    // drifts out of sync. Clicking a tick scrolls that project to view.
-    if (ruler){
-      items.forEach((item, i) => {
-        const date = item.querySelector('.timeline-date')?.textContent || '';
-        const title = item.querySelector('.timeline-title')?.textContent || '';
-        const tick = document.createElement('button');
-        tick.type = 'button';
-        tick.className = 'timeline-tick';
-        tick.setAttribute('role', 'tab');
-        tick.setAttribute('aria-label', `Jump to ${title}`);
-        tick.innerHTML = `<span class="timeline-tick-mark"></span><span class="timeline-tick-label">${date}</span>`;
-        tick.addEventListener('click', () => {
-          const target = items[i];
-          scroller.scrollTo({
-            left: target.offsetLeft - 24,
-            behavior: 'smooth'
-          });
-        });
-        ruler.appendChild(tick);
-      });
-    }
-    const ticks = ruler ? [...ruler.querySelectorAll('.timeline-tick')] : [];
-
-    function maxScroll(){ return scroller.scrollWidth - scroller.clientWidth; }
-
-    function updateActive(){
-      if (!items.length) return;
-      const center = scroller.scrollLeft + scroller.clientWidth / 2;
-      let closest = 0, closestDist = Infinity;
-      items.forEach((item, i) => {
-        const dist = Math.abs((item.offsetLeft + item.offsetWidth / 2) - center);
-        if (dist < closestDist){ closestDist = dist; closest = i; }
-      });
-      items.forEach((item, i) => item.classList.toggle('active', i === closest));
-      ticks.forEach((tick, i) => tick.classList.toggle('active', i === closest));
-      // Keep the active tick in view within the ruler's own horizontal strip
-      // only — never scrollIntoView, which can drag the whole page vertically
-      // to follow it and fights the user's own scroll on mobile.
-      const activeTick = ticks[closest];
-      if (activeTick && ruler){
-        const tickLeft = activeTick.offsetLeft;
-        const tickRight = tickLeft + activeTick.offsetWidth;
-        const viewLeft = ruler.scrollLeft;
-        const viewRight = viewLeft + ruler.clientWidth;
-        if (tickLeft < viewLeft || tickRight > viewRight){
-          ruler.scrollTo({ left: tickLeft - ruler.clientWidth / 2 + activeTick.offsetWidth / 2, behavior: 'smooth' });
-        }
-      }
-    }
-
-    function updateUI(){
-      const max = maxScroll();
-      const pct = max > 0 ? Math.min(1, Math.max(0, scroller.scrollLeft / max)) : 1;
-      if (progress) progress.style.width = (pct * 100) + '%';
-      if (prevBtn) prevBtn.disabled = scroller.scrollLeft <= 30;
-      if (nextBtn) nextBtn.disabled = scroller.scrollLeft >= max - 2;
-      updateActive();
-    }
-
-    function nudge(dir){
-      const item = track?.querySelector('.timeline-item');
-      const step = item ? item.getBoundingClientRect().width + 20 : 200;
-      scroller.scrollBy({ left: dir * step * 2, behavior: 'smooth' });
-    }
-
-    prevBtn?.addEventListener('click', () => nudge(-1));
-    nextBtn?.addEventListener('click', () => nudge(1));
-
-    scroller.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); nudge(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); nudge(-1); }
-    });
-
-    // Mouse drag-to-scroll (touch already scrolls natively via overflow-x)
-    let dragging = false, dragged = false, startX = 0, startScroll = 0;
-    scroller.addEventListener('pointerdown', (e) => {
-      if (e.pointerType === 'touch') return;
-      dragging = true; dragged = false;
-      startX = e.clientX; startScroll = scroller.scrollLeft;
-      scroller.classList.add('dragging');
-      scroller.setPointerCapture(e.pointerId);
-    });
-    scroller.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 3) dragged = true;
-      scroller.scrollLeft = startScroll - dx;
-    });
-    function endDrag(){ dragging = false; scroller.classList.remove('dragging'); }
-    scroller.addEventListener('pointerup', endDrag);
-    scroller.addEventListener('pointercancel', endDrag);
-    scroller.addEventListener('pointerleave', endDrag);
-    // Suppress the click-through navigation when a drag actually moved the track
-    scroller.addEventListener('click', (e) => {
-      if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; }
-    }, true);
-
-    scroller.addEventListener('scroll', updateUI, { passive: true });
-    window.addEventListener('resize', updateUI);
-    updateUI();
   })();
 
   // Project card "Read more" expand/collapse: keeps each card's visible
