@@ -586,30 +586,49 @@
       if (delay) a.setAttribute('begin', delay);
       el.appendChild(a);
     }
-    [head, tail, e1, e2].forEach(el => el.setAttribute('opacity', 1));
-    addMotion(head, 'M-40,-30 Q50,-10 118,118', '0.85s');
-    addMotion(tail, 'M-40,-30 Q50,-10 118,118', '0.85s');
-    addMotion(e1, 'M-55,10 Q30,20 110,130', '0.85s', '0.05s');
-    addMotion(e2, 'M-30,60 Q70,50 128,132', '0.85s', '0.1s');
 
-    setTimeout(() => {
-      [head, tail, e1, e2].forEach(el => {
-        el.style.transition = 'opacity .2s ease';
-        el.setAttribute('opacity', 0);
-      });
-      flash.style.transition = 'none';
-      flash.setAttribute('opacity', 1);
-      flash.setAttribute('r', 4);
-      requestAnimationFrame(() => {
-        flash.style.transition = 'r .5s ease-out, opacity .5s ease-out';
-        flash.setAttribute('r', 60);
-        flash.setAttribute('opacity', 0);
-      });
-      charm.style.transition = 'opacity .5s ease';
-      charm.setAttribute('opacity', 1);
-      orbit.setAttribute('begin', '0s');
-      orbit.beginElement();
-    }, 900);
+    // Made much bigger on request, and now a genuinely huge incoming hit.
+    head.setAttribute('r', 24);
+    tail.setAttribute('rx', 58); tail.setAttribute('ry', 9);
+    e1.setAttribute('r', 9);
+    e2.setAttribute('r', 11);
+
+    function launch(){
+      [head, tail, e1, e2].forEach(el => el.setAttribute('opacity', 1));
+      addMotion(head, 'M-70,-55 Q50,-15 118,118', '0.95s');
+      addMotion(tail, 'M-70,-55 Q50,-15 118,118', '0.95s');
+      addMotion(e1, 'M-90,15 Q30,25 108,132', '0.95s', '0.05s');
+      addMotion(e2, 'M-55,100 Q70,70 130,134', '0.95s', '0.1s');
+
+      setTimeout(() => {
+        [head, tail, e1, e2].forEach(el => {
+          el.style.transition = 'opacity .2s ease';
+          el.setAttribute('opacity', 0);
+        });
+        flash.style.transition = 'none';
+        flash.setAttribute('stroke-width', 6);
+        flash.setAttribute('opacity', 1);
+        flash.setAttribute('r', 8);
+        requestAnimationFrame(() => {
+          flash.style.transition = 'r .6s ease-out, opacity .6s ease-out';
+          flash.setAttribute('r', 130);
+          flash.setAttribute('opacity', 0);
+        });
+        charm.style.transition = 'opacity .5s ease';
+        charm.setAttribute('opacity', 1);
+        orbit.setAttribute('begin', '0s');
+        orbit.beginElement();
+      }, 950);
+    }
+
+    // The intro splash covers the whole screen for a few seconds on load --
+    // firing the meteor before it clears meant it hit the portrait while
+    // nobody could see it. Wait for the splash to actually finish (with a
+    // safety-net timeout in case that event is somehow never dispatched).
+    let fired = false;
+    function fireOnce(){ if (fired) return; fired = true; launch(); }
+    document.addEventListener('intro:done', fireOnce, { once: true });
+    setTimeout(fireOnce, 6000);
   })();
 
   // Freeze the corner footer mark's orbiting photon under prefers-reduced-motion —
@@ -1117,11 +1136,17 @@
   // badge's measured position/size and fades it, revealing the small
   // corner logo already settled in place.
   (function(){
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.dispatchEvent(new Event('intro:done'));
+      return;
+    }
     const overlay = document.getElementById('logoIntro');
     const inner = overlay?.querySelector('.logo-intro-inner');
     const realBadge = document.querySelector('.nav-logo-badge');
-    if (!overlay || !inner || !realBadge) return;
+    if (!overlay || !inner || !realBadge) {
+      document.dispatchEvent(new Event('intro:done'));
+      return;
+    }
 
     const clone = realBadge.cloneNode(true);
     clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
@@ -1137,6 +1162,7 @@
       if (realRect.width === 0 || introRect.width === 0){
         overlay.remove();
         document.body.classList.remove('intro-playing');
+        document.dispatchEvent(new Event('intro:done'));
         return;
       }
       const dx = (realRect.left + realRect.width / 2) - (introRect.left + introRect.width / 2);
@@ -1148,6 +1174,6 @@
       inner.classList.add('leaving');
       overlay.classList.add('leaving');
       document.body.classList.remove('intro-playing');
-      setTimeout(() => overlay.remove(), 1000);
+      setTimeout(() => { overlay.remove(); document.dispatchEvent(new Event('intro:done')); }, 1000);
     }, 3900);
   })();
