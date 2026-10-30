@@ -588,10 +588,10 @@
     }
 
     // Made much bigger on request, and now a genuinely huge incoming hit.
-    head.setAttribute('r', 24);
-    tail.setAttribute('rx', 58); tail.setAttribute('ry', 9);
-    e1.setAttribute('r', 9);
-    e2.setAttribute('r', 11);
+    head.setAttribute('r', 36);
+    tail.setAttribute('rx', 86); tail.setAttribute('ry', 14);
+    e1.setAttribute('r', 13);
+    e2.setAttribute('r', 16);
 
     function launch(){
       [head, tail, e1, e2].forEach(el => el.setAttribute('opacity', 1));
@@ -606,12 +606,12 @@
           el.setAttribute('opacity', 0);
         });
         flash.style.transition = 'none';
-        flash.setAttribute('stroke-width', 6);
+        flash.setAttribute('stroke-width', 9);
         flash.setAttribute('opacity', 1);
-        flash.setAttribute('r', 8);
+        flash.setAttribute('r', 12);
         requestAnimationFrame(() => {
           flash.style.transition = 'r .6s ease-out, opacity .6s ease-out';
-          flash.setAttribute('r', 130);
+          flash.setAttribute('r', 190);
           flash.setAttribute('opacity', 0);
         });
         charm.style.transition = 'opacity .5s ease';
@@ -867,14 +867,14 @@
       { keys: ['experience','background','cognizant','work history','career'], a: "3+ years at Cognizant Technology Solutions supporting healthcare platforms for EmblemHealth & ConnectiCare (3.2M members): production support and incident management across multiple countries, plus a contact center transition from Avaya to Genesys Cloud CX. Full timeline is in the Experience section below." },
       { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from Sep to Oct 2026, supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
       { keys: ['hr administrative','hew','coo','senior vp','clayton'], a: "She's also a casual HR Administrative Officer (HEW 4, ~10 hrs/week) with the HR Projects team in Monash's Office of the COO & Senior VP at Clayton Campus." },
-      { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentors 40+ postgraduate IT students at Monash, works as a Student Adviser through Monash Student Communities advising 45+ students, and runs IT infrastructure for the Monash Data & AI Society (1,600+ members)." },
+      { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentored 40+ postgraduate IT students at Monash (Jan–Oct 2026), works as a Student Adviser through Monash Student Communities advising 45+ students, and runs IT infrastructure for the Monash Data & AI Society (1,600+ members)." },
       { keys: ['australia','open to','available','job','role','opportunit','internship'], a: "Yes — she's open to IT roles across the board at the grad and entry level (cloud, systems, data, software, support), available part-time now and full-time from December 2026. She's on a Student Visa (Subclass 500) now, moving to a 485 Temporary Graduate Visa after graduating, and open to relocating anywhere across Australia." },
       { keys: ['contact','reach','email','talk','meet'], a: "Best way in is the coffee catch-up scheduler further down this page, or email her directly at rchmadhumitha@gmail.com. She replies fast. Ask me \"how do I schedule\" for the exact options." },
       { keys: ['astronomy','photon','hobby','fun fact','space','pen name','poetry','writing','poem'], a: "She writes poetry under the pen name \"Female Photon\" on the side, a nod to her science-enthusiast streak. Ask her about it, she loves the topic." },
       { keys: ['certif','award','aws ccp','cloud practitioner','sapphire','amber','csat'], a: "AWS Certified Cloud Practitioner, plus IT Help Desk for Beginners and Agile Fundamentals (Scrum) from LinkedIn Learning/Udemy. From her time at Cognizant: the Cheers Sapphire and Amber awards (peer-nominated for technical excellence and professional growth) and CSAT Champion for a 100 customer-satisfaction score. Full list is in the Certifications section below." },
       { keys: ['linkedin','github','profile','social','find her online'], a: "GitHub: github.com/madhumithachalla — LinkedIn: linkedin.com/in/madhumitha-challa. Both linked in the footer of this page too." },
       { keys: ['resume','cv','download'], a: "Yes — PDF and DOCX versions are both linked right at the top of this page, next to \"View Projects.\"" },
-      { keys: ['why hire','why should','strength','what makes her','unique','stand out','different'], a: "Three years of real production support on systems serving 3.2M members, now paired with hands-on cloud/dev work she builds and ships herself (not just coursework) — most of the projects on this page have a live demo, not just a writeup. She also runs four roles at once (mentoring, advising, IT admin, study) without dropping any of them, which says something about reliability under load." },
+      { keys: ['why hire','why should','strength','what makes her','unique','stand out','different'], a: "Three years of real production support on systems serving 3.2M members, now paired with hands-on cloud/dev work she builds and ships herself (not just coursework) — most of the projects on this page have a live demo, not just a writeup. She also juggled multiple roles at once (mentoring, advising, IT admin, study) without dropping any of them, which says something about reliability under load." },
       { keys: ['notice period','start date','when can she start','availability date'], a: "She's available part-time now, alongside her studies, and full-time from December 2026 once she graduates." },
       { keys: ['salary','pay','rate','compensation','expect to be paid'], a: "That's a conversation best had directly — email her at rchmadhumitha@gmail.com or grab a coffee catch-up slot below and she'll talk specifics." },
       { keys: ['remote','hybrid','wfh','work from home','onsite','in office'], a: "Open to remote, hybrid, or onsite — whatever the role needs. She's also open to relocating anywhere across Australia." },
@@ -890,7 +890,7 @@
       { keys: ['birdtag details','cognito','identity and access','api gateway'], a: "On BirdTag she owned identity and access end to end: designed and configured Cognito authentication, then wired it into API Gateway authorizers across every protected route with CORS handled properly. She also independently built species search, tag editing, file deletion, and secure signed-upload functions, plus co-built the core tag-query function with a teammate." },
       { keys: ['cloudpose details','kubernetes details','kubeadm','oci vcn','self-built cluster'], a: "CloudPose started as a Monash assignment, but she rebuilt and extended it well past what the assignment asked for: the model now loads once at startup instead of per-request, a batch endpoint processes up to 32 images concurrently, and she manually configured an OCI VCN and built a 3-VM Kubernetes cluster from scratch with kubeadm (no managed Kubernetes offering), then load-tested it with Locust." },
       { keys: ['colorcompass details','hsl','colour wheel','seasonal analysis'], a: "ColorCompass does real seasonal colour analysis from scratch: it converts sampled skin/hair pixels to actual HSL colour-wheel coordinates and classifies into one of the 12 standard seasonal categories. Worth noting: her first pass used a generic half-wheel warm/cool split and it was wrong — real skin tones cluster in a narrow hue band, so that split called everyone \"warm.\" She caught it, rebuilt it with a skin-tone-calibrated threshold instead." },
-      { keys: ['issue','challenge','obstacle','difficult','hardest part','problem she faced','mistake','went wrong','failure'], a: "A concrete one: building ColorCompass's colour classifier, her first warm/cool split used a generic 90°-half division of the colour wheel — technically reasonable-sounding, but wrong for skin tones specifically, since real skin hues all cluster in one narrow band. It made every test case come back \"warm.\" She caught it through actual testing (not just assuming the math was right) and rebuilt it with a calibrated threshold. More broadly: she's run four roles at once (Monash studies, mentoring 40+ students, advising 45+ more, two part-time IT/HR jobs) — the real challenge there is just disciplined prioritisation, not any one dramatic problem." }
+      { keys: ['issue','challenge','obstacle','difficult','hardest part','problem she faced','mistake','went wrong','failure'], a: "A concrete one: building ColorCompass's colour classifier, her first warm/cool split used a generic 90°-half division of the colour wheel — technically reasonable-sounding, but wrong for skin tones specifically, since real skin hues all cluster in one narrow band. It made every test case come back \"warm.\" She caught it through actual testing (not just assuming the math was right) and rebuilt it with a calibrated threshold. More broadly: she's juggled multiple roles at once (Monash studies, mentoring 40+ students, advising 45+ more, part-time IT/HR work) — the real challenge there is just disciplined prioritisation, not any one dramatic problem." }
     ];
     const fallback = "I'm just a lightweight assistant built into this page (no live AI backend), so I don't have a good answer for that one. Try asking about her skills, projects, experience, education, or availability, or email her directly at rchmadhumitha@gmail.com.";
 
