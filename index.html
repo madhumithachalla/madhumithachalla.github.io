@@ -1100,53 +1100,14 @@
 <section id="juggling" style="background:var(--bg-panel); padding-top:56px; padding-bottom:56px;">
   <div class="wrap">
     <span class="eyebrow c-coral">Right now</span>
-    <h2 style="margin-bottom:22px;">What I do right now, sketched</h2>
-    <p class="juggle-intro">A rough sketch of me, with the numbered marks matching what I'm currently doing. Updated against my own record.</p>
+    <h2 style="margin-bottom:22px;">What I do right now</h2>
+    <p class="juggle-intro">A digital portrait of me, with the numbered cards showing what I'm currently doing. Updated against my own record.</p>
     <div class="tuesday-board">
       <figure class="tuesday-sketch">
-        <svg class="sketch-svg" viewBox="0 0 320 400" role="img" aria-label="Hand-drawn sketch of Madhumitha with numbered marks on what she does">
-          <defs>
-            <filter id="sketchWobble" x="-5%" y="-5%" width="110%" height="110%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="7"/>
-              <feDisplacementMap in="SourceGraphic" scale="3.2"/>
-            </filter>
-          </defs>
-          <g filter="url(#sketchWobble)" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M124,96 C112,58 138,42 160,46 C184,42 206,60 196,98 C202,124 198,150 186,164 C178,158 176,150 178,142"/>
-            <circle cx="160" cy="94" r="34"/>
-            <circle cx="150" cy="94" r="1.8" fill="currentColor"/>
-            <circle cx="170" cy="94" r="1.8" fill="currentColor"/>
-            <path d="M152,110 Q160,117 168,110" stroke-width="1.8"/>
-            <path d="M152,126 L152,142 M168,126 L168,142"/>
-            <path d="M124,146 C138,136 182,136 196,146 L204,240 C182,250 138,250 116,240 Z"/>
-            <path d="M140,140 L160,158 L180,140"/>
-            <path d="M122,156 C102,172 96,196 104,214"/>
-            <path d="M80,208 L116,198 L122,222 L86,232 Z"/>
-            <path d="M76,234 L126,224" stroke-width="1.6"/>
-            <path d="M198,156 C214,170 220,192 210,208"/>
-            <path d="M204,196 L236,186 L242,216 L210,226 Z"/>
-            <path d="M212,204 L232,198" stroke-width="1.4"/>
-            <path d="M136,242 L130,352 L148,354 L160,262"/>
-            <path d="M184,242 L190,352 L172,354 L160,262"/>
-            <path d="M122,354 L150,354 M170,354 L200,354"/>
-            <path d="M22,68 q-12,0 -10,-11 q2,-10 14,-8 q4,-12 18,-8 q8,-6 14,4 q10,0 8,10 q-2,6 -10,5 q-12,6 -24,8 Z"/>
-            <path d="M236,70 h58 a10,10 0 0 1 10,10 v22 a10,10 0 0 1 -10,10 h-40 l-12,10 v-10 h-6 a10,10 0 0 1 -10,-10 v-22 a10,10 0 0 1 10,-10 Z"/>
-            <rect x="30" y="268" width="44" height="56" rx="4"/>
-            <rect x="44" y="262" width="16" height="10" rx="2"/>
-            <path d="M38,284 h28 M38,296 h28 M38,308 h20"/>
-            <circle cx="270" cy="300" r="20"/>
-            <path d="M258,318 L252,350 L264,342 L270,354 L276,342 L288,350 L282,318"/>
-          </g>
-          <g class="sketch-marks" font-family="'IBM Plex Mono', monospace" font-size="13" font-weight="600" text-anchor="middle">
-            <g><circle cx="250" cy="176" r="12"/><text x="250" y="181">1</text></g>
-            <g><circle cx="66" cy="186" r="12"/><text x="66" y="191">2</text></g>
-            <g><circle cx="84" cy="342" r="12"/><text x="84" y="347">3</text></g>
-            <g><circle cx="232" cy="130" r="12"/><text x="232" y="135">4</text></g>
-            <g><circle cx="58" cy="30" r="12"/><text x="58" y="35">5</text></g>
-            <g><circle cx="300" cy="344" r="12"/><text x="300" y="349">6</text></g>
-          </g>
-        </svg>
-        <figcaption class="mono sketch-caption">Sketch of me, roughly. Each number is a current role.</figcaption>
+<div class="slate-frame">
+          <img src="portrait-digital.jpg" width="720" height="720" loading="lazy" alt="Digital portrait of Madhumitha, a gradient-mapped version of her own photo">
+        </div>
+        <figcaption class="mono sketch-caption">Digital portrait, made from my own photo. The numbers on the cards are my current roles.</figcaption>
       </figure>
       <div class="juggle-grid" id="juggleGrid">
         <div class="juggle-card"><span class="jc-num">1</span><span class="jc-role">Master of Information Technology</span><span class="jc-org">Monash University</span><span class="jc-since">graduating Dec 2026</span></div>
@@ -1169,122 +1130,195 @@
       <p>A mix of team builds and solo work. Team contributions are scoped to what was mine. The rest belonged to teammates.</p>
     </div>
 
-    <div class="metro-map">
-<svg viewBox="0 0 2440 590" role="img" aria-labelledby="map-title map-desc" focusable="false">
+    <div class="gmap">
+      <div class="gmap-bar" aria-hidden="true"><span class="gmap-search">Projects · Apr 2025 to Oct 2026 · 13 places</span></div>
+      <div class="gmap-scroll">
+<svg viewBox="0 0 2440 860" role="img" aria-labelledby="map-title map-desc" focusable="false">
   <title id="map-title">Project map, oldest to newest</title>
-  <desc id="map-desc">Projects placed on three lines by kind of work, from April 2025 to October 2026. Each station links to its project below.</desc>
-  <line class="mm-grid" x1="170" y1="74" x2="170" y2="564"/>
-  <text class="mm-axis" x="176" y="62">Apr 25</text>
-  <line class="mm-grid" x1="500" y1="74" x2="500" y2="564"/>
-  <text class="mm-axis" x="506" y="62">Jul</text>
-  <line class="mm-grid" x1="830" y1="74" x2="830" y2="564"/>
-  <text class="mm-axis" x="836" y="62">Oct</text>
-  <line class="mm-grid" x1="1160" y1="74" x2="1160" y2="564"/>
-  <text class="mm-axis" x="1166" y="62">Jan 26</text>
-  <line class="mm-grid" x1="1490" y1="74" x2="1490" y2="564"/>
-  <text class="mm-axis" x="1496" y="62">Apr 26</text>
-  <line class="mm-grid" x1="1820" y1="74" x2="1820" y2="564"/>
-  <text class="mm-axis" x="1826" y="62">Jul 26</text>
-  <line class="mm-grid" x1="2150" y1="74" x2="2150" y2="564"/>
-  <text class="mm-axis" x="2156" y="62">Oct 26</text>
-  <line class="mm-lane mm-lane-cloud" x1="186" y1="190" x2="2380" y2="190"/>
-  <text class="mm-lane-name" x="24" y="195">Cloud &amp; data</text>
-  <line class="mm-lane mm-lane-web" x1="186" y1="350" x2="2380" y2="350"/>
-  <text class="mm-lane-name" x="24" y="355">Apps &amp; web</text>
-  <line class="mm-lane mm-lane-design" x1="186" y1="510" x2="2380" y2="510"/>
-  <text class="mm-lane-name" x="24" y="515">Design &amp; creative</text>
-  <polyline class="mm-route" points="208.0,190 242.0,190 445.0,190 1325.0,350 1765.0,190 1765.0,510 1875.0,350 2078.0,350 2095.0,510 2112.0,350 2171.0,350 2205.0,350 2239.0,350"/>
-  <line class="mm-tube mm-tube-cloud" x1="225.0" y1="190" x2="445.0" y2="190"/>
-  <line class="mm-tube mm-tube-cloud" x1="225.0" y1="190" x2="335.0" y2="190"/>
-  <line class="mm-tube mm-tube-cloud" x1="445.0" y1="190" x2="995.0" y2="190"/>
-  <line class="mm-tube mm-tube-cloud" x1="1765.0" y1="190" x2="1875.0" y2="190"/>
-  <line class="mm-tube mm-tube-web" x1="1325.0" y1="350" x2="1765.0" y2="350"/>
-  <line class="mm-tube mm-tube-web" x1="1875.0" y1="350" x2="2205.0" y2="350"/>
-  <line class="mm-tube mm-tube-web" x1="2095.0" y1="350" x2="2205.0" y2="350"/>
-  <line class="mm-tube mm-tube-design" x1="1765.0" y1="510" x2="1985.0" y2="510"/>
-  <a class="mm-station" href="#proj-birdtag" aria-label="BirdTag, Apr – Jun 2025">
-    <circle class="mm-dot mm-dot-cloud" cx="208.0" cy="190" r="9"/>
-    <text class="mm-name" x="204.0" y="143.0">BirdTag</text>
-    <text class="mm-date" x="204.0" y="159.0">Apr – Jun 2025</text>
+  <desc id="map-desc">Projects shown as pins on a street-style map. Each pin is labelled with the project and the months it ran, placed by when it was built. Pins are grouped into three areas: cloud and data, apps and web, design and creative.</desc>
+  <rect class="gm-land" x="0" y="0" width="2440" height="860"/>
+  <path class="gm-water" d="M0,640 C300,600 520,700 820,650 S1380,600 1700,690 S2200,640 2440,600 L2440,860 L0,860 Z"/>
+  <path class="gm-park" d="M1180,120 C1260,90 1380,110 1400,190 C1420,270 1330,300 1240,280 C1160,262 1120,170 1180,120 Z"/>
+  <path class="gm-park" d="M380,740 C440,720 520,730 540,770 C556,806 480,826 420,812 C360,800 340,760 380,740 Z"/>
+  <path class="gm-park" d="M1880,400 C1940,380 2010,400 2020,450 C2030,500 1960,520 1900,500 C1850,484 1840,420 1880,400 Z"/>
+  <path class="gm-major" d="M0,120 C420,90 800,160 1180,120 S2100,60 2440,140" stroke-width="22"/>
+  <path class="gm-major" d="M0,380 C360,420 700,330 1080,380 S1900,430 2440,360" stroke-width="26"/>
+  <path class="gm-major" d="M200,0 C240,260 180,520 260,860" stroke-width="18"/>
+  <path class="gm-major" d="M900,0 C950,220 860,520 980,860" stroke-width="18"/>
+  <path class="gm-major" d="M1600,0 C1560,240 1660,520 1620,860" stroke-width="18"/>
+  <path class="gm-minor" d="M2200,0 C2260,260 2180,560 2240,860" stroke-width="16"/>
+  <path class="gm-minor" d="M0,580 C500,560 900,620 1400,590 S2100,560 2440,600" stroke-width="14"/>
+  <path class="gm-minor" d="M0,240 L2440,300" stroke-width="8"/>
+  <path class="gm-minor" d="M0,520 L2440,470" stroke-width="8"/>
+  <path class="gm-minor" d="M0,790 C400,760 800,820 1200,790 S2000,770 2440,800" stroke-width="10"/>
+  <text class="gm-area" x="40" y="130">CLOUD AND DATA</text>
+  <text class="gm-area" x="40" y="350">APPS AND WEB</text>
+  <text class="gm-area" x="40" y="570">DESIGN AND CREATIVE</text>
+  <line class="gm-scale" x1="190" y1="826" x2="2360" y2="826"/>
+  <line class="gm-scale" x1="190" y1="818" x2="190" y2="834"/>
+  <text class="gm-scale-label" x="190" y="856" text-anchor="middle">Apr 2025</text>
+  <line class="gm-scale" x1="520" y1="818" x2="520" y2="834"/>
+  <text class="gm-scale-label" x="520" y="856" text-anchor="middle">Jul 2025</text>
+  <line class="gm-scale" x1="850" y1="818" x2="850" y2="834"/>
+  <text class="gm-scale-label" x="850" y="856" text-anchor="middle">Oct 2025</text>
+  <line class="gm-scale" x1="1180" y1="818" x2="1180" y2="834"/>
+  <text class="gm-scale-label" x="1180" y="856" text-anchor="middle">Jan 2026</text>
+  <line class="gm-scale" x1="1510" y1="818" x2="1510" y2="834"/>
+  <text class="gm-scale-label" x="1510" y="856" text-anchor="middle">Apr 2026</text>
+  <line class="gm-scale" x1="1840" y1="818" x2="1840" y2="834"/>
+  <text class="gm-scale-label" x="1840" y="856" text-anchor="middle">Jul 2026</text>
+  <line class="gm-scale" x1="2170" y1="818" x2="2170" y2="834"/>
+  <text class="gm-scale-label" x="2170" y="856" text-anchor="middle">Oct 2026</text>
+  <polyline class="gm-route" points="225.0,250 265.0,250 465.0,250 1345.0,470 1785.0,250 1785.0,690 1895.0,470 2095.0,470 2115.0,690 2135.0,470 2185.0,470 2225.0,470 2265.0,470"/>
+  <a class="gpin" href="#proj-birdtag" style="--d:0.00s" aria-label="BirdTag, Apr – Jun 2025">
+    <g transform="translate(225.0,250)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-cloud" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="156.0" y="154.0" width="138.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="168.0" y="174.0">BirdTag</text>
+    <text class="gpill-date" x="168.0" y="191.0">Apr – Jun 2025</text>
   </a>
-  <a class="mm-station" href="#proj-cloudpose" aria-label="CloudPose, Apr – May 2025">
-    <circle class="mm-dot mm-dot-cloud" cx="242.0" cy="190" r="9"/>
-    <text class="mm-name" x="238.0" y="231.0">CloudPose</text>
-    <text class="mm-date" x="238.0" y="247.0">Apr – May 2025</text>
+  <a class="gpin" href="#proj-cloudpose" style="--d:0.07s" aria-label="CloudPose, Apr – May 2025">
+    <g transform="translate(265.0,250)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-cloud" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="196.0" y="264.0" width="138.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="208.0" y="284.0">CloudPose</text>
+    <text class="gpill-date" x="208.0" y="301.0">Apr – May 2025</text>
   </a>
-  <a class="mm-station" href="#proj-spotify" aria-label="Spotify analysis, Jun – Nov 2025">
-    <circle class="mm-dot mm-dot-cloud" cx="445.0" cy="190" r="9"/>
-    <text class="mm-name" x="441.0" y="143.0">Spotify analysis</text>
-    <text class="mm-date" x="441.0" y="159.0">Jun – Nov 2025</text>
+  <a class="gpin" href="#proj-spotify" style="--d:0.14s" aria-label="Spotify analysis, Jun – Nov 2025">
+    <g transform="translate(465.0,250)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-cloud" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="380.0" y="154.0" width="170.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="392.0" y="174.0">Spotify analysis</text>
+    <text class="gpill-date" x="392.0" y="191.0">Jun – Nov 2025</text>
   </a>
-  <a class="mm-station" href="#proj-ocr" aria-label="Document pipeline, Jun – Jul 2026">
-    <circle class="mm-dot mm-dot-cloud" cx="1765.0" cy="190" r="9"/>
-    <text class="mm-name" x="1761.0" y="143.0">Document pipeline</text>
-    <text class="mm-date" x="1761.0" y="159.0">Jun – Jul 2026</text>
+  <a class="gpin" href="#proj-ocr" style="--d:0.21s" aria-label="Document pipeline, Jun – Jul 2026">
+    <g transform="translate(1785.0,250)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-cloud" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="1695.5" y="154.0" width="179.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="1707.5" y="174.0">Document pipeline</text>
+    <text class="gpill-date" x="1707.5" y="191.0">Jun – Jul 2026</text>
   </a>
-  <a class="mm-station" href="#proj-esaver" aria-label="ESaver, Feb – Jun 2026">
-    <circle class="mm-dot mm-dot-web" cx="1325.0" cy="350" r="9"/>
-    <text class="mm-name" x="1321.0" y="303.0">ESaver</text>
-    <text class="mm-date" x="1321.0" y="319.0">Feb – Jun 2026</text>
+  <a class="gpin" href="#proj-esaver" style="--d:0.28s" aria-label="ESaver, Feb – Jun 2026">
+    <g transform="translate(1345.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="1276.0" y="374.0" width="138.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="1288.0" y="394.0">ESaver</text>
+    <text class="gpill-date" x="1288.0" y="411.0">Feb – Jun 2026</text>
   </a>
-  <a class="mm-station" href="#proj-portfolio" aria-label="Portfolio site, Jul 2026 – present">
-    <circle class="mm-dot mm-dot-web" cx="1875.0" cy="350" r="9"/>
-    <text class="mm-name" x="1871.0" y="303.0">Portfolio site</text>
-    <text class="mm-date" x="1871.0" y="319.0">Jul 2026 – present</text>
+  <a class="gpin" href="#proj-portfolio" style="--d:0.35s" aria-label="Portfolio site, Jul 2026 – present">
+    <g transform="translate(1895.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="1810.0" y="374.0" width="170.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="1822.0" y="394.0">Portfolio site</text>
+    <text class="gpill-date" x="1822.0" y="411.0">Jul 2026 – present</text>
   </a>
-  <a class="mm-station" href="#proj-contact-icons" aria-label="Contact icons, Sep 2026">
-    <circle class="mm-dot mm-dot-web" cx="2078.0" cy="350" r="9"/>
-    <text class="mm-name" x="2074.0" y="303.0">Contact icons</text>
-    <text class="mm-date" x="2074.0" y="319.0">Sep 2026</text>
+  <a class="gpin" href="#proj-contact-icons" style="--d:0.42s" aria-label="Contact icons, Sep 2026">
+    <g transform="translate(2095.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="2023.5" y="374.0" width="143.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2035.5" y="394.0">Contact icons</text>
+    <text class="gpill-date" x="2035.5" y="411.0">Sep 2026</text>
   </a>
-  <a class="mm-station" href="#proj-climaze" aria-label="CliMaze (ShelfShift), Sep – Oct 2026">
-    <circle class="mm-dot mm-dot-web" cx="2112.0" cy="350" r="9"/>
-    <text class="mm-name" x="2108.0" y="391.0">CliMaze (ShelfShift)</text>
-    <text class="mm-date" x="2108.0" y="407.0">Sep – Oct 2026</text>
+  <a class="gpin" href="#proj-climaze" style="--d:0.49s" aria-label="CliMaze (ShelfShift), Sep – Oct 2026">
+    <g transform="translate(2135.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="2032.0" y="484.0" width="206.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2044.0" y="504.0">CliMaze (ShelfShift)</text>
+    <text class="gpill-date" x="2044.0" y="521.0">Sep – Oct 2026</text>
   </a>
-  <a class="mm-station" href="#proj-focuslens" aria-label="FocusLens, Oct 2026">
-    <circle class="mm-dot mm-dot-web" cx="2171.0" cy="350" r="9"/>
-    <text class="mm-name" x="2167.0" y="261.0">FocusLens</text>
-    <text class="mm-date" x="2167.0" y="277.0">Oct 2026</text>
+  <a class="gpin" href="#proj-focuslens" style="--d:0.56s" aria-label="FocusLens, Oct 2026">
+    <g transform="translate(2185.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="2131.5" y="310.0" width="107.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2143.5" y="330.0">FocusLens</text>
+    <text class="gpill-date" x="2143.5" y="347.0">Oct 2026</text>
   </a>
-  <a class="mm-station" href="#proj-colorcompass" aria-label="ColorCompass, Oct 2026">
-    <circle class="mm-dot mm-dot-web" cx="2205.0" cy="350" r="9"/>
-    <text class="mm-name" x="2201.0" y="433.0">ColorCompass</text>
-    <text class="mm-date" x="2201.0" y="449.0">Oct 2026</text>
+  <a class="gpin" href="#proj-colorcompass" style="--d:0.63s" aria-label="ColorCompass, Oct 2026">
+    <g transform="translate(2225.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="2158.0" y="246.0" width="134.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2170.0" y="266.0">ColorCompass</text>
+    <text class="gpill-date" x="2170.0" y="283.0">Oct 2026</text>
   </a>
-  <a class="mm-station" href="#proj-stuplying" aria-label="Stuplying, Oct 2026">
-    <circle class="mm-dot mm-dot-web" cx="2239.0" cy="350" r="9"/>
-    <text class="mm-name" x="2235.0" y="303.0">Stuplying</text>
-    <text class="mm-date" x="2235.0" y="319.0">Oct 2026</text>
+  <a class="gpin" href="#proj-stuplying" style="--d:0.70s" aria-label="Stuplying, Oct 2026">
+    <g transform="translate(2265.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="2211.5" y="374.0" width="107.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2223.5" y="394.0">Stuplying</text>
+    <text class="gpill-date" x="2223.5" y="411.0">Oct 2026</text>
   </a>
-  <a class="mm-station" href="#proj-banner" aria-label="LinkedIn banner, Jun – Aug 2026">
-    <circle class="mm-dot mm-dot-design" cx="1765.0" cy="510" r="9"/>
-    <text class="mm-name" x="1761.0" y="463.0">LinkedIn banner</text>
-    <text class="mm-date" x="1761.0" y="479.0">Jun – Aug 2026</text>
+  <a class="gpin" href="#proj-banner" style="--d:0.77s" aria-label="LinkedIn banner, Jun – Aug 2026">
+    <g transform="translate(1785.0,690)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-design" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="1704.5" y="594.0" width="161.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="1716.5" y="614.0">LinkedIn banner</text>
+    <text class="gpill-date" x="1716.5" y="631.0">Jun – Aug 2026</text>
   </a>
-  <a class="mm-station" href="#proj-logo" aria-label="Logo mark, Sep 2026">
-    <circle class="mm-dot mm-dot-design" cx="2095.0" cy="510" r="9"/>
-    <text class="mm-name" x="2091.0" y="463.0">Logo mark</text>
-    <text class="mm-date" x="2091.0" y="479.0">Sep 2026</text>
+  <a class="gpin" href="#proj-logo" style="--d:0.84s" aria-label="Logo mark, Sep 2026">
+    <g transform="translate(2115.0,690)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-design" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="2061.5" y="594.0" width="107.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2073.5" y="614.0">Logo mark</text>
+    <text class="gpill-date" x="2073.5" y="631.0">Sep 2026</text>
   </a>
 </svg>
+      </div>
     </div>
-    <ol class="sr-only" aria-label="Projects, oldest to newest">
-          <li><a href="#proj-birdtag">BirdTag, Apr – Jun 2025</a></li>
-          <li><a href="#proj-cloudpose">CloudPose, Apr – May 2025</a></li>
-          <li><a href="#proj-spotify">Spotify analysis, Jun – Nov 2025</a></li>
-          <li><a href="#proj-esaver">ESaver, Feb – Jun 2026</a></li>
-          <li><a href="#proj-ocr">Document pipeline, Jun – Jul 2026</a></li>
-          <li><a href="#proj-banner">LinkedIn banner, Jun – Aug 2026</a></li>
-          <li><a href="#proj-portfolio">Portfolio site, Jul 2026 – present</a></li>
-          <li><a href="#proj-contact-icons">Contact icons, Sep 2026</a></li>
-          <li><a href="#proj-logo">Logo mark, Sep 2026</a></li>
-          <li><a href="#proj-climaze">CliMaze (ShelfShift), Sep – Oct 2026</a></li>
-          <li><a href="#proj-focuslens">FocusLens, Oct 2026</a></li>
-          <li><a href="#proj-colorcompass">ColorCompass, Oct 2026</a></li>
-          <li><a href="#proj-stuplying">Stuplying, Oct 2026</a></li>
+    <ol class="gmap-chips" aria-label="Places on the map, oldest to newest">
+          <li><a href="#proj-birdtag"><span class="chip-dot gpin-cloud"></span>BirdTag, Apr – Jun 2025</a></li>
+          <li><a href="#proj-cloudpose"><span class="chip-dot gpin-cloud"></span>CloudPose, Apr – May 2025</a></li>
+          <li><a href="#proj-spotify"><span class="chip-dot gpin-cloud"></span>Spotify analysis, Jun – Nov 2025</a></li>
+          <li><a href="#proj-esaver"><span class="chip-dot gpin-web"></span>ESaver, Feb – Jun 2026</a></li>
+          <li><a href="#proj-ocr"><span class="chip-dot gpin-cloud"></span>Document pipeline, Jun – Jul 2026</a></li>
+          <li><a href="#proj-banner"><span class="chip-dot gpin-design"></span>LinkedIn banner, Jun – Aug 2026</a></li>
+          <li><a href="#proj-portfolio"><span class="chip-dot gpin-web"></span>Portfolio site, Jul 2026 – present</a></li>
+          <li><a href="#proj-contact-icons"><span class="chip-dot gpin-web"></span>Contact icons, Sep 2026</a></li>
+          <li><a href="#proj-logo"><span class="chip-dot gpin-design"></span>Logo mark, Sep 2026</a></li>
+          <li><a href="#proj-climaze"><span class="chip-dot gpin-web"></span>CliMaze (ShelfShift), Sep – Oct 2026</a></li>
+          <li><a href="#proj-focuslens"><span class="chip-dot gpin-web"></span>FocusLens, Oct 2026</a></li>
+          <li><a href="#proj-colorcompass"><span class="chip-dot gpin-web"></span>ColorCompass, Oct 2026</a></li>
+          <li><a href="#proj-stuplying"><span class="chip-dot gpin-web"></span>Stuplying, Oct 2026</a></li>
     </ol>
-    <p class="map-note">A map of what got built, oldest to newest. Each line is a kind of work, each station is a project placed by when it was built, and the thick bars show how long it ran. Select a station to jump to that project.</p>
+    <p class="map-note">Each pin is a project, dropped at the months it was built. Pins are grouped by area, the dashed line runs in build order, and the scale at the bottom is time. Select a pin to jump to its project.</p>
 
     <div class="project-filters" id="projectFilters" role="group" aria-label="Filter projects by category">
       <button type="button" class="project-filter active" data-filter="all">All</button>
@@ -1969,13 +2003,13 @@
       <p>Longer-form writing, on and off the clock — technical notes, reflections, and poetry under a pen name.</p>
     </div>
     <div class="writeup-grid">
-      <a class="writeup-card" href="https://medium.com/rchmadhumitha" target="_blank" rel="noopener">
+      <a class="writeup-card" href="https://medium.com/@rchmadhumitha" target="_blank" rel="noopener">
         <div class="writeup-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="4"/><ellipse cx="16" cy="12" rx="2.5" ry="4"/><ellipse cx="21.5" cy="12" rx="1" ry="4"/></svg>
         </div>
         <div class="writeup-title">Medium</div>
         <p>Longer-form posts and technical write-ups, separate from the project pages on this site.</p>
-        <span class="writeup-link">medium.com/rchmadhumitha ↗</span>
+        <span class="writeup-link">medium.com/@rchmadhumitha ↗</span>
       </a>
       <a class="writeup-card" href="https://canva.link/lefyyt2epfaanxw" target="_blank" rel="noopener">
         <div class="writeup-icon" aria-hidden="true">
@@ -1997,6 +2031,14 @@
         <div class="writeup-title">Poetry, as "Female Photon"</div>
         <p>Writes poetry on the side under the pen name Female Photon — entered the MSA 2026 Poetry Competition this year.</p>
         <span class="writeup-link">Read the poem ↗</span>
+      </a>
+      <a class="writeup-card" href="https://lnkd.in/p/gD5mZbs5" target="_blank" rel="noopener">
+        <div class="writeup-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>
+        </div>
+        <div class="writeup-title">An article I wrote on LinkedIn</div>
+        <p>A piece I wrote for LinkedIn, linked directly.</p>
+        <span class="writeup-link">lnkd.in/p/gD5mZbs5 ↗</span>
       </a>
       <a class="writeup-card" href="https://www.linkedin.com/in/madhumitha-challa/recent-activity/articles/" target="_blank" rel="noopener">
         <div class="writeup-icon" aria-hidden="true">
