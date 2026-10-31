@@ -75,7 +75,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="styles.css?v=17">
+<link rel="stylesheet" href="styles.css?v=18">
 </head>
 <body>
 
@@ -2017,6 +2017,10 @@
           <h3>Movie &amp; book suggestion window</h3>
           <div class="role">Role: sole builder · in progress</div>
           <p>A small widget for what I'm currently reading and watching, with a "what should I try next" suggestion window pulled from my own lists. Less a portfolio piece, more a corner of the site that's just mine.</p>
+          <div class="project-more spoiler-more" id="more-upcoming" hidden>
+            <p>The plan: a plain list I update by hand (no API, no tracking) of whatever I'm actually reading or watching that week. The "suggestion window" picks one at random on page load, so it changes every time I update the list — a tiny, low-stakes corner of the site I don't have to justify to anyone.</p>
+          </div>
+          <button type="button" class="project-expand spoiler-btn" aria-expanded="false" aria-controls="more-upcoming" data-collapsed-label="🔒 Sneak peek" data-expanded-label="Hide sneak peek">🔒 Sneak peek</button>
           <div class="tags"><span class="tag">Planned</span></div>
         </div>
       </div>
@@ -2406,7 +2410,7 @@
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-<script src="app.js?v=22"></script>
+<script src="app.js?v=23"></script>
 <script src="portfolio-sync.js?v=1"></script>
 
 </body>

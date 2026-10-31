@@ -1233,16 +1233,43 @@
   (function(){
     const list = document.getElementById('projectList');
     if (!list) return;
-    list.addEventListener('click', (e) => {
-      const btn = e.target.closest('.project-expand');
-      if (!btn) return;
+    function toggle(btn){
       const more = btn.previousElementSibling;
       if (!more || !more.classList.contains('project-more')) return;
       const expanded = btn.getAttribute('aria-expanded') === 'true';
       more.hidden = expanded;
       btn.setAttribute('aria-expanded', String(!expanded));
-      btn.textContent = expanded ? 'Read more' : 'Show less';
+      const collapsedLabel = btn.dataset.collapsedLabel || 'Read more';
+      const expandedLabel = btn.dataset.expandedLabel || 'Show less';
+      btn.textContent = expanded ? collapsedLabel : expandedLabel;
+    }
+    list.addEventListener('click', (e) => {
+      const btn = e.target.closest('.project-expand');
+      if (btn) toggle(btn);
     });
+
+    // Landing on a specific project — from the map, a nav link, or any
+    // #proj-x link elsewhere on the page — should actually show you that
+    // project, not just scroll near it: open its "Read more" detail and
+    // settle the scroll position under the sticky nav, not half behind it.
+    function goToProject(id){
+      const card = document.getElementById(id);
+      if (!card || !card.classList.contains('project')) return;
+      const btn = card.querySelector('.project-expand');
+      if (btn && btn.getAttribute('aria-expanded') !== 'true') toggle(btn);
+      requestAnimationFrame(() => {
+        const nav = document.querySelector('header.nav');
+        const offset = (nav ? nav.getBoundingClientRect().height : 0) + 16;
+        const top = card.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+    }
+    function handleHash(){
+      const id = location.hash.slice(1);
+      if (id.startsWith('proj-')) goToProject(id);
+    }
+    window.addEventListener('hashchange', handleHash);
+    if (location.hash) setTimeout(handleHash, 300);
   })();
 
   // Mobile-view preview: loads the current page inside a real iframe at
@@ -1353,6 +1380,35 @@
     }, 3900);
   })();
 
+  // Date badges on the project cards themselves — the map already knows
+  // when each project ran (its pin's aria-label), so read that back onto
+  // the matching card instead of hand-duplicating every date a second
+  // time. The one card with no pin (still upcoming) gets an honest
+  // "no fixed date yet" badge instead.
+  (function(){
+    const list = document.getElementById('projectList');
+    const pins = document.querySelectorAll('.gpin[href^="#proj-"]');
+    if (!list) return;
+    const dates = new Map();
+    pins.forEach(pin => {
+      const id = pin.getAttribute('href').slice(1);
+      const label = pin.getAttribute('aria-label') || '';
+      const when = label.split(',').slice(1).join(',').trim();
+      if (when) dates.set(id, when);
+    });
+    list.querySelectorAll('.project[id]').forEach(card => {
+      const top = card.querySelector('.project-top');
+      if (!top || top.querySelector('.pill-date')) return;
+      const when = dates.get(card.id) || (card.classList.contains('upcoming') ? 'No fixed date yet' : '');
+      if (!when) return;
+      const span = document.createElement('span');
+      span.className = 'pill pill-date mono';
+      span.style.cssText = 'color:var(--slate);border-color:var(--line);';
+      span.textContent = when;
+      top.appendChild(span);
+    });
+  })();
+
   // Project map: zoom with the buttons or Ctrl/Cmd and the scroll wheel, a time ruler that
   // shows only the places active in the months you pick, a search box that filters by name,
   // and clicking a place (pin or chip) pans the map to it with a brief highlight before
@@ -1441,7 +1497,17 @@
         const inRange = +pin.dataset.start <= b && +pin.dataset.end >= a;
         const inSearch = matchesQuery(pinName(pin));
         const on = inRange && inSearch;
+        const wasOn = !pin.classList.contains('is-off');
         pin.classList.toggle('is-off', !on);
+        // A place that just came into range lights up with the same glow
+        // pins get when you search or click one, so moving the scale
+        // visibly "turns on" the places it reveals.
+        if (on && !wasOn && scrollToStart) {
+          pin.classList.remove('gpin-highlight');
+          void pin.offsetWidth;
+          pin.classList.add('gpin-highlight');
+          setTimeout(() => pin.classList.remove('gpin-highlight'), 1400);
+        }
         if (on) shown++;
       });
       chips.forEach(li => {

@@ -758,6 +758,10 @@
   .project-expand:hover, .project-expand:focus-visible{color:var(--coral);}
   .project-expand::after{content:'▾'; font-size:10px; transition:transform .15s ease;}
   .project-expand[aria-expanded="true"]::after{transform:rotate(180deg);}
+  .spoiler-btn::after{content:none;}
+  .spoiler-more{animation:spoilerReveal .4s ease both;}
+  @keyframes spoilerReveal{0%{opacity:0; filter:blur(6px);} 100%{opacity:1; filter:blur(0);}}
+  @media(prefers-reduced-motion: reduce){ .spoiler-more{animation:none;} }
   .tags{display:flex; flex-wrap:wrap; gap:7px;}
   .tag{font-family:'IBM Plex Mono'; font-size:15px; background:var(--bg); border:1px solid var(--line); padding:5px 12px; border-radius:20px; color:var(--slate);}
   .tag:nth-child(3n+1){border-color:var(--coral); color:#FF6F5E;}
