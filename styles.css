@@ -630,7 +630,20 @@
      It is drawn at full size and scrolls sideways on small screens. */
   .gmap{border:1px solid var(--line); border-radius:var(--radius); background:var(--map-land); overflow:hidden; margin:0 0 14px;}
   .gmap-bar{padding:10px 14px; background:var(--bg-panel); border-bottom:1px solid var(--line);}
-  .gmap-search{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft); background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:6px 14px;}
+  .gmap-search-box{display:flex; align-items:center; gap:7px; background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:6px 14px; flex:1 1 220px; max-width:320px; color:var(--slate);}
+  .gmap-search-box svg{width:14px; height:14px; flex:none;}
+  .gmap-search-box:focus-within{border-color:var(--teal);}
+  .gmap-search{flex:1; min-width:0; border:none; background:none; outline:none; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--paper);}
+  .gmap-search::placeholder{color:var(--slate);}
+  .map-status-note{font-size:12px; color:var(--slate); margin:10px 14px 0; padding-bottom:4px;}
+  .map-status-note a{color:var(--teal);}
+  .gpin.gpin-highlight .gpin-body{animation:gpinHighlight 1.4s ease-out;}
+  @keyframes gpinHighlight{
+    0%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,197,107,0));}
+    30%{filter:brightness(1.6) drop-shadow(0 0 14px rgba(255,197,107,0.9));}
+    100%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,197,107,0));}
+  }
+  @media(prefers-reduced-motion: reduce){ .gpin.gpin-highlight .gpin-body{animation:none;} }
   .gmap-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
   .gmap-scroll svg{display:block; width:2440px; height:auto; max-width:none;}
   .gm-land{fill:var(--map-land);}
@@ -665,6 +678,16 @@
   .map-note{font-size:14px; color:var(--slate); margin:0 0 20px; font-style:italic;}
   .slate-frame{margin:0; background:linear-gradient(160deg,#2A2D36,#1B1D24); border:10px solid #3A3F4B; border-radius:6px; box-shadow:inset 0 0 0 2px #4A505E, 0 18px 40px -18px rgba(0,0,0,.6); padding:10px; overflow:hidden;}
   .slate-frame img{display:block; width:100%; height:auto; border-radius:3px;}
+  .status-frame{display:flex; align-items:center; justify-content:center; min-height:240px; border-radius:3px;}
+  .status-readout{padding:18px; text-align:center;}
+  .status-row-top{display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:14px;}
+  .status-row-top .status-dot{width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px rgba(45,212,191,0.3); flex:none;}
+  .status-row-top .status-dot.pulse{animation:pulse 2.2s ease-in-out infinite;}
+  .status-row-top .mono{font-size:13px; color:var(--ink-soft);}
+  .status-tz{color:var(--slate) !important;}
+  .status-line{font-size:14.5px; color:var(--paper); margin-bottom:10px; min-height:20px; transition:opacity .3s ease;}
+  .status-sub{font-size:11.5px; color:var(--slate);}
+  @media(prefers-reduced-motion: reduce){ .status-row-top .status-dot.pulse{animation:none;} }
   .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
   .project-list{display:flex; flex-direction:column; gap:18px;}
   .project{

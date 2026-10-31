@@ -275,6 +275,39 @@
       .catch(() => {});
   })();
 
+  // "Right now" status readout: a live Melbourne clock plus a ticker that
+  // cycles through her actual current roles (read straight from the juggle
+  // cards, so it never drifts from data/experience.json), replacing the old
+  // static digital-portrait image with something that's actually alive.
+  (function(){
+    const clock = document.getElementById('juggleClock');
+    const ticker = document.getElementById('juggleTicker');
+    if (!clock && !ticker) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function tickClock(){
+      if (!clock) return;
+      const fmt = new Intl.DateTimeFormat('en-AU', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Australia/Melbourne' });
+      clock.textContent = fmt.format(new Date());
+    }
+    tickClock();
+    setInterval(tickClock, 15000);
+
+    if (!ticker) return;
+    let idx = 0;
+    function cycle(){
+      const roles = [...document.querySelectorAll('#juggleGrid .jc-role')].map(el => el.textContent);
+      if (!roles.length) return;
+      idx = (idx + 1) % roles.length;
+      ticker.style.opacity = '0';
+      setTimeout(() => {
+        ticker.textContent = `Currently: ${roles[idx]}`;
+        ticker.style.opacity = '1';
+      }, reduced ? 0 : 300);
+    }
+    if (!reduced) setInterval(cycle, 3200);
+  })();
+
   // Skills & stack auto-addendum — this is the actual sync logic, not a one-off edit: any
   // technology named in a Project's tag row, or in an Experience entry's own "Skills:" line,
   // that isn't already named anywhere in Skills & Stack (by exact match or as a substring of
@@ -1030,7 +1063,7 @@
       { keys: ['stack','skill','tech','programming language','coding language','tool','framework'], a: "Her core stack spans enterprise cloud & systems (Genesys Cloud CX, AWS, Microsoft 365, Google Cloud), IT operations (incident & SLA management, ITSM, Netcool), infrastructure (Windows/Linux, Active Directory, Azure MFA, CyberArk, SailPoint), and programming (COBOL, JCL, Java, SQL, Kotlin, Firebase). See the Skills & Stack section on this page for the full breakdown." },
       { keys: ['visa','sponsor','485','subclass','graduate visa'], a: "She's currently on a Student Visa (Subclass 500) and will transition onto a 485 Temporary Graduate Visa after graduating in December 2026, giving her full working rights in Australia. Happy to talk sponsorship or graduate pathways." },
       { keys: ['relocat','move','melbourne','sydney','brisbane','perth','adelaide','location','based','where is she'], a: "She's based in Melbourne, VIC, and open to relocating anywhere across Australia for the right role." },
-      { keys: ['project','built','build','portfolio','birdtag','spotify','esaver','ocr','cloudpose','kubernetes','docker','pose'], a: "She's built BirdTag (serverless wildlife tagging on AWS), CloudPose (a FastAPI pose-estimation service on a self-built OCI Kubernetes cluster), a statistical analysis of 114K Spotify tracks, ESaver (an Android energy-saving app in Kotlin), a document/OCR extraction pipeline, and even this site's own LinkedIn banner generator. Scroll down to Projects for the full writeups." },
+      { keys: ['project','built','build','portfolio','birdtag','spotify','esaver','ocr','cloudpose','kubernetes','docker','pose','activeclimate','climate'], a: "She's built BirdTag (serverless wildlife tagging on AWS), CloudPose (a FastAPI pose-estimation service on a self-built OCI Kubernetes cluster), a statistical analysis of 114K Spotify tracks, ESaver (an Android energy-saving app in Kotlin), ActiveClimate Melbourne (a Vue + Firebase app for community sport and climate impact tracking), a document/OCR extraction pipeline, and even this site's own LinkedIn banner generator. Scroll down to Projects for the full writeups." },
       { keys: ['education','degree','university','monash','study','gpa','wam'], a: "She's finishing a Master of Information Technology at Monash University (graduating Dec 2026, 65.7 WAM) and holds a Bachelor of Computer Applications from the University of Madras (First Class)." },
       { keys: ['experience','background','cognizant','work history','career'], a: "3+ years at Cognizant Technology Solutions supporting healthcare platforms for EmblemHealth & ConnectiCare (3.2M members): production support and incident management across multiple countries, plus a contact center transition from Avaya to Genesys Cloud CX. Full timeline is in the Experience section below." },
       { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from Sep to Oct 2026, supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
@@ -1319,14 +1352,16 @@
     }, 3900);
   })();
 
-  // Project map: zoom with the buttons or Ctrl/Cmd and the scroll wheel, and a time ruler that
-  // shows only the places that were active in the months you pick. Changing the range scrolls
-  // the map to where the range starts.
+  // Project map: zoom with the buttons or Ctrl/Cmd and the scroll wheel, a time ruler that
+  // shows only the places active in the months you pick, a search box that filters by name,
+  // and clicking a place (pin or chip) pans the map to it with a brief highlight before
+  // following the link down to the project card.
   (function(){
     const scroller = document.querySelector('.gmap-scroll');
     const svg = scroller && scroller.querySelector('svg');
     const from = document.getElementById('timeFrom');
     const to = document.getElementById('timeTo');
+    const search = document.getElementById('mapSearch');
     if (!scroller || !svg || !from || !to) return;
     const BASE_W = 2440, PAD_L = 190, MW = 110, LAST = 18;
     const MONTHS = ['Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026'];
@@ -1335,7 +1370,17 @@
     const brush = document.getElementById('timeBrush');
     const readout = document.getElementById('timeReadout');
     const zoomReadout = document.getElementById('zoomReadout');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let zoom = 1;
+    let query = '';
+
+    function pinName(pin){
+      const label = pin.getAttribute('aria-label') || '';
+      return label.split(',')[0].trim();
+    }
+    function matchesQuery(name){
+      return !query || name.toLowerCase().includes(query);
+    }
 
     function setZoom(z, focus = 0.5){
       const before = zoom;
@@ -1355,23 +1400,71 @@
     document.getElementById('zoomOut')?.addEventListener('click', () => setZoom(zoom / 1.25));
     document.getElementById('zoomReset')?.addEventListener('click', () => setZoom(1));
 
+    // Pans the scroller so a given pin sits centered, and gives it a brief
+    // glowing pulse so it's obvious which place just got selected.
+    function panToPin(pin, opts){
+      const g = pin.querySelector('g');
+      const m = g && g.getAttribute('transform').match(/translate\(([\d.]+),([\d.]+)\)/);
+      if (m) {
+        const x = parseFloat(m[1]);
+        scroller.scrollTo({ left: Math.max(0, x * zoom - scroller.clientWidth / 2), behavior: reduced ? 'auto' : 'smooth' });
+      }
+      pin.classList.remove('gpin-highlight');
+      void pin.offsetWidth;
+      pin.classList.add('gpin-highlight');
+      setTimeout(() => pin.classList.remove('gpin-highlight'), 1400);
+      if (opts && opts.thenFollow) {
+        setTimeout(() => { window.location.hash = pin.getAttribute('href'); }, reduced ? 0 : 650);
+      }
+    }
+    // Any click on a place (map pin or sidebar chip) pans + highlights first,
+    // then still follows the link down to the full project card.
+    function wireNavigate(el, pin){
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        panToPin(pin, { thenFollow: true });
+      });
+    }
+    pins.forEach(pin => wireNavigate(pin, pin));
+    chips.forEach(li => {
+      const a = li.querySelector('a');
+      const pin = pins.find(p => p.getAttribute('href') === a?.getAttribute('href'));
+      if (a && pin) wireNavigate(a, pin);
+    });
+
     function applyRange(scrollToStart){
       let a = +from.value, b = +to.value;
       if (a > b) [a, b] = [b, a];
       let shown = 0;
       pins.forEach(pin => {
-        const on = +pin.dataset.start <= b && +pin.dataset.end >= a;
+        const inRange = +pin.dataset.start <= b && +pin.dataset.end >= a;
+        const inSearch = matchesQuery(pinName(pin));
+        const on = inRange && inSearch;
         pin.classList.toggle('is-off', !on);
         if (on) shown++;
       });
-      chips.forEach(li => { li.hidden = !(+li.dataset.start <= b && +li.dataset.end >= a); });
+      chips.forEach(li => {
+        const a2 = li.querySelector('a');
+        const name = a2 ? a2.textContent.split(',')[0].trim() : '';
+        li.hidden = !((+li.dataset.start <= b && +li.dataset.end >= a) && matchesQuery(name));
+      });
       brush.style.left = (a / LAST * 100) + '%';
       brush.style.width = ((b - a) / LAST * 100) + '%';
       readout.textContent = `${MONTHS[a]} to ${MONTHS[b]} · ${shown} of ${pins.length} places`;
-      if (scrollToStart) scroller.scrollTo({ left: Math.max(0, (PAD_L + a * MW) * zoom - 120), behavior: 'smooth' });
+      if (scrollToStart) scroller.scrollTo({ left: Math.max(0, (PAD_L + a * MW) * zoom - 120), behavior: reduced ? 'auto' : 'smooth' });
     }
     from.addEventListener('input', () => applyRange(true));
     to.addEventListener('input', () => applyRange(true));
     document.getElementById('timeReset')?.addEventListener('click', () => { from.value = 0; to.value = LAST; applyRange(true); });
+
+    if (search) {
+      search.addEventListener('input', () => {
+        query = search.value.trim().toLowerCase();
+        applyRange(false);
+        if (!query) return;
+        const match = pins.find(pin => !pin.classList.contains('is-off') && matchesQuery(pinName(pin)));
+        if (match) panToPin(match);
+      });
+    }
     applyRange(false);
   })();

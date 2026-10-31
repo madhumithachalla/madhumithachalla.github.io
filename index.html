@@ -75,7 +75,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
 
@@ -1135,13 +1135,17 @@
   <div class="wrap">
     <span class="eyebrow c-coral">Right now</span>
     <h2 style="margin-bottom:22px;">What I do right now</h2>
-    <p class="juggle-intro">A digital portrait of me, with the numbered cards showing what I'm currently doing. Updated against my own record.</p>
+    <p class="juggle-intro">A live status readout, with the numbered cards showing what I'm currently doing. Updated against my own record.</p>
     <div class="tuesday-board">
       <figure class="tuesday-sketch">
-<div class="slate-frame">
-          <img src="portrait-digital.jpg" width="720" height="720" loading="lazy" alt="Digital portrait of Madhumitha, a gradient-mapped version of her own photo">
+        <div class="slate-frame status-frame">
+          <div class="status-readout">
+            <div class="status-row-top"><span class="status-dot pulse"></span><span class="mono" id="juggleClock">--:--</span><span class="mono status-tz">Melbourne, VIC</span></div>
+            <div class="status-line mono" id="juggleTicker">Currently: Master of Information Technology</div>
+            <div class="status-sub mono">6 roles running at once — see the cards →</div>
+          </div>
         </div>
-        <figcaption class="mono sketch-caption">Digital portrait, made from my own photo. The numbers on the cards are my current roles.</figcaption>
+        <figcaption class="mono sketch-caption">Live status, not a photo. The numbers on the cards are my current roles.</figcaption>
       </figure>
       <div class="juggle-grid" id="juggleGrid">
         <div class="juggle-card"><span class="jc-num">1</span><span class="jc-role">Master of Information Technology</span><span class="jc-org">Monash University</span><span class="jc-since">graduating Dec 2026</span></div>
@@ -1165,7 +1169,14 @@
     </div>
 
     <div class="gmap">
-      <div class="gmap-bar"><span class="gmap-search">Projects · Apr 2025 to Oct 2026 · 13 places</span><span class="gmap-zoom" role="group" aria-label="Zoom the map"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><span id="zoomReadout" class="mono">100%</span><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomReset" class="gmap-btn">Reset</button></span></div>
+      <div class="gmap-bar">
+        <label class="gmap-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="mapSearch" class="gmap-search" placeholder="Search 14 places…" aria-label="Search projects on the map" autocomplete="off">
+        </label>
+        <span class="gmap-zoom" role="group" aria-label="Zoom the map"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><span id="zoomReadout" class="mono">100%</span><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomReset" class="gmap-btn">Reset</button></span>
+      </div>
+      <p class="map-status-note mono">1 more project is upcoming, with no fixed date yet — see the <a href="#proj-upcoming">Upcoming card</a> in the list below.</p>
       <div class="gmap-scroll">
 <svg viewBox="0 0 2440 860" role="img" aria-labelledby="map-title map-desc" focusable="false">
   <title id="map-title">Project map, oldest to newest</title>
@@ -1274,6 +1285,16 @@
     <text class="gpill-name" x="2035.5" y="394.0">Contact icons</text>
     <text class="gpill-date" x="2035.5" y="411.0">Sep 2026</text>
   </a>
+  <a class="gpin" data-start="18" data-end="18" href="#proj-activeclimate" style="--d:0.47s" aria-label="ActiveClimate Melbourne, Oct 2026">
+    <g transform="translate(2305.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="2190.0" y="566.0" width="230.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2202.0" y="586.0">ActiveClimate Melbourne</text>
+    <text class="gpill-date" x="2202.0" y="603.0">Oct 2026</text>
+  </a>
   <a class="gpin" data-start="17" data-end="18" href="#proj-climaze" style="--d:0.49s" aria-label="CliMaze (ShelfShift), Sep – Oct 2026">
     <g transform="translate(2135.0,470)">
       <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
@@ -1363,6 +1384,7 @@
           <li data-start="18" data-end="18"><a href="#proj-focuslens"><span class="chip-dot gpin-web"></span>FocusLens, Oct 2026</a></li>
           <li data-start="18" data-end="18"><a href="#proj-colorcompass"><span class="chip-dot gpin-web"></span>ColorCompass, Oct 2026</a></li>
           <li data-start="18" data-end="18"><a href="#proj-stuplying"><span class="chip-dot gpin-web"></span>Stuplying, Oct 2026</a></li>
+          <li data-start="18" data-end="18"><a href="#proj-activeclimate"><span class="chip-dot gpin-web"></span>ActiveClimate Melbourne, Oct 2026</a></li>
     </ol>
     <p class="map-note">Each pin is a project, dropped at the months it was built. Pins are grouped by area, the dashed line runs in build order, and the scale at the bottom is time. Select a pin to jump to its project.</p>
 
@@ -1603,6 +1625,33 @@
           <div class="metric"><span class="n" data-target="0">0</span><span class="l">photos ever leave your device</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/colorcompass" target="_blank" rel="noopener">View source ↗</a>
           <a class="project-link" href="https://madhumithachalla.github.io/colorcompass/" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-activeclimate" data-categories="web cloud">
+        <div class="project-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16a4 4 0 1 0-3.8-5.2A3 3 0 0 0 7 17h10a3.5 3.5 0 0 0-1-6.9"/></svg></div>
+        <div>
+          <div class="project-top">
+            <span class="pill">Solo</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">Monash assignment</span>
+          </div>
+          <h3>ActiveClimate Melbourne: community sport &amp; climate-impact app</h3>
+          <div class="role">Role: full stack, solo (coursework)</div>
+          <p>A Vue web app for a fictional not-for-profit that connects Melburnians to community sport and active-travel groups. Members log lower-emission trips, track their impact, rate activity groups, and check a location-aware weather map; a coordinator view adds moderation and reporting on top.</p>
+          <div class="project-more" id="more-activeclimate" hidden>
+            <ul>
+            <li>Built Firebase email/password auth with role-aware routing — a Firebase Admin custom claim gates the coordinator-only <code>/admin</code> area.</li>
+            <li>Firestore-backed member profiles and activity records, locked down with custom Firestore security rules.</li>
+            <li>Coordinator dashboard with two interactive data tables (per-column filters, sorting, pagination), each exporting to CSV and a printable PDF.</li>
+            <li>Weather page with city search, browser geolocation, and an interactive map; Cloud Functions handle book-list APIs and an authenticated impact-email send via Gmail SMTP.</li>
+          </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-activeclimate">Read more</button>
+          <div class="tags"><span class="tag">Vue</span><span class="tag">Firebase Auth</span><span class="tag">Cloud Firestore</span><span class="tag">Cloud Functions</span><span class="tag">Firebase Hosting</span><span class="tag">Vite</span></div>
+        </div>
+        <div class="project-side">
+          <div class="metric"><span class="n" data-target="2">0</span><span class="l">roles: member and coordinator</span></div>
+          <a class="project-link" href="https://activeclimateapp-0218.web.app" target="_blank" rel="noopener">Try live app ↗</a>
         </div>
       </div>
 
@@ -1921,7 +1970,7 @@
         </div>
       </div>
 
-      <div class="project upcoming">
+      <div class="project upcoming" id="proj-upcoming">
         <div>
           <div class="project-top">
             <span class="pill upcoming">Upcoming</span>
@@ -2319,7 +2368,7 @@
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-<script src="app.js?v=19"></script>
+<script src="app.js?v=20"></script>
 <script src="portfolio-sync.js?v=1"></script>
 
 </body>
