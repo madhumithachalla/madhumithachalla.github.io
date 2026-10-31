@@ -1326,3 +1326,87 @@
     document.getElementById('timeReset')?.addEventListener('click', () => { from.value = 0; to.value = LAST; applyRange(true); });
     applyRange(false);
   })();
+
+  // Map navigation: click a pin (or use Previous, Next or the arrow keys) to select a place.
+  // The selected place is drawn in its own colour with a pulsing ring, the map scrolls to it,
+  // and a card under the map names it with a link to its project.
+  (function(){
+    const scroller = document.querySelector('.gmap-scroll');
+    const svg = scroller && scroller.querySelector('svg');
+    if (!scroller || !svg) return;
+    const pins = [...svg.querySelectorAll('.gpin')];
+    const card = document.getElementById('placeCard');
+    const nameEl = document.getElementById('placeName');
+    const datesEl = document.getElementById('placeDates');
+    const dot = document.getElementById('placeDot');
+    const link = document.getElementById('placeLink');
+    const countEl = document.getElementById('placeCount');
+    const prev = document.getElementById('placePrev');
+    const next = document.getElementById('placeNext');
+    const LANE_CLASS = { cloud: 'sel-cloud', web: 'sel-web', design: 'sel-design' };
+    const BASE_W = 2440, MONTH_W = 110, PAD_L = 190;
+    let selected = null;
+
+    // A pulsing ring for each pin, shown only while it is selected.
+    pins.forEach(pin => {
+      const body = pin.querySelector('.gpin-body');
+      const g = pin.querySelector('g');
+      if (!body || !g) return;
+      const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      ring.setAttribute('class', 'gpin-ring');
+      ring.setAttribute('cx', '0'); ring.setAttribute('cy', '-33'); ring.setAttribute('r', '14');
+      g.insertBefore(ring, g.firstChild);
+      pin.dataset.lane = (body.getAttribute('class').match(/gpin-(cloud|web|design)/) || [])[1] || '';
+    });
+
+    // Places currently shown (not hidden by the time filter), in build order.
+    function visible(){
+      return pins.filter(p => !p.classList.contains('is-off'))
+        .sort((a, b) => (+a.dataset.start - +b.dataset.start) || (+a.dataset.end - +b.dataset.end));
+    }
+
+    function select(pin){
+      if (selected) selected.classList.remove('is-selected');
+      selected = pin || null;
+      if (!selected) {
+        nameEl.textContent = 'Choose a pin on the map';
+        datesEl.textContent = 'Click a pin, or use Previous and Next.';
+        dot.className = 'gmap-selected-dot';
+        link.hidden = true;
+        countEl.textContent = 'Select a place';
+        return;
+      }
+      selected.classList.add('is-selected');
+      const label = selected.getAttribute('aria-label') || '';
+      const [name, dates] = label.split(/,\s(.+)/);
+      nameEl.textContent = name || label;
+      datesEl.textContent = dates || '';
+      dot.className = 'gmap-selected-dot ' + (LANE_CLASS[selected.dataset.lane] || '');
+      link.href = selected.getAttribute('href');
+      link.hidden = false;
+      const list = visible();
+      countEl.textContent = (list.indexOf(selected) + 1) + ' of ' + list.length;
+      // Scroll the map so the selected pin sits near the middle of the view.
+      const x = (PAD_L + (+selected.dataset.start + +selected.dataset.end) / 2 * MONTH_W + MONTH_W / 2) * (svg.getBoundingClientRect().width / BASE_W);
+      scroller.scrollTo({ left: Math.max(0, x - scroller.clientWidth / 2), behavior: 'smooth' });
+    }
+
+    function step(dir){
+      const list = visible();
+      if (!list.length) return;
+      const i = selected ? list.indexOf(selected) : -1;
+      const n = i < 0 ? (dir > 0 ? 0 : list.length - 1) : (i + dir + list.length) % list.length;
+      select(list[n]);
+    }
+
+    pins.forEach(pin => pin.addEventListener('click', e => { e.preventDefault(); select(pin); }));
+    prev.addEventListener('click', () => step(-1));
+    next.addEventListener('click', () => step(1));
+    scroller.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); step(1); }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
+    });
+    // If the time filter hides the selected place, clear the selection.
+    new MutationObserver(() => { if (selected && selected.classList.contains('is-off')) select(null); })
+      .observe(svg, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  })();

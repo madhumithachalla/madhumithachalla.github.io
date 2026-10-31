@@ -1129,3 +1129,19 @@
 
   /* The hero shows the same deep sky as the rest of the page in dark mode, not its own gradient. */
   :root:not([data-theme="light"]) .hero{background:none;}
+  /* Map navigation: the selected place gets its own colour, a pulsing ring, and a card below the map. */
+  .gmap-nav{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; color:var(--slate);}
+  .gmap-selected{display:flex; align-items:center; gap:12px; flex-wrap:wrap; border:1px solid var(--line); border-radius:var(--radius); background:var(--bg-panel); padding:12px 14px; margin:0 0 12px;}
+  .gmap-selected b{font-size:16px;}
+  .gmap-selected .mono{font-size:12.5px; color:var(--slate);}
+  .gmap-selected a{margin-left:auto;}
+  .gmap-selected-dot{width:14px; height:14px; border-radius:50%; background:var(--slate); flex:none;}
+  .gmap-selected-dot.sel-cloud{background:var(--map-cloud);} .gmap-selected-dot.sel-web{background:var(--map-web);} .gmap-selected-dot.sel-design{background:var(--map-design);}
+  .gmap-scroll:focus-visible{outline:2px solid var(--paper); outline-offset:2px;}
+  .gpin-ring{fill:none; stroke:var(--paper); stroke-width:2.5; opacity:0;}
+  .gpin.is-selected .gpin-ring{opacity:1; animation:gpinPulse 1.6s ease-out infinite;}
+  .gpin.is-selected .gpin-body{fill:var(--paper) !important; stroke:var(--amber); stroke-width:3.5; filter:drop-shadow(0 0 8px rgba(255,197,107,.7));}
+  .gpin.is-selected .gpill{fill:var(--amber); stroke:var(--paper);}
+  .gpin.is-selected .gpill-name{fill:var(--ink);}
+  .gpin.is-selected .gpill-date{fill:var(--ink);}
+  @keyframes gpinPulse{0%{r:14; opacity:.9;} 100%{r:34; opacity:0;}}
