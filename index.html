@@ -1175,9 +1175,10 @@
           <input type="search" id="mapSearch" class="gmap-search" placeholder="Search 15 places…" aria-label="Search projects on the map" autocomplete="off">
         </label>
         <span class="gmap-zoom" role="group" aria-label="Zoom the map"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><span id="zoomReadout" class="mono">100%</span><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomReset" class="gmap-btn">Reset</button></span>
+        <span class="gmap-nav" role="group" aria-label="Move between places"><button type="button" id="placePrev" class="gmap-btn" aria-label="Previous place">← Previous</button><span id="placeCount" class="mono">Select a place</span><button type="button" id="placeNext" class="gmap-btn" aria-label="Next place">Next →</button></span>
       </div>
       <p class="map-status-note mono">1 more project is upcoming, with no fixed date yet — see the <a href="#proj-upcoming">Upcoming card</a> in the list below.</p>
-      <div class="gmap-scroll">
+      <div class="gmap-scroll" tabindex="0" aria-label="Project map. Use the arrow keys to move between places.">
 <svg viewBox="0 0 2440 860" role="img" aria-labelledby="map-title map-desc" focusable="false">
   <title id="map-title">Project map, oldest to newest</title>
   <desc id="map-desc">Projects shown as pins on a street-style map. Each pin is labelled with the project and the months it ran, placed by when it was built. Pins are grouped into three areas: cloud and data, apps and web, design and creative.</desc>
@@ -1379,6 +1380,11 @@
         <div class="time-months" aria-hidden="true"><span style="left:0.000%">Apr 2025</span><span style="left:16.667%">Jul 2025</span><span style="left:33.333%">Oct 2025</span><span style="left:50.000%">Jan 2026</span><span style="left:66.667%">Apr 2026</span><span style="left:83.333%">Jul 2026</span><span style="left:100.000%">Oct 2026</span></div>
         <p class="time-hint mono">Drag the two handles to choose months. Ctrl or Cmd with the scroll wheel also zooms the map.</p>
       </div>
+    </div>
+    <div class="gmap-selected" id="placeCard" aria-live="polite">
+      <span class="gmap-selected-dot" id="placeDot"></span>
+      <div><b id="placeName">Choose a pin on the map</b><div class="mono" id="placeDates">Click a pin, or use Previous and Next.</div></div>
+      <a class="gmap-btn" id="placeLink" href="#projects" hidden>Open the project</a>
     </div>
     <ol class="gmap-chips" aria-label="Places on the map, oldest to newest">
           <li data-start="0" data-end="2"><a href="#proj-birdtag"><span class="chip-dot gpin-cloud"></span>BirdTag, Apr – Jun 2025</a></li>
