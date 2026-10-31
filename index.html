@@ -75,7 +75,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="styles.css?v=15">
+<link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body>
 
@@ -712,62 +712,39 @@
   <canvas id="meteor-canvas" aria-hidden="true"></canvas>
   <div class="wrap hero-grid">
     <div class="hero-text">
-      <figure class="hero-scene" aria-label="An illustrated scene: Madhumitha greets a visitor, who walks up and asks what she does, and she explains.">
-        <svg viewBox="0 0 520 200" role="img" aria-hidden="true" class="scene-svg">
+      <figure class="hero-scene" aria-label="An illustrated scene: Madhumitha, drawn with her own photo for a face, walking through a typical day — lectures, the Baazar internship and HR Projects, mentoring, Microsoft 365 admin, then coding and poetry at night.">
+        <svg viewBox="0 0 520 200" role="img" aria-hidden="true" class="scene-svg day-scene">
           <line x1="0" y1="186" x2="520" y2="186" stroke="var(--line-dark)" stroke-width="2"/>
-          <ellipse cx="200" cy="188" rx="120" ry="5" fill="#000" opacity=".25"/>
-          <g class="scene-her">
-            <g class="her-body">
-              <path d="M148,78 C144,50 158,40 170,40 C188,40 200,54 196,80 L202,122 C190,128 180,126 170,120 C160,126 150,128 140,122 Z" fill="#2A1810"/>
-              <circle cx="170" cy="80" r="22" fill="#C6875C"/>
-              <path d="M148,74 C150,56 160,52 172,54 C184,52 194,60 192,74 C184,64 164,62 148,74 Z" fill="#2A1810"/>
-              <circle cx="162" cy="82" r="1.9" fill="#2A1810"/><circle cx="178" cy="82" r="1.9" fill="#2A1810"/>
-              <path d="M164,93 Q170,98 176,93" fill="none" stroke="#7A4632" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M160,104 C166,100 174,100 180,104 L182,150 L158,150 Z" fill="#F5C451"/>
-              <path d="M158,150 L182,150 L181,184 L173,184 L170,160 L167,184 L159,184 Z" fill="#9B7EDE"/>
-              <rect x="156" y="183" width="10" height="4" rx="2" fill="#1B1130"/><rect x="168" y="183" width="10" height="4" rx="2" fill="#1B1130"/>
-              <path d="M152,106 C146,118 144,132 146,144" fill="none" stroke="#F5C451" stroke-width="9" stroke-linecap="round"/>
-              <circle cx="146" cy="147" r="5.5" fill="#C6875C"/>
-            </g>
-            <g class="her-arm">
-              <path d="M180,106 L204,74" fill="none" stroke="#F5C451" stroke-width="9" stroke-linecap="round"/>
-              <circle cx="207" cy="70" r="6" fill="#C6875C"/>
-            </g>
+          <g class="day-marks">
+            <circle cx="40" cy="186" r="4" fill="var(--amber)"/>
+            <circle cx="126" cy="186" r="4" fill="var(--coral)"/>
+            <circle cx="212" cy="186" r="4" fill="var(--teal)"/>
+            <circle cx="298" cy="186" r="4" fill="var(--violet)"/>
+            <circle cx="384" cy="186" r="4" fill="#6BA3FF"/>
+            <circle cx="470" cy="186" r="4" fill="#9B7EDE"/>
           </g>
-          <g class="scene-visitor">
-            <g class="visitor-body" transform="translate(300,0)">
-        <path d="M-22,78 C-26,48 -10,40 0,40 C12,40 24,52 22,80 L26,122 C14,128 6,126 0,120 C-8,126 -18,128 -24,122 Z" fill="#2A1810"/><circle cx="14" cy="34" r="8" fill="#2A1810"/>
-        <circle cx="0" cy="80" r="22" fill="#C6875C"/>
-        <path d="M-22,74 C-20,56 -8,52 2,54 C12,52 22,60 22,74 C14,64 -4,62 -22,74 Z" fill="#2A1810"/>
-        <circle cx="-8" cy="82" r="1.9" fill="#2A1810"/><circle cx="8" cy="82" r="1.9" fill="#2A1810"/>
-        <path d="M-6,93 Q0,98 6,93" fill="none" stroke="#7A4632" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M-2,103 L-2,122" stroke="#C6875C" stroke-width="7" stroke-linecap="round" opacity="0"/>
-        <path d="M-10,104 C-4,100 4,100 10,104 L12,150 L-12,150 Z" fill="#FF6F5E"/>
-        <path d="M-12,150 L12,150 L11,184 L3,184 L0,160 L-3,184 L-11,184 Z" fill="#2A2440"/>
-        <rect x="-14" y="183" width="10" height="4" rx="2" fill="#1B1130"/><rect x="4" y="183" width="10" height="4" rx="2" fill="#1B1130"/>
-        <path d="M-10,106 C-18,118 -20,132 -18,146" fill="none" stroke="#FF6F5E" stroke-width="9" stroke-linecap="round"/>
-        <circle cx="-18" cy="148" r="5.5" fill="#C6875C"/>
-      </g>
-            <g class="visitor-arm" transform="translate(300,0)"><path d="M-10,106 L-30,80" fill="none" stroke="#FF6F5E" stroke-width="8" stroke-linecap="round"/><circle cx="-33" cy="76" r="5.5" fill="#C6875C"/></g>
+          <g class="day-avatar">
+            <g class="avatar-body">
+              <path d="M-22,78 C-26,50 -10,40 0,40 C18,40 30,54 26,80 L32,122 C20,128 10,126 0,120 C-10,126 -20,128 -30,122 Z" fill="#2A1810"/>
+              <clipPath id="avatarFaceClip"><circle cx="0" cy="80" r="21"/></clipPath>
+              <image href="portrait-digital.jpg" x="-21" y="59" width="42" height="42" clip-path="url(#avatarFaceClip)" preserveAspectRatio="xMidYMid slice"/>
+              <circle cx="0" cy="80" r="21" fill="none" stroke="var(--amber)" stroke-width="2"/>
+              <path d="M-10,104 C-4,100 4,100 10,104 L12,150 L-12,150 Z" fill="#F5C451"/>
+              <path d="M-12,150 L12,150 L11,184 L3,184 L0,160 L-3,184 L-11,184 Z" fill="#9B7EDE"/>
+              <rect x="-14" y="183" width="10" height="4" rx="2" fill="#1B1130"/><rect x="4" y="183" width="10" height="4" rx="2" fill="#1B1130"/>
+            </g>
+            <g class="avatar-arm"><path d="M-10,106 L-30,80" fill="none" stroke="#F5C451" stroke-width="9" stroke-linecap="round"/><circle cx="-33" cy="76" r="5.5" fill="#C6875C"/></g>
           </g>
-          <g class="bystander" transform="translate(400,0)">
-        <path d="M-22,78 C-26,48 -10,40 0,40 C12,40 24,52 22,80 L26,122 C14,128 6,126 0,120 C-8,126 -18,128 -24,122 Z" fill="#1B1130"/>
-        <circle cx="0" cy="80" r="22" fill="#C6875C"/>
-        <path d="M-22,74 C-20,56 -8,52 2,54 C12,52 22,60 22,74 C14,64 -4,62 -22,74 Z" fill="#1B1130"/>
-        <circle cx="-8" cy="82" r="1.9" fill="#2A1810"/><circle cx="8" cy="82" r="1.9" fill="#2A1810"/>
-        <path d="M-6,93 Q0,98 6,93" fill="none" stroke="#7A4632" stroke-width="1.6" stroke-linecap="round"/>
-        <path d="M-2,103 L-2,122" stroke="#C6875C" stroke-width="7" stroke-linecap="round" opacity="0"/>
-        <path d="M-10,104 C-4,100 4,100 10,104 L12,150 L-12,150 Z" fill="#2DD4BF"/>
-        <path d="M-12,150 L12,150 L11,184 L3,184 L0,160 L-3,184 L-11,184 Z" fill="#2A2440"/>
-        <rect x="-14" y="183" width="10" height="4" rx="2" fill="#1B1130"/><rect x="4" y="183" width="10" height="4" rx="2" fill="#1B1130"/>
-        <path d="M-10,106 C-18,118 -20,132 -18,146" fill="none" stroke="#2DD4BF" stroke-width="9" stroke-linecap="round"/>
-        <circle cx="-18" cy="148" r="5.5" fill="#C6875C"/>
-      </g>
-          <g class="bubble bubble-her bubble-1"><rect x="20" y="10" width="170" height="30" rx="9" fill="var(--paper)"/><path d="M120,40 l10,10 l4,-10 z" fill="var(--paper)"/><text x="105" y="30" text-anchor="middle">Hi, I'm Madhumitha</text></g>
-          <g class="bubble bubble-visitor bubble-2"><rect x="240" y="10" width="170" height="30" rx="9" fill="var(--amber)"/><path d="M280,40 l-10,10 l-4,-10 z" fill="var(--amber)"/><text x="325" y="30" text-anchor="middle">What do you do?</text></g>
-          <g class="bubble bubble-her bubble-3"><rect x="20" y="10" width="200" height="30" rx="9" fill="var(--paper)"/><path d="M120,40 l10,10 l4,-10 z" fill="var(--paper)"/><text x="120" y="30" text-anchor="middle">Cloud, data and mentoring</text></g>
         </svg>
-        <figcaption class="mono scene-caption">Illustrated scene. Nothing here is a photo.</figcaption>
+        <div class="day-caption-wrap">
+          <span class="day-caption day-cap-1">Morning — Master of IT lectures at Monash</span>
+          <span class="day-caption day-cap-2">Midday — Baazar internship + HR Projects</span>
+          <span class="day-caption day-cap-3">Afternoon — mentoring 40+ students, advising 45+ more</span>
+          <span class="day-caption day-cap-4">Also — Microsoft 365 admin for Basava Samiti</span>
+          <span class="day-caption day-cap-5">Evening — coding this site</span>
+          <span class="day-caption day-cap-6">Late night — poetry, as "Female Photon"</span>
+        </div>
+        <figcaption class="mono scene-caption">Illustrated, but that's my real photo for the face.</figcaption>
       </figure>
       <div class="status-row"><span class="dot pulse"></span> Open to IT roles across the board, grad &amp; entry-level</div>
       <div class="hero-name-row">
@@ -2029,7 +2006,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/><path d="M8 4v5"/><path d="M8 14h3"/></svg>
         </div>
         <div class="service-title">IT &amp; Microsoft 365 administration</div>
-        <p>Active Directory, Azure MFA/SSO, M365, SharePoint, and Exchange setup and admin for small orgs or societies — the same work I currently do for the Monash Data &amp; AI Society's 1,600+ members.</p>
+        <p>Active Directory, Azure MFA/SSO, M365, SharePoint, and Exchange setup and admin for small orgs or societies — the same work I currently volunteer for Basava Samiti of Asia Pacific, plus three years of it in production at Cognizant.</p>
       </div>
       <div class="service-card">
         <div class="service-icon" aria-hidden="true">
@@ -2054,10 +2031,10 @@
       </div>
       <div class="service-card">
         <div class="service-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
         </div>
-        <div class="service-title">Guest talks &amp; workshops</div>
-        <p>Short sessions for student societies or small teams on topics like IT operations, cloud migrations, or navigating a career switch into tech — happy to tailor the format to what the group actually needs.</p>
+        <div class="service-title">Cloud &amp; IT operations support</div>
+        <p>Incident and SLA management, ITSM tooling, Windows/Linux and Active Directory admin, plus Genesys Cloud CX and AWS fundamentals — three years of real production support behind it, not just coursework.</p>
       </div>
     </div>
     <p style="margin-top:28px; color:var(--slate); font-size:14px;">Interested in any of these? Grab a slot in the Coffee section below, or email <a href="mailto:rchmadhumitha@gmail.com" style="color:var(--teal);">rchmadhumitha@gmail.com</a> directly.</p>
@@ -2342,7 +2319,7 @@
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-<script src="app.js?v=18"></script>
+<script src="app.js?v=19"></script>
 <script src="portfolio-sync.js?v=1"></script>
 
 </body>

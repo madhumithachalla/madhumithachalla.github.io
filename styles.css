@@ -1070,36 +1070,43 @@
   .scene-svg{display:block; width:100%; height:auto; overflow:visible;}
   .scene-svg text{font-family:'IBM Plex Mono',monospace; font-size:12.5px; fill:var(--ink);}
   .scene-caption{font-size:11px; color:var(--slate); margin-top:4px;}
-  .scene-visitor{animation:visitorLoop 14s ease-in-out infinite;}
-  .her-arm{transform-box:view-box; transform-origin:180px 106px; animation:herWave 14s ease-in-out infinite;}
-  .visitor-arm{transform-box:view-box; transform-origin:290px 106px; animation:visitorWave 14s ease-in-out infinite;}
-  .bubble{opacity:0;}
-  .bubble-1{animation:bubble1 14s linear infinite;}
-  .bubble-2{animation:bubble2 14s linear infinite;}
-  .bubble-3{animation:bubble3 14s linear infinite;}
-  @keyframes visitorLoop{
-    0%{transform:translateX(170px); opacity:0;}
-    4%{opacity:1;}
-    26%{transform:translateX(0); opacity:1;}
-    88%{transform:translateX(0); opacity:1;}
-    96%{transform:translateX(170px); opacity:0;}
-    100%{transform:translateX(170px); opacity:0;}
+  .day-avatar{transform-box:view-box; animation:dayWalk 24s ease-in-out infinite;}
+  .avatar-arm{transform-box:view-box; transform-origin:150px 106px; animation:avatarWave 24s ease-in-out infinite;}
+  .day-caption-wrap{position:relative; height:16px; margin-top:4px;}
+  .day-caption{
+    position:absolute; left:0; top:0; font-size:13px; color:var(--paper); font-weight:500;
+    font-family:'Inter'; opacity:0; white-space:nowrap;
   }
-  @keyframes herWave{
-    0%,29%{transform:rotate(0);} 32%{transform:rotate(-20deg);} 36%{transform:rotate(0);}
-    40%{transform:rotate(-20deg);} 44%{transform:rotate(0);} 100%{transform:rotate(0);}
+  .day-cap-1{animation:dayCap1 24s linear infinite;}
+  .day-cap-2{animation:dayCap2 24s linear infinite;}
+  .day-cap-3{animation:dayCap3 24s linear infinite;}
+  .day-cap-4{animation:dayCap4 24s linear infinite;}
+  .day-cap-5{animation:dayCap5 24s linear infinite;}
+  .day-cap-6{animation:dayCap6 24s linear infinite;}
+  @keyframes dayWalk{
+    0%,12%{transform:translateX(40px); opacity:1;}
+    15%,27%{transform:translateX(126px); opacity:1;}
+    30%,42%{transform:translateX(212px); opacity:1;}
+    45%,57%{transform:translateX(298px); opacity:1;}
+    60%,72%{transform:translateX(384px); opacity:1;}
+    75%,90%{transform:translateX(470px); opacity:1;}
+    93%{transform:translateX(470px); opacity:0;}
+    96%{transform:translateX(40px); opacity:0;}
+    100%{transform:translateX(40px); opacity:1;}
   }
-  @keyframes visitorWave{
-    0%,35%{transform:rotate(0);} 38%{transform:rotate(16deg);} 42%{transform:rotate(0);}
-    46%{transform:rotate(16deg);} 50%{transform:rotate(0);} 100%{transform:rotate(0);}
+  @keyframes avatarWave{
+    0%,13%{transform:rotate(0);} 16%{transform:rotate(-18deg);} 19%{transform:rotate(0);} 100%{transform:rotate(0);}
   }
-  @keyframes bubble1{0%,28%{opacity:0;} 30%,44%{opacity:1;} 48%,100%{opacity:0;}}
-  @keyframes bubble2{0%,48%{opacity:0;} 50%,62%{opacity:1;} 66%,100%{opacity:0;}}
-  @keyframes bubble3{0%,66%{opacity:0;} 69%,84%{opacity:1;} 88%,100%{opacity:0;}}
+  @keyframes dayCap1{0%,100%{opacity:1;} 12%{opacity:1;} 15%{opacity:0;} 93%{opacity:0;} 96%{opacity:0;}}
+  @keyframes dayCap2{0%,13%{opacity:0;} 16%,26%{opacity:1;} 29%,100%{opacity:0;}}
+  @keyframes dayCap3{0%,28%{opacity:0;} 31%,41%{opacity:1;} 44%,100%{opacity:0;}}
+  @keyframes dayCap4{0%,43%{opacity:0;} 46%,56%{opacity:1;} 59%,100%{opacity:0;}}
+  @keyframes dayCap5{0%,58%{opacity:0;} 61%,71%{opacity:1;} 74%,100%{opacity:0;}}
+  @keyframes dayCap6{0%,73%{opacity:0;} 76%,89%{opacity:1;} 92%,100%{opacity:0;}}
   @media (prefers-reduced-motion: reduce){
-    .scene-visitor,.her-arm,.visitor-arm,.bubble-1,.bubble-2,.bubble-3{animation:none;}
-    .scene-visitor{transform:translateX(0); opacity:1;}
-    .bubble-1{opacity:1;}
+    .day-avatar,.avatar-arm,.day-cap-1,.day-cap-2,.day-cap-3,.day-cap-4,.day-cap-5,.day-cap-6{animation:none;}
+    .day-avatar{transform:translateX(40px); opacity:1;}
+    .day-cap-1{opacity:1;}
   }
 
   /* Map controls and the time ruler */

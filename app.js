@@ -1035,9 +1035,10 @@
       { keys: ['experience','background','cognizant','work history','career'], a: "3+ years at Cognizant Technology Solutions supporting healthcare platforms for EmblemHealth & ConnectiCare (3.2M members): production support and incident management across multiple countries, plus a contact center transition from Avaya to Genesys Cloud CX. Full timeline is in the Experience section below." },
       { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from Sep to Oct 2026, supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
       { keys: ['hr administrative','hew','coo','senior vp','clayton'], a: "She's also a casual HR Administrative Officer (HEW 4, ~10 hrs/week) with the HR Projects team in Monash's Office of the COO & Senior VP at Clayton Campus." },
-      { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentored 40+ postgraduate IT students at Monash (Jan–Oct 2026), works as a Student Adviser through Monash Student Communities advising 45+ students, and runs IT infrastructure for the Monash Data & AI Society (1,600+ members)." },
+      { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentored 40+ postgraduate IT students at Monash (Jan–Oct 2026), works as a Student Adviser through Monash Student Communities advising 45+ students, and volunteers as Microsoft 365 Administrator for Basava Samiti of Asia Pacific. She also previously ran IT infrastructure for the Monash Data & AI Society (1,600+ members) for a committee term." },
       { keys: ['australia','open to','available','job','role','opportunit','internship'], a: "Yes — she's open to IT roles across the board at the grad and entry level (cloud, systems, data, software, support), available part-time now and full-time from December 2026. She's on a Student Visa (Subclass 500) now, moving to a 485 Temporary Graduate Visa after graduating, and open to relocating anywhere across Australia." },
       { keys: ['contact','reach','email','talk','meet'], a: "Best way in is the coffee catch-up scheduler further down this page, or email her directly at rchmadhumitha@gmail.com. She replies fast. Ask me \"how do I schedule\" for the exact options." },
+      { keys: ['service','collaborat','freelance','consult','hire her for','work together'], a: "She offers mentoring & peer advising, IT/Microsoft 365 administration, technical documentation & SOPs, portfolio/resume/interview review, small web builds, and cloud & IT operations support. See the Services section on this page for the full list, or just email rchmadhumitha@gmail.com with what you need." },
       { keys: ['astronomy','photon','hobby','fun fact','space','pen name','poetry','writing','poem','medium','writeup'], a: "She writes poetry under the pen name \"Female Photon\" on the side, a nod to her science-enthusiast streak, and also writes longer-form pieces on Medium. See the Writeups section on this page for the poem, her Medium, and her LinkedIn articles." },
       { keys: ['certif','award','aws ccp','cloud practitioner','sapphire','amber','csat'], a: "AWS Certified Cloud Practitioner, plus IT Help Desk for Beginners and Agile Fundamentals (Scrum) from LinkedIn Learning/Udemy. From her time at Cognizant: the Cheers Sapphire and Amber awards (peer-nominated for technical excellence and professional growth) and CSAT Champion for a 100 customer-satisfaction score. Full list is in the Certifications section below." },
       { keys: ['linkedin','github','profile','social','find her online'], a: "GitHub: github.com/madhumithachalla — LinkedIn: linkedin.com/in/madhumitha-challa. Both linked in the footer of this page too." },
@@ -1063,12 +1064,31 @@
     const fallback = "I'm just a lightweight assistant built into this page (no live AI backend), so I don't have a good answer for that one. Try one of these instead, or email her directly at rchmadhumitha@gmail.com:";
     const fallbackChips = ["What's her stack?", "Is she open to roles in Australia?", "Tell me about her projects", "Why should we hire her?"];
 
+    // Small talk that shouldn't fall through to the FAQ matcher or the
+    // "I don't have an answer" fallback — greetings, thanks, and the
+    // inevitable "are you real AI" question all get a direct, honest reply.
+    const smallTalk = [
+      { keys: ['thank','thanks','thx','cheers'], a: "You're welcome! Anything else you'd like to know about her?" },
+      { keys: ['are you ai','are you a bot','are you real','is this ai','chatgpt','are you human'], a: "I'm a lightweight built-in assistant — simple keyword matching against her real resume and project content, no live AI backend or API key involved. Ask away, I just might not catch an oddly-phrased question." },
+      { keys: ['who are you', 'what are you'], a: "I'm a quick built-in FAQ assistant for this page — ask me about Madhumitha's skills, projects, experience, services, or availability." },
+      { keys: ['hello', 'hi there', 'hiya', 'hey there', 'good morning', 'good afternoon', 'good evening'], a: "Hi! Ask me anything about Madhumitha's skills, projects, experience, services, or availability." }
+    ];
+    // Bare "hi"/"hey"/"hello" only count as a greeting when they're the
+    // whole message — otherwise "hi, is she built a kubernetes thing?"
+    // would get a greeting reply instead of a real answer.
+    function isBareGreeting(q){
+      return /^(hi|hey|hello|yo|sup)[!.? ]*$/.test(q.trim());
+    }
+
     // Picks the best match, not just the first one in array order: a longer,
     // more specific keyword (e.g. "cloudpose details") should win over a
     // shorter generic one (e.g. "project") even if the generic entry comes
     // first in the list.
     function answer(question){
       const q = question.toLowerCase();
+      if (isBareGreeting(q)) return { text: smallTalk[3].a, matched: true };
+      const smallHit = smallTalk.find(f => f.keys.some(k => q.includes(k)));
+      if (smallHit) return { text: smallHit.a, matched: true };
       let best = null, bestLen = 0;
       faq.forEach(f => {
         f.keys.forEach(k => {
