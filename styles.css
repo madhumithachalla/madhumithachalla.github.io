@@ -59,8 +59,7 @@
     --pill-team-tint:rgba(27,17,48,0.06);
   }
   :root[data-theme="light"] #meteor-canvas,
-  :root[data-theme="light"] #starfield{ opacity:0; }
-  *{box-sizing:border-box;}
+    *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
@@ -295,7 +294,7 @@
     border-bottom:none !important;
   }
   .nav-dropdown-menu a:hover{background:rgba(255,111,94,0.12); color:var(--coral) !important;}
-  @media(max-width:760px){
+  @media(max-width:1120px){
     .nav-toggle{display:flex;}
     .nav-links{
       position:fixed; top:60px; left:0; right:0; height:calc(100vh - 60px); height:calc(100dvh - 60px);
@@ -1205,3 +1204,24 @@
   .gi-key{display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:var(--paper); color:var(--ink); font-weight:600; font-size:11px;}
   .legend-tip{color:var(--slate);}
   .gmap-selected-dot.sel-interest{background:var(--map-interest);}
+  /* Recent-work skills: plain tags with a "now" marker for what I'm working on at the moment. */
+  .skill-item.plain .skill-dashes{display:none;}
+  .skill-now{margin-left:8px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--amber); border:1px solid var(--amber); border-radius:999px; padding:1px 7px; vertical-align:middle;}
+  /* The walking figure on the map: it glides to each selected place, with legs and arms swinging while it moves. */
+  .map-walker{transition:transform var(--walk-dur,1s) cubic-bezier(.4,0,.2,1); pointer-events:none;}
+  .walker-flip{transition:transform .2s ease;}
+  .walker-leg, .walker-arm{transform-box:fill-box; transform-origin:50% 0;}
+  .map-walker.walking .walker-leg-a{animation:walkLegA .5s ease-in-out infinite alternate;}
+  .map-walker.walking .walker-leg-b{animation:walkLegB .5s ease-in-out infinite alternate;}
+  .map-walker.walking .walker-arm-a{animation:walkArmB .5s ease-in-out infinite alternate;}
+  .map-walker.walking .walker-arm-b{animation:walkArmA .5s ease-in-out infinite alternate;}
+  .map-walker.walking .walker-bob{animation:walkBob .25s ease-in-out infinite alternate;}
+  @keyframes walkLegA{from{transform:rotate(-28deg);} to{transform:rotate(28deg);}}
+  @keyframes walkLegB{from{transform:rotate(28deg);} to{transform:rotate(-28deg);}}
+  @keyframes walkArmA{from{transform:rotate(-22deg);} to{transform:rotate(22deg);}}
+  @keyframes walkArmB{from{transform:rotate(22deg);} to{transform:rotate(-22deg);}}
+  @keyframes walkBob{from{transform:translateY(0);} to{transform:translateY(-2px);}}
+  @media (prefers-reduced-motion: reduce){
+    .map-walker{transition:none;}
+    .map-walker.walking .walker-leg-a, .map-walker.walking .walker-leg-b, .map-walker.walking .walker-arm-a, .map-walker.walking .walker-arm-b, .map-walker.walking .walker-bob{animation:none;}
+  }

@@ -960,11 +960,44 @@
     let w, h, dpr, sky = null, bright = [];
     const rnd = (a, b) => a + Math.random() * (b - a);
 
+    const LIGHT_TINTS = ['70,50,130', '95,70,170', '40,110,130'];
+    let links = [];
+    const isLight = () => document.documentElement.getAttribute('data-theme') === 'light';
+
+    // Light theme: a pale sky with soft pastel nebula washes, a faint lavender haze, indigo stars and
+    // a few constellation lines. Muted enough to sit quietly behind the content.
+    function paintLightSky(g){
+      const span = Math.max(w, h);
+      const base = g.createLinearGradient(0, 0, 0, h);
+      base.addColorStop(0, '#FBF9FD'); base.addColorStop(1, '#EFE9F7');
+      g.fillStyle = base; g.fillRect(0, 0, w, h);
+      g.save(); g.translate(w * .5, h * .5); g.rotate(-.55);
+      const band = g.createLinearGradient(0, -span * .18, 0, span * .18);
+      band.addColorStop(0, 'rgba(155,126,222,0)'); band.addColorStop(.5, 'rgba(155,126,222,.10)'); band.addColorStop(1, 'rgba(155,126,222,0)');
+      g.fillStyle = band; g.fillRect(-span * 1.5, -span * 1.5, span * 3, span * 3);
+      g.restore();
+      const NEB_L = [[155, 126, 222], [45, 212, 190], [255, 111, 94], [245, 166, 35]];
+      const count = Math.max(5, Math.round(w * h / 220000));
+      for (let i = 0; i < count; i++){
+        const [r, gg, b] = NEB_L[i % NEB_L.length];
+        const x = rnd(0, w), y = rnd(0, h), rad = span * rnd(.12, .28), a = rnd(.07, .13);
+        const c = g.createRadialGradient(x, y, 0, x, y, rad);
+        c.addColorStop(0, `rgba(${r},${gg},${b},${a.toFixed(3)})`); c.addColorStop(.5, `rgba(${r},${gg},${b},${(a * .35).toFixed(3)})`); c.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+        g.fillStyle = c; g.fillRect(0, 0, w, h);
+      }
+      const field = Math.round(w * h / 2200);
+      for (let i = 0; i < field; i++){
+        g.fillStyle = `rgba(70,52,120,${rnd(.08, .3).toFixed(2)})`;
+        g.fillRect(rnd(0, w), rnd(0, h), rnd(.5, 1.2), rnd(.5, 1.2));
+      }
+    }
+
     function paintSky(){
       const off = document.createElement('canvas');
       off.width = Math.round(w * dpr); off.height = Math.round(h * dpr);
       const g = off.getContext('2d');
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (isLight()) { paintLightSky(g); sky = off; return; }
       const span = Math.max(w, h);
       const base = g.createRadialGradient(w * .5, h * .42, 0, w * .5, h * .5, span * .8);
       base.addColorStop(0, '#0E0B1E'); base.addColorStop(.6, '#07060F'); base.addColorStop(1, '#030308');
@@ -1011,13 +1044,32 @@
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       paintSky();
+      const palette = isLight() ? LIGHT_TINTS : TINTS;
       bright = Array.from({ length: Math.round(w * h / 32000) + 6 }, () => ({
-        x: rnd(0, w), y: rnd(0, h), r: rnd(.9, 1.9), c: TINTS[Math.floor(Math.random() * TINTS.length)],
+        x: rnd(0, w), y: rnd(0, h), r: rnd(.9, 1.9), c: palette[Math.floor(Math.random() * palette.length)],
         ph: rnd(0, 6.28), sp: rnd(.01, .03), spike: Math.random() < .4
       }));
+      links = [];
+      if (isLight()){
+        bright.forEach((s, i) => {
+          let best = -1, bestD = 170;
+          bright.forEach((t, k) => {
+            if (k === i) return;
+            const d = Math.hypot(s.x - t.x, s.y - t.y);
+            if (d < bestD){ bestD = d; best = k; }
+          });
+          if (best > -1 && links.length < 26 && Math.random() < .5) links.push([i, best]);
+        });
+      }
+      if (reduced) frame(0);
     }
 
     function drawBright(t){
+      if (links.length){
+        ctx.save(); ctx.strokeStyle = 'rgba(155,126,222,.22)'; ctx.lineWidth = 1; ctx.beginPath();
+        links.forEach(([a, b]) => { ctx.moveTo(bright[a].x, bright[a].y); ctx.lineTo(bright[b].x, bright[b].y); });
+        ctx.stroke(); ctx.restore();
+      }
       bright.forEach(st => {
         const tw = .75 + .25 * Math.sin(t * st.sp + st.ph);
         const glow = ctx.createRadialGradient(st.x, st.y, 0, st.x, st.y, st.r * 7);
@@ -1043,6 +1095,7 @@
     }
     resize();
     window.addEventListener('resize', resize);
+    new MutationObserver(resize).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     requestAnimationFrame(frame);
   })();
 
@@ -1067,8 +1120,8 @@
       { keys: ['fit5120','industry experience','bio-datascope details','biodatascope details'], a: "Bio-DataScope is her FIT5120 Industry Experience Studio team project: a platform that maps where a species' occurrence records cluster, flags survey \"data gaps,\" and predicts habitat suitability from trained models (NestJS/PostGIS backend, React/Leaflet frontend, Python/XGBoost models). Her contributions: access control on the data-quality dashboard (plus fixing a spoofable-access bug), account sign-up/login, the Density & Gaps live API integration, the predictive habitat-suitability report with PDF export, the species sighting timeline chart, and several accessibility and UX fixes (colour-blind-safe suitability scale, off-window tooltip, unreachable modal button)." },
       { keys: ['education','degree','university','monash','study','gpa','wam'], a: "She's finishing a Master of Information Technology at Monash University (graduating Dec 2026, 65.7 WAM) and holds a Bachelor of Computer Applications from the University of Madras (First Class)." },
       { keys: ['experience','background','cognizant','work history','career'], a: "3+ years at Cognizant Technology Solutions supporting healthcare platforms for EmblemHealth & ConnectiCare (3.2M members): production support and incident management across multiple countries, plus a contact center transition from Avaya to Genesys Cloud CX. Full timeline is in the Experience section below." },
-      { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from Sep to Oct 2026, supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
-      { keys: ['hr administrative','hew','coo','senior vp','clayton'], a: "She's also a casual HR Administrative Officer (HEW 4, ~10 hrs/week) with the HR Projects team in Monash's Office of the COO & Senior VP at Clayton Campus." },
+      { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from September to November 2026, supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
+      { keys: ['hr administrative','hew','coo','senior vp','clayton'], a: "She was also a casual HR Administrative Officer (HEW 4, ~10 hrs/week, August to October 2026, now ended) with the HR Projects team in Monash's Office of the COO & Senior VP at Clayton Campus." },
       { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentored 40+ postgraduate IT students at Monash (Jan–Oct 2026), works as a Student Adviser through Monash Student Communities advising 45+ students, and volunteers as Microsoft 365 Administrator for Basava Samiti of Asia Pacific. She also previously ran IT infrastructure for the Monash Data & AI Society (1,600+ members) for a committee term." },
       { keys: ['australia','open to','available','job','role','opportunit','internship'], a: "Yes — she's open to IT roles across the board at the grad and entry level (cloud, systems, data, software, support), available part-time now and full-time from December 2026. She's on a Student Visa (Subclass 500) now, moving to a 485 Temporary Graduate Visa after graduating, and open to relocating anywhere across Australia." },
       { keys: ['contact','reach','email','talk','meet'], a: "Best way in is the coffee catch-up scheduler further down this page, or email her directly at rchmadhumitha@gmail.com. She replies fast. Ask me \"how do I schedule\" for the exact options." },
@@ -1222,6 +1275,122 @@
         if (!result.matched) showSuggestions();
       }, 650);
     }
+
+    // Guided assistant: topics, then sub-questions, with a back button at every level.
+    // Each node has either children (a sub-menu) or an answer. Free-text questions still work.
+    const TREE = [
+      { label: 'Experience', children: [
+        { label: 'Current roles', children: [
+          { label: 'Baazar internship', a: "Technology & Digital Innovation Intern at Baazar (a Fund'ex venture), September to November 2026. Work covered digital platform research, software and user testing, bug reporting, CRM and process documentation, and user guides." },
+          { label: 'Monash peer mentor', a: 'IT Postgraduate Peer Mentor at Monash University since January 2026, mentoring 40+ postgraduate IT students through one-on-one catch-ups and workshops.' },
+          { label: 'Volunteer Microsoft 365 admin', a: 'Microsoft 365 Administrator (volunteer) for Basava Samiti of Asia Pacific since October 2025, across 8 APAC chapters and 100+ users. Wrote 3 SOPs that cut ticket volume by 30 to 40%.' },
+          { label: 'Student Adviser', a: 'Student Adviser at Monash Student Communities since July 2025: one-on-one check-ins and cohort catch-ups for students.' },
+        ]},
+        { label: 'Past roles', children: [
+          { label: 'Monash HR Projects', a: 'Casual HR Administrative Officer (HEW 4, about 10 hours a week) in Monash\'s HR Projects team, August to October 2026. That role has ended.' },
+          { label: 'Cognizant, 2021 to 2024', children: [
+            { label: 'What the work was', a: 'Production support for EmblemHealth and ConnectiCare (3.2M members) at Cognizant, from Programmer Analyst Trainee in May 2021 to Programmer in July 2024. Netcool alert handling, incident management, SLA work, and a contact-centre migration from Avaya to Genesys Cloud CX.' },
+            { label: 'Results on record', a: 'Resolved 100+ incidents a month within SLA with a 100% CSAT score, won the CSAT Champion award in September 2023, and authored 15+ SOPs that cut team onboarding time by 50%+. Contributed to a migration covering 30,000+ associates.' },
+          ]},
+        ]},
+      ]},
+      { label: 'Projects', children: [
+        { label: 'Cloud and data', children: [
+          { label: 'BirdTag', a: 'A serverless system that tags and retrieves wildlife media with ML species detection. She owned identity and access, plus four of the eight backend functions.' },
+          { label: 'CloudPose', a: 'A FastAPI and OpenCV pose-detection service, deployed to a Kubernetes cluster built by hand across three Oracle Cloud VMs.' },
+          { label: 'Spotify analysis', a: 'An analysis of 114,000 Spotify tracks to test which factors predict an independent artist\'s success.' },
+          { label: 'Document pipeline', a: 'A Python pipeline that pulls specific data rows out of scanned, multi-page PDFs automatically.' },
+        ]},
+        { label: 'Apps and web', children: [
+          { label: 'ESaver and FocusLens', a: 'ESaver is an Android app pairing live weather data with energy-saving tips. FocusLens is a phone-habit app that reads real Android usage data and blocks distracting apps.' },
+          { label: 'ColorCompass and CliMaze', a: 'ColorCompass turns a selfie into a seasonal colour and style report. CliMaze (ShelfShift) is a food-waste tool built for a COP31 brief.' },
+          { label: 'Stuplying and ActiveClimate', a: 'Stuplying is a job-search workspace with approval before anything is applied for. ActiveClimate is a Vue app connecting Melburnians to community sport and active-travel groups.' },
+          { label: 'Bio-DataScope', a: 'A platform mapping species occurrence records and predicting habitat suitability, built as a Monash FIT5120 team project.' },
+        ]},
+        { label: 'How to use the map', a: 'Each pin is a project placed by when it was built. Click a pin or its i for a short description, use the time ruler to filter months, zoom with the buttons, and use Previous and Next to step through places.' },
+      ]},
+      { label: 'Skills and tools', children: [
+        { label: 'Cloud and systems', a: 'Genesys Cloud CX, AWS (Cloud Practitioner), Google Cloud, Azure MFA, Microsoft 365, Oracle Cloud Infrastructure, Active Directory, SCCM, Netcool.' },
+        { label: 'Programming', a: 'Python, SQL, Java, Kotlin, JavaScript, C/C++, COBOL and JCL, plus FastAPI and OpenCV.' },
+        { label: 'Infrastructure and security', a: 'Docker, Kubernetes, CyberArk, SailPoint, PowerShell, and identity and access management.' },
+      ]},
+      { label: 'Education and certifications', children: [
+        { label: 'Master of IT', a: 'Master of Information Technology at Monash University, graduating December 2026, WAM 65.7.' },
+        { label: 'Bachelor of Computer Applications', a: 'Bachelor of Computer Applications, University of Madras, 2020, First Class.' },
+        { label: 'AWS and IELTS', a: 'AWS Certified Cloud Practitioner (July 2024). IELTS Academic, overall band 7.' },
+      ]},
+      { label: 'Writing and interests', children: [
+        { label: 'Medium', a: 'Longer-form posts and technical write-ups on Medium at medium.com/@rchmadhumitha. Poetry is written under the pen name Female Photon.' },
+        { label: 'LinkedIn article', a: 'An article on LinkedIn, "Rethinking Enterprise ITSM": lnkd.in/p/gD5mZbs5' },
+        { label: 'Poetry', a: 'Poetry under the pen name Female Photon, including an entry in the Monash Student Association\'s 2026 poetry competition.' },
+      ]},
+      { label: 'Availability and visa', children: [
+        { label: 'Work rights', a: 'She is on a Student Visa (subclass 500) now. After finishing in December 2026 she expects to move onto a 485 Temporary Graduate visa, as stated on her site. This is her own status, not migration advice.' },
+        { label: 'When she is available', a: 'Part-time now, alongside her studies, and full-time from December 2026.' },
+        { label: 'Location', a: 'Based in Melbourne, VIC, and open to relocating across Australia for the right role.' },
+      ]},
+      { label: 'Contact and next steps', children: [
+        { label: 'Email', a: 'rchmadhumitha@gmail.com' },
+        { label: 'LinkedIn', a: 'linkedin.com/in/madhumitha-challa' },
+        { label: 'GitHub', a: 'github.com/madhumithachalla' },
+        { label: 'Book a coffee chat', a: 'Use the Coffee section on this page to book a chat through Calendly or Google Calendar.' },
+      ]},
+    ];
+    let stack = [{ nodes: TREE, label: null }];
+
+    function renderLevel(){
+      const level = stack[stack.length - 1];
+      const row = document.createElement('div');
+      row.className = 'chat-msg bot chat-suggestions chat-menu';
+      level.nodes.forEach(node => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chat-chip';
+        btn.textContent = node.label + (node.children ? '  ›' : '');
+        btn.addEventListener('click', () => pick(node));
+        row.appendChild(btn);
+      });
+      if (stack.length > 1){
+        const back = document.createElement('button');
+        back.type = 'button';
+        back.className = 'chat-chip chat-chip-nav';
+        back.textContent = '← Back';
+        back.addEventListener('click', goBack);
+        const top = document.createElement('button');
+        top.type = 'button';
+        top.className = 'chat-chip chat-chip-nav';
+        top.textContent = 'All topics';
+        top.addEventListener('click', () => { stack = [stack[0]]; addMsg('Back to all topics.', 'bot'); renderLevel(); });
+        row.appendChild(back);
+        row.appendChild(top);
+      }
+      body.appendChild(row);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function pick(node){
+      addMsg(node.label, 'user');
+      setTimeout(() => {
+        if (node.children){
+          stack.push({ nodes: node.children, label: node.label });
+          addMsg(node.label + ': pick a question.', 'bot');
+        } else {
+          addMsg(node.a, 'bot');
+        }
+        renderLevel();
+      }, 350);
+    }
+
+    function goBack(){
+      if (stack.length < 2) return;
+      stack.pop();
+      const level = stack[stack.length - 1];
+      addMsg(level.label ? 'Back to ' + level.label + '.' : 'Back to all topics.', 'bot');
+      renderLevel();
+    }
+
+    // Show the top-level topics straight away, under the welcome message.
+    renderLevel();
 
     sendBtn.addEventListener('click', () => { ask(input.value); input.value = ''; });
     input.addEventListener('keydown', (e) => {
@@ -1586,6 +1755,29 @@
         .sort((a, b) => (+a.dataset.start - +b.dataset.start) || (+a.dataset.end - +b.dataset.end));
     }
 
+    // The walking figure: glides from its current spot to the selected place, legs and arms swinging, then stops.
+    const walker = svg.querySelector('#mapWalker');
+    let walkTimer = null;
+    function pinPoint(pin){
+      const g = pin.querySelector(':scope > g');
+      const m = g && g.getAttribute('transform').match(/translate\(([\d.]+),([\d.]+)\)/);
+      return m ? { x: +m[1], y: +m[2] } : null;
+    }
+    function walkTo(pin, instant){
+      const p = pin && pinPoint(pin);
+      if (!walker || !p) return;
+      const cur = walker.dataset.x ? { x: +walker.dataset.x, y: +walker.dataset.y } : p;
+      const dist = Math.hypot(p.x - cur.x, p.y - cur.y);
+      const dur = instant || dist < 2 ? 0 : Math.min(2.4, 0.7 + dist / 650);
+      walker.style.setProperty('--walk-dur', dur + 's');
+      walker.style.transform = `translate(${p.x}px, ${p.y + 6}px)`;
+      walker.querySelector('.walker-flip').style.transform = p.x < cur.x - 2 ? 'scaleX(-1)' : (p.x > cur.x + 2 ? 'scaleX(1)' : walker.querySelector('.walker-flip').style.transform);
+      walker.dataset.x = p.x; walker.dataset.y = p.y;
+      walker.classList.toggle('walking', dur > 0);
+      clearTimeout(walkTimer);
+      walkTimer = setTimeout(() => walker.classList.remove('walking'), dur * 1000);
+    }
+
     function select(pin){
       if (selected) selected.classList.remove('is-selected');
       selected = pin || null;
@@ -1598,6 +1790,7 @@
         return;
       }
       selected.classList.add('is-selected');
+      walkTo(selected, false);
       const label = selected.getAttribute('aria-label') || '';
       const [name, dates] = label.split(/,\s(.+)/);
       nameEl.textContent = name || label;
@@ -1631,6 +1824,8 @@
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); step(1); }
       if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
     });
+    const firstPlace = visible()[0];
+    if (firstPlace) walkTo(firstPlace, true);
     // If the time filter hides the selected place, clear the selection.
     new MutationObserver(() => { if (selected && selected.classList.contains('is-off')) select(null); })
       .observe(svg, { subtree: true, attributes: true, attributeFilter: ['class'] });

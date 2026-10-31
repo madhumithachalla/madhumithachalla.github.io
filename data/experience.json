@@ -1,8 +1,39 @@
 [
-  { "id": "monash-mit", "role": "Master of Information Technology", "org": "Monash University", "when": "graduating Dec 2026", "end": "2026-12", "source": "Resume: Education" },
-  { "id": "baazar", "role": "Technology & Digital Innovation Intern", "org": "Baazar (Fund'ex venture)", "when": "Sep 2026 – now", "source": "Resume: Recent experience" },
-  { "id": "monash-hr", "role": "HR Administrative Officer (casual, HEW 4)", "org": "Monash University · HR Projects", "when": "Aug – Oct 2026", "end": "2026-10", "source": "Resume: Recent experience" },
-  { "id": "peer-mentor", "role": "IT Postgraduate Peer Mentor, 40+ mentees", "org": "Monash University", "when": "Jan 2026 – now", "source": "Resume: Volunteer and mentoring" },
-  { "id": "m365", "role": "Microsoft 365 Administrator (volunteer)", "org": "Basava Samiti of Asia Pacific", "when": "since Oct 2025", "source": "Resume: Volunteer and mentoring" },
-  { "id": "student-adviser", "role": "Student Adviser, 45+ mentees", "org": "Monash Student Communities", "when": "since Jul 2025", "source": "Resume: Volunteer and mentoring" }
+  {
+    "id": "monash-mit",
+    "role": "Master of Information Technology",
+    "org": "Monash University",
+    "when": "graduating Dec 2026",
+    "end": "2026-12",
+    "source": "Resume: Education"
+  },
+  {
+    "id": "baazar",
+    "role": "Technology & Digital Innovation Intern",
+    "org": "Baazar (Fund'ex venture)",
+    "when": "Sep – Nov 2026",
+    "end": "2026-11",
+    "source": "Resume: Recent experience"
+  },
+  {
+    "id": "peer-mentor",
+    "role": "IT Postgraduate Peer Mentor, 40+ mentees",
+    "org": "Monash University",
+    "when": "Jan 2026 – now",
+    "source": "Resume: Volunteer and mentoring"
+  },
+  {
+    "id": "m365",
+    "role": "Microsoft 365 Administrator (volunteer)",
+    "org": "Basava Samiti of Asia Pacific",
+    "when": "since Oct 2025",
+    "source": "Resume: Volunteer and mentoring"
+  },
+  {
+    "id": "student-adviser",
+    "role": "Student Adviser, 45+ mentees",
+    "org": "Monash Student Communities",
+    "when": "since Jul 2025",
+    "source": "Resume: Volunteer and mentoring"
+  }
 ]
