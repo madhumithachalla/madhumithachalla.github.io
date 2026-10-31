@@ -1172,7 +1172,7 @@
       <div class="gmap-bar">
         <label class="gmap-search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="search" id="mapSearch" class="gmap-search" placeholder="Search 14 places…" aria-label="Search projects on the map" autocomplete="off">
+          <input type="search" id="mapSearch" class="gmap-search" placeholder="Search 15 places…" aria-label="Search projects on the map" autocomplete="off">
         </label>
         <span class="gmap-zoom" role="group" aria-label="Zoom the map"><button type="button" id="zoomOut" aria-label="Zoom out">−</button><span id="zoomReadout" class="mono">100%</span><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomReset" class="gmap-btn">Reset</button></span>
       </div>
@@ -1295,6 +1295,16 @@
     <text class="gpill-name" x="2202.0" y="586.0">ActiveClimate Melbourne</text>
     <text class="gpill-date" x="2202.0" y="603.0">Oct 2026</text>
   </a>
+  <a class="gpin" data-start="17" data-end="18" href="#proj-biodatascope" style="--d:0.45s" aria-label="Bio-DataScope, Sep – Oct 2026">
+    <g transform="translate(2060.0,470)">
+      <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
+      <path class="gpin-body gpin-web" d="M0,0 C-7,-11 -17,-20 -17,-33 A17,17 0 1 1 17,-33 C17,-20 7,-11 0,0 Z"/>
+      <circle class="gpin-dot" cx="0" cy="-33" r="6.5"/>
+    </g>
+    <rect class="gpill" x="1990.0" y="246.0" width="140.0" height="48.0" rx="10"/>
+    <text class="gpill-name" x="2002.0" y="266.0">Bio-DataScope</text>
+    <text class="gpill-date" x="2002.0" y="283.0">Sep – Oct 2026</text>
+  </a>
   <a class="gpin" data-start="17" data-end="18" href="#proj-climaze" style="--d:0.49s" aria-label="CliMaze (ShelfShift), Sep – Oct 2026">
     <g transform="translate(2135.0,470)">
       <ellipse class="gpin-shadow" cx="0" cy="0" rx="10" ry="4"/>
@@ -1385,6 +1395,7 @@
           <li data-start="18" data-end="18"><a href="#proj-colorcompass"><span class="chip-dot gpin-web"></span>ColorCompass, Oct 2026</a></li>
           <li data-start="18" data-end="18"><a href="#proj-stuplying"><span class="chip-dot gpin-web"></span>Stuplying, Oct 2026</a></li>
           <li data-start="18" data-end="18"><a href="#proj-activeclimate"><span class="chip-dot gpin-web"></span>ActiveClimate Melbourne, Oct 2026</a></li>
+          <li data-start="17" data-end="18"><a href="#proj-biodatascope"><span class="chip-dot gpin-web"></span>Bio-DataScope, Sep – Oct 2026</a></li>
     </ol>
     <p class="map-note">Each pin is a project, dropped at the months it was built. Pins are grouped by area, the dashed line runs in build order, and the scale at the bottom is time. Select a pin to jump to its project.</p>
 
@@ -1597,6 +1608,33 @@
           <div class="metric"><span class="n">24 → 0</span><span class="l">kg at-risk stock in the demo scenario</span></div>
           <a class="project-link" href="https://github.com/madhumithachalla/CliMaze" target="_blank" rel="noopener">View source ↗</a>
           <a class="project-link" href="https://madhumithachalla.github.io/climaze/" target="_blank" rel="noopener" style="margin-top:6px;">Try live demo ↗</a>
+        </div>
+      </div>
+
+      <div class="project" id="proj-biodatascope" data-categories="web team data cloud">
+        <div class="project-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 18 0"/><path d="M3 12a9 9 0 0 0 18 0"/><path d="M12 3v18"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <div>
+          <div class="project-top">
+            <span class="pill team">Team</span>
+            <span class="pill" style="color:var(--slate);border-color:var(--line);">FIT5120 Industry Experience Studio</span>
+          </div>
+          <h3>Bio-DataScope: biodiversity density, data-gap &amp; habitat prediction platform</h3>
+          <div class="role">Role: team member — access control, account auth, predictive-report frontend, data visualisation &amp; accessibility fixes</div>
+          <p>A platform mapping where a species' occurrence records cluster, flagging survey "data gaps," and predicting habitat suitability from trained models — built as a Monash FIT5120 Industry Experience team project with a NestJS/PostGIS backend and a React/Leaflet frontend.</p>
+          <div class="project-more" id="more-biodatascope" hidden>
+            <ul>
+            <li>Implemented role-based access control on the data-quality dashboard, then later found and fixed a spoofable-access bug, hardening session handling so dashboard access couldn't be faked.</li>
+            <li>Built account sign-up and login, plus the live API integration behind the Density &amp; Gaps map.</li>
+            <li>Built the predictive habitat-suitability report: generation, PDF download, and the site logo on every page of the exported PDF.</li>
+            <li>Shipped the species sighting timeline chart with freshness classification, added map-level loading feedback for point predictions, and fixed a colour-blind-inaccessible suitability grid scale, a tooltip running off the window, and an unreachable "Got it" button on the prediction intro modal.</li>
+          </ul>
+          </div>
+          <button type="button" class="project-expand" aria-expanded="false" aria-controls="more-biodatascope">Read more</button>
+          <div class="tags"><span class="tag">NestJS</span><span class="tag">PostgreSQL / PostGIS</span><span class="tag">React</span><span class="tag">Leaflet</span><span class="tag">Python</span><span class="tag">XGBoost</span><span class="tag">Azure Functions</span></div>
+        </div>
+        <div class="project-side">
+          <div class="metric"><span class="n">13+</span><span class="l">PRs merged by me into main</span></div>
+          <a class="project-link" href="https://fit5120-bio-datascope-monorepo.onrender.com/" target="_blank" rel="noopener">Try live app ↗</a>
         </div>
       </div>
 
@@ -2368,7 +2406,7 @@
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-<script src="app.js?v=20"></script>
+<script src="app.js?v=21"></script>
 <script src="portfolio-sync.js?v=1"></script>
 
 </body>
