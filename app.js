@@ -244,22 +244,35 @@
   // card with a known end date and it fades out on its own once that month
   // has passed, so this section never needs manual pruning again. Cards
   // with no data-end (ongoing "since ..." roles) are left alone.
+  // "Right now" board: the cards are drawn from data/experience.json, so an update is one edit to that file.
+  // Entries whose end month has passed are dropped. The static cards in the HTML are the fallback.
   (function(){
-    const cards = document.querySelectorAll('.juggle-card[data-end]');
-    if (!cards.length) return;
-    const now = new Date();
-    const currentYm = now.getFullYear() * 12 + now.getMonth();
-    cards.forEach(card => {
-      const [y, m] = card.dataset.end.split('-').map(Number);
-      if (!y || !m) return;
-      const endYm = y * 12 + (m - 1);
-      if (endYm < currentYm) {
-        card.style.transition = 'opacity .4s ease, transform .4s ease';
-        card.style.opacity = '0';
-        card.style.transform = 'scale(0.96)';
-        setTimeout(() => card.remove(), 400);
-      }
-    });
+    const grid = document.getElementById('juggleGrid');
+    if (!grid || !window.fetch) return;
+    fetch('data/experience.json', { cache: 'no-cache' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(items => {
+        if (!Array.isArray(items)) return;
+        const now = new Date();
+        const currentYm = now.getFullYear() * 12 + now.getMonth();
+        const live = items.filter(item => {
+          if (!item.end) return true;
+          const [y, m] = item.end.split('-').map(Number);
+          return y * 12 + (m - 1) >= currentYm;
+        });
+        grid.replaceChildren(...live.map((item, i) => {
+          const card = document.createElement('div');
+          card.className = 'juggle-card in';
+          for (const [cls, text] of [['jc-num', String(i + 1)], ['jc-role', item.role], ['jc-org', item.org], ['jc-since', item.when]]) {
+            const span = document.createElement('span');
+            span.className = cls;
+            span.textContent = text;
+            card.appendChild(span);
+          }
+          return card;
+        }));
+      })
+      .catch(() => {});
   })();
 
   // Skills & stack auto-addendum — this is the actual sync logic, not a one-off edit: any
@@ -424,53 +437,6 @@
     });
   })();
 
-
-  // Terminal-style typewriter beside the portrait — loops through a plain-text
-  // "cat typical_tuesday.log" reveal, tying into the "hustle on a Tuesday"
-  // framing used in the Juggling section further down. Content is
-  // decorative/illustrative (not literal clock times), same spirit as the
-  // ticker taglines elsewhere on the page. Respects reduced-motion by just
-  // printing the full text once.
-  (function(){
-    const el = document.getElementById('terminal-lines');
-    if (!el) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const lines = [
-      '> morning: Master of IT lectures @ Monash',
-      '> midday: Baazar internship + HR Projects',
-      '> afternoon: mentoring + Monash Data & AI Society',
-      '> evening: coffee catch-ups, coding this site',
-      '> late night: poetry as "Female Photon"',
-      '> repeat. (mostly)',
-    ];
-    const badges = document.querySelectorAll('.rbadge');
-    function setBadge(i){
-      badges.forEach(b => b.classList.toggle('active', b.dataset.badge === String(i)));
-    }
-    if (reduced) {
-      el.textContent = lines.join('\n');
-      return;
-    }
-    let li = 0, ci = 0, text = '';
-    function tick(){
-      if (li >= lines.length) {
-        setTimeout(() => { text = ''; li = 0; ci = 0; el.textContent = ''; setBadge(0); tick(); }, 2200);
-        return;
-      }
-      const line = lines[li];
-      if (ci === 0) setBadge(li);
-      if (ci <= line.length) {
-        el.textContent = text + line.slice(0, ci);
-        ci++;
-        setTimeout(tick, 22);
-      } else {
-        text += line + '\n';
-        li++; ci = 0;
-        setTimeout(tick, 380);
-      }
-    }
-    tick();
-  })();
 
   // Meteor shower — ambient signature animation in the hero. Also carries its
   // own constellation backdrop (stars + nearest-neighbour link lines), since
@@ -640,88 +606,13 @@
       el.appendChild(a);
     }
 
-    // Made much bigger again on request — a wide, dramatic incoming hit.
-    head.setAttribute('r', 48);
-    tail.setAttribute('rx', 128); tail.setAttribute('ry', 20);
-    e1.setAttribute('r', 18);
-    e2.setAttribute('r', 22);
-    // The impact flash belongs at the actual destination point the paths
-    // below converge on (the portrait's center in this 244x244 viewBox),
-    // not the old fixed (122,15) left over from an earlier layout.
-    flash.setAttribute('cx', 122);
-    flash.setAttribute('cy', 122);
-
-    // Base paths (quadratic curves ending near the portrait's center,
-    // 122,122). Rotated at runtime around that same center so the meteor
-    // always streaks in from whichever screen direction the nav logo
-    // actually sits in, instead of a hardcoded corner.
-    const BASE = {
-      head: 'M-70,-55 Q50,-15 118,118',
-      tail: 'M-70,-55 Q50,-15 118,118',
-      e1:   'M-90,15 Q30,25 108,132',
-      e2:   'M-55,100 Q70,70 130,134'
-    };
-    const CENTER = { x: 122, y: 122 };
-
-    function rotatePath(path, angle){
-      if (!angle) return path;
-      const cos = Math.cos(angle), sin = Math.sin(angle);
-      return path.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, (m, xs, ys) => {
-        const x = parseFloat(xs) - CENTER.x, y = parseFloat(ys) - CENTER.y;
-        const rx = CENTER.x + (x * cos - y * sin);
-        const ry = CENTER.y + (x * sin + y * cos);
-        return `${rx.toFixed(1)},${ry.toFixed(1)}`;
-      });
-    }
-
-    function approachAngle(){
-      const logoEl = document.querySelector('header.nav .nav-logo-badge');
-      const portraitEl = document.querySelector('.portrait-wrap');
-      if (!logoEl || !portraitEl) return 0;
-      const logoRect = logoEl.getBoundingClientRect();
-      const portraitRect = portraitEl.getBoundingClientRect();
-      if (!logoRect.width || !portraitRect.width) return 0;
-      const logoCx = logoRect.left + logoRect.width / 2;
-      const logoCy = logoRect.top + logoRect.height / 2;
-      const portraitCx = portraitRect.left + portraitRect.width / 2;
-      const portraitCy = portraitRect.top + portraitRect.height / 2;
-      // Direction from the portrait toward the logo — the meteor should
-      // appear to originate from that side.
-      const desired = Math.atan2(logoCy - portraitCy, logoCx - portraitCx);
-      // The baseline path above already approaches from upper-left; its
-      // own angle (start point relative to the shared center) is the zero
-      // point the rotation is measured against.
-      const baseline = Math.atan2(-55 - CENTER.y, -70 - CENTER.x);
-      return desired - baseline;
-    }
-
-    function launch(){
-      const angle = approachAngle();
-      [head, tail, e1, e2].forEach(el => el.setAttribute('opacity', 1));
-      addMotion(head, rotatePath(BASE.head, angle), '0.95s');
-      addMotion(tail, rotatePath(BASE.tail, angle), '0.95s');
-      addMotion(e1, rotatePath(BASE.e1, angle), '0.95s', '0.05s');
-      addMotion(e2, rotatePath(BASE.e2, angle), '0.95s', '0.1s');
-
-      setTimeout(() => {
-        [head, tail, e1, e2].forEach(el => {
-          el.style.transition = 'opacity .2s ease';
-          el.setAttribute('opacity', 0);
-        });
-        flash.style.transition = 'none';
-        flash.setAttribute('stroke-width', 11);
-        flash.setAttribute('opacity', 1);
-        flash.setAttribute('r', 14);
-        requestAnimationFrame(() => {
-          flash.style.transition = 'r .6s ease-out, opacity .6s ease-out';
-          flash.setAttribute('r', 240);
-          flash.setAttribute('opacity', 0);
-        });
-        charm.style.transition = 'opacity .5s ease';
-        charm.setAttribute('opacity', 1);
-        orbit.setAttribute('begin', '0s');
-        orbit.beginElement();
-      }, 950);
+    // The opening comet (below) is the hit on the photo. Once it lands, the charm settles around the photo.
+    [head, tail, e1, e2, flash].forEach(el => el && el.remove());
+    function settle(){
+      charm.style.transition = 'opacity .5s ease';
+      charm.setAttribute('opacity', 1);
+      orbit.setAttribute('begin', '0s');
+      orbit.beginElement();
     }
 
     // The intro splash covers the whole screen for a few seconds on load --
@@ -731,16 +622,16 @@
     // then give the hero name its own moment first before the meteor hits --
     // splash, then name, then meteor, not all three stacked on each other.
     let fired = false;
-    function fireOnce(){ if (fired) return; fired = true; setTimeout(launch, 550); }
+    function fireOnce(){ if (fired) return; fired = true; setTimeout(settle, 300); }
     document.addEventListener('comet:done', fireOnce, { once: true });
     setTimeout(fireOnce, 11000);
   })();
 
   // Opening comet: once the intro splash clears, a large comet streaks in from the
-  // top-right and strikes the hero name. The impact throws a shockwave, sparks and a
+  // top-right and strikes the portrait. The impact throws a shockwave, sparks and a
   // short shake, then the portrait meteor and the hero shower carry on.
   (function(){
-    const target = document.querySelector('.hero-name');
+    const target = document.querySelector('.portrait-wrap');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!target) return;
     let ran = false;
