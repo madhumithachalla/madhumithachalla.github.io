@@ -1060,12 +1060,22 @@
       { keys: ['colorcompass details','hsl','colour wheel','seasonal analysis'], a: "ColorCompass does real seasonal colour analysis from scratch: it converts sampled skin/hair pixels to actual HSL colour-wheel coordinates and classifies into one of the 12 standard seasonal categories. Worth noting: her first pass used a generic half-wheel warm/cool split and it was wrong — real skin tones cluster in a narrow hue band, so that split called everyone \"warm.\" She caught it, rebuilt it with a skin-tone-calibrated threshold instead." },
       { keys: ['issue','challenge','obstacle','difficult','hardest part','problem she faced','mistake','went wrong','failure'], a: "A concrete one: building ColorCompass's colour classifier, her first warm/cool split used a generic 90°-half division of the colour wheel — technically reasonable-sounding, but wrong for skin tones specifically, since real skin hues all cluster in one narrow band. It made every test case come back \"warm.\" She caught it through actual testing (not just assuming the math was right) and rebuilt it with a calibrated threshold. More broadly: she's juggled multiple roles at once (Monash studies, mentoring 40+ students, advising 45+ more, part-time IT/HR work) — the real challenge there is just disciplined prioritisation, not any one dramatic problem." }
     ];
-    const fallback = "I'm just a lightweight assistant built into this page (no live AI backend), so I don't have a good answer for that one. Try asking about her skills, projects, experience, education, or availability, or email her directly at rchmadhumitha@gmail.com.";
+    const fallback = "I'm just a lightweight assistant built into this page (no live AI backend), so I don't have a good answer for that one. Try one of these instead, or email her directly at rchmadhumitha@gmail.com:";
+    const fallbackChips = ["What's her stack?", "Is she open to roles in Australia?", "Tell me about her projects", "Why should we hire her?"];
 
+    // Picks the best match, not just the first one in array order: a longer,
+    // more specific keyword (e.g. "cloudpose details") should win over a
+    // shorter generic one (e.g. "project") even if the generic entry comes
+    // first in the list.
     function answer(question){
       const q = question.toLowerCase();
-      const hit = faq.find(f => f.keys.some(k => q.includes(k)));
-      return hit ? hit.a : fallback;
+      let best = null, bestLen = 0;
+      faq.forEach(f => {
+        f.keys.forEach(k => {
+          if (q.includes(k) && k.length > bestLen){ best = f; bestLen = k.length; }
+        });
+      });
+      return best ? { text: best.a, matched: true } : { text: fallback, matched: false };
     }
 
     const avatar = document.getElementById('chatAvatar');
@@ -1114,6 +1124,23 @@
     closeBtn.addEventListener('click', closePanel);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
 
+    // Follow-up suggestion chips shown under a fallback reply, so a miss
+    // isn't a dead end — same clickable chip pattern as the starter ones.
+    function showSuggestions(){
+      const row = document.createElement('div');
+      row.className = 'chat-msg bot chat-suggestions';
+      fallbackChips.forEach(text => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'chat-chip';
+        btn.textContent = text;
+        btn.addEventListener('click', () => ask(text));
+        row.appendChild(btn);
+      });
+      body.appendChild(row);
+      body.scrollTop = body.scrollHeight;
+    }
+
     function ask(text){
       if (!text.trim()) return;
       addMsg(text, 'user');
@@ -1126,7 +1153,9 @@
       const typingEl = showTyping();
       setTimeout(() => {
         typingEl.remove();
-        addMsg(answer(text), 'bot');
+        const result = answer(text);
+        addMsg(result.text, 'bot');
+        if (!result.matched) showSuggestions();
       }, 650);
     }
 
