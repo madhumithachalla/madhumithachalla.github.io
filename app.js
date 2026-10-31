@@ -456,7 +456,7 @@
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const count = Math.round((w * h) / 7000);
+      const count = 0;
       heroStars = Array.from({ length: count }, () => ({
         x: Math.random() * w, y: Math.random() * h,
         r: Math.random() * 1.3 + 0.3,
@@ -913,55 +913,62 @@
     });
   })();
 
-  // Ambient starfield — sits behind the whole page (visible wherever a section
-  // has no opaque background of its own), a quieter companion to the hero's meteors.
-  // Enhanced into a full backdrop: faint constellation lines between nearby
-  // stars, a couple of drifting planets echoing the nav logo's cosmic badge,
-  // and a scattering of tech glyphs (</>,  {}, cloud) nodding to her field --
-  // all very low-opacity so it reads as atmosphere, not decoration fighting
-  // the actual content.
+  // Ambient deep-sky backdrop, drawn to resemble astronomy photographs: a dark sky with a
+  // dust-laced Milky Way band, red hydrogen and teal oxygen nebulae, a dense field of faint
+  // stars, and bright stars with diffraction spikes. The static sky is painted once per resize;
+  // only the bright stars twinkle.
   (function(){
     const canvas = document.getElementById('starfield');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let w, h, dpr, stars = [], links = [], planets = [], glyphs = [], nebula = null;
-    const GLYPHS = ['</>', '{ }', '☁', '⌘', '< >'];
-    // Star colours: mostly cool white, with some blue-white and warm stars, as in real star fields.
-    const STAR_TINTS = ['231,223,247', '196,214,255', '255,226,198'];
+    const TINTS = ['255,255,255', '200,220,255', '255,236,210', '255,205,180'];
+    const NEBULA = [[255, 74, 112], [42, 212, 190], [92, 122, 238], [255, 150, 96]];
+    let w, h, dpr, sky = null, bright = [];
+    const rnd = (a, b) => a + Math.random() * (b - a);
 
-    // Deep-sky backdrop, drawn once per resize and reused every frame: a faint
-    // Milky-Way-style haze plus soft nebula clouds in the site's accent colours.
-    function buildNebula(){
+    function paintSky(){
       const off = document.createElement('canvas');
       off.width = Math.round(w * dpr); off.height = Math.round(h * dpr);
-      const n = off.getContext('2d');
-      n.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const g = off.getContext('2d');
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
       const span = Math.max(w, h);
-      n.save();
-      n.translate(w / 2, h / 2); n.rotate(-0.4);
-      const haze = n.createLinearGradient(0, -span * 0.12, 0, span * 0.12);
-      haze.addColorStop(0, 'rgba(155,126,222,0)');
-      haze.addColorStop(0.5, 'rgba(155,126,222,0.13)');
-      haze.addColorStop(1, 'rgba(155,126,222,0)');
-      n.fillStyle = haze;
-      n.fillRect(-span * 1.5, -span * 1.5, span * 3, span * 3);
-      n.restore();
-      const CLOUDS = [[155, 126, 222], [45, 212, 191], [255, 111, 94], [96, 130, 235]];
-      const clouds = Math.max(4, Math.round((w * h) / 160000));
-      for (let i = 0; i < clouds; i++){
-        const [r, g, b] = CLOUDS[i % CLOUDS.length];
-        const x = Math.random() * w, y = Math.random() * h;
-        const rad = span * (0.15 + Math.random() * 0.2);
-        const a = 0.08 + Math.random() * 0.08;
-        const cloud = n.createRadialGradient(x, y, 0, x, y, rad);
-        cloud.addColorStop(0, `rgba(${r},${g},${b},${a.toFixed(3)})`);
-        cloud.addColorStop(0.45, `rgba(${r},${g},${b},${(a * 0.4).toFixed(3)})`);
-        cloud.addColorStop(1, `rgba(${r},${g},${b},0)`);
-        n.fillStyle = cloud;
-        n.fillRect(0, 0, w, h);
+      const base = g.createRadialGradient(w * .5, h * .42, 0, w * .5, h * .5, span * .8);
+      base.addColorStop(0, '#0E0B1E'); base.addColorStop(.6, '#07060F'); base.addColorStop(1, '#030308');
+      g.fillStyle = base; g.fillRect(0, 0, w, h);
+      // Milky Way band with dark dust lanes running through it
+      g.save(); g.translate(w * .5, h * .5); g.rotate(-.55);
+      const band = g.createLinearGradient(0, -span * .18, 0, span * .18);
+      band.addColorStop(0, 'rgba(120,110,170,0)'); band.addColorStop(.5, 'rgba(150,140,205,.22)'); band.addColorStop(1, 'rgba(120,110,170,0)');
+      g.fillStyle = band; g.fillRect(-span * 1.5, -span * 1.5, span * 3, span * 3);
+      for (let i = 0; i < 30; i++){
+        const x = rnd(-span * .6, span * .6), y = rnd(-span * .04, span * .04), r = rnd(span * .02, span * .07);
+        const d = g.createRadialGradient(x, y, 0, x, y, r);
+        d.addColorStop(0, 'rgba(3,2,8,.6)'); d.addColorStop(1, 'rgba(3,2,8,0)');
+        g.fillStyle = d; g.fillRect(x - r, y - r, r * 2, r * 2);
       }
-      return off;
+      g.restore();
+      // Nebulae: hydrogen red, oxygen teal, dust blue, screened over the sky
+      g.globalCompositeOperation = 'screen';
+      const count = Math.max(6, Math.round(w * h / 180000));
+      for (let i = 0; i < count; i++){
+        const [r, gg, b] = NEBULA[i % NEBULA.length];
+        const x = rnd(0, w), y = rnd(0, h), rad = span * rnd(.12, .3), a = rnd(.05, .11);
+        const c = g.createRadialGradient(x, y, 0, x, y, rad);
+        c.addColorStop(0, `rgba(${r},${gg},${b},${a})`); c.addColorStop(.5, `rgba(${r},${gg},${b},${(a * .35).toFixed(3)})`); c.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+        g.fillStyle = c; g.fillRect(0, 0, w, h);
+      }
+      g.globalCompositeOperation = 'source-over';
+      // Dense faint field, with more stars along the band
+      const field = Math.round(w * h / 1400);
+      for (let i = 0; i < field; i++){
+        const x = rnd(0, w), y = rnd(0, h);
+        const along = Math.abs(((x - w * .5) * Math.sin(-.55) + (y - h * .5) * Math.cos(-.55)) / span);
+        if (Math.random() < along * .5) continue;
+        g.fillStyle = `rgba(228,224,255,${rnd(.15, .7).toFixed(2)})`;
+        g.fillRect(x, y, rnd(.4, 1.1), rnd(.4, 1.1));
+      }
+      sky = off;
     }
 
     function resize(){
@@ -970,135 +977,40 @@
       canvas.width = w * dpr; canvas.height = h * dpr;
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = Math.round((w * h) / 9000);
-      nebula = buildNebula();
-      stars = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        // Most stars are faint; a few are bright, as in a real sky.
-        r: Math.random() * 0.4 + 0.3 + Math.pow(Math.random(), 4) * 1.4,
-        c: STAR_TINTS[Math.floor(Math.random() * STAR_TINTS.length)],
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.015 + Math.random() * 0.02
+      paintSky();
+      bright = Array.from({ length: Math.round(w * h / 32000) + 6 }, () => ({
+        x: rnd(0, w), y: rnd(0, h), r: rnd(.9, 1.9), c: TINTS[Math.floor(Math.random() * TINTS.length)],
+        ph: rnd(0, 6.28), sp: rnd(.01, .03), spike: Math.random() < .4
       }));
+    }
 
-      // Constellation lines: each star joins its nearest neighbour within
-      // reach, skipped on tiny/dense clusters so it never turns into a mesh.
-      links = [];
-      const maxDist = Math.min(w, h) * 0.07;
-      for (let i = 0; i < stars.length; i++){
-        if (Math.random() > 0.35) continue;
-        let best = -1, bestD = maxDist;
-        for (let j = 0; j < stars.length; j++){
-          if (i === j) continue;
-          const dx = stars[i].x - stars[j].x, dy = stars[i].y - stars[j].y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < bestD){ bestD = d; best = j; }
+    function drawBright(t){
+      bright.forEach(st => {
+        const tw = .75 + .25 * Math.sin(t * st.sp + st.ph);
+        const glow = ctx.createRadialGradient(st.x, st.y, 0, st.x, st.y, st.r * 7);
+        glow.addColorStop(0, `rgba(${st.c},${(.5 * tw).toFixed(2)})`); glow.addColorStop(1, `rgba(${st.c},0)`);
+        ctx.fillStyle = glow; ctx.fillRect(st.x - st.r * 7, st.y - st.r * 7, st.r * 14, st.r * 14);
+        ctx.fillStyle = `rgba(${st.c},${tw.toFixed(2)})`;
+        ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2); ctx.fill();
+        if (st.spike){
+          ctx.strokeStyle = `rgba(${st.c},${(.3 * tw).toFixed(2)})`; ctx.lineWidth = .6;
+          ctx.beginPath();
+          ctx.moveTo(st.x - st.r * 10, st.y); ctx.lineTo(st.x + st.r * 10, st.y);
+          ctx.moveTo(st.x, st.y - st.r * 10); ctx.lineTo(st.x, st.y + st.r * 10);
+          ctx.stroke();
         }
-        if (best !== -1) links.push([i, best]);
-      }
+      });
+    }
 
-      planets = [
-        { x: w * 0.92, y: h * 0.08, r: Math.max(18, w * 0.018), kind: 'mars' },
-        { x: w * 0.05, y: h * 0.82, r: Math.max(22, w * 0.022), kind: 'saturn' }
-      ];
-
-      glyphs = Array.from({ length: Math.round(w / 420) + 2 }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        text: GLYPHS[Math.floor(Math.random() * GLYPHS.length)],
-        size: 11 + Math.random() * 7,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.01 + Math.random() * 0.012
-      }));
+    function frame(t){
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(sky, 0, 0, w, h);
+      drawBright(t);
+      if (!reduced) requestAnimationFrame(frame);
     }
     resize();
     window.addEventListener('resize', resize);
-
-    function drawPlanet(p){
-      ctx.save();
-      ctx.globalAlpha = 0.5;
-      const grad = ctx.createRadialGradient(p.x - p.r * 0.3, p.y - p.r * 0.3, p.r * 0.1, p.x, p.y, p.r);
-      if (p.kind === 'mars'){
-        grad.addColorStop(0, '#D9885F'); grad.addColorStop(0.5, '#B85732'); grad.addColorStop(1, '#3A1A0C');
-      } else {
-        grad.addColorStop(0, '#EFE3C4'); grad.addColorStop(0.55, '#C9B489'); grad.addColorStop(1, '#5A4A2E');
-      }
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
-      if (p.kind === 'saturn'){
-        ctx.strokeStyle = 'rgba(201,180,137,0.55)';
-        ctx.lineWidth = Math.max(1.5, p.r * 0.08);
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y, p.r * 1.7, p.r * 0.45, -0.3, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    function drawLinks(alphaMul){
-      ctx.save();
-      ctx.strokeStyle = `rgba(155,126,222,${0.1 * alphaMul})`;
-      ctx.lineWidth = 1;
-      links.forEach(([a, b]) => {
-        ctx.beginPath();
-        ctx.moveTo(stars[a].x, stars[a].y);
-        ctx.lineTo(stars[b].x, stars[b].y);
-        ctx.stroke();
-      });
-      ctx.restore();
-    }
-
-    function drawGlyphs(t){
-      ctx.save();
-      ctx.font = '11px "IBM Plex Mono", monospace';
-      ctx.fillStyle = 'rgba(155,126,222,0.22)';
-      ctx.textBaseline = 'middle';
-      glyphs.forEach(g => {
-        ctx.font = `${g.size}px "IBM Plex Mono", monospace`;
-        const alpha = 0.1 + 0.14 * (0.5 + 0.5 * Math.sin(t * g.speed + g.phase));
-        ctx.fillStyle = `rgba(155,126,222,${alpha.toFixed(2)})`;
-        ctx.fillText(g.text, g.x, g.y);
-      });
-      ctx.restore();
-    }
-
-    function drawStatic(){
-      ctx.clearRect(0, 0, w, h);
-      if (nebula) ctx.drawImage(nebula, 0, 0, w, h);
-      drawLinks(1);
-      planets.forEach(drawPlanet);
-      glyphs.forEach(g => {
-        ctx.font = `${g.size}px "IBM Plex Mono", monospace`;
-        ctx.fillStyle = 'rgba(155,126,222,0.18)';
-        ctx.fillText(g.text, g.x, g.y);
-      });
-      stars.forEach(s => {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${s.c},0.3)`;
-        ctx.fill();
-      });
-    }
-    if (reduced){ drawStatic(); return; }
-
-    let t = 0;
-    function tick(){
-      t++;
-      ctx.clearRect(0, 0, w, h);
-      if (nebula) ctx.drawImage(nebula, 0, 0, w, h);
-      drawLinks(0.7 + 0.3 * Math.sin(t * 0.004));
-      planets.forEach(drawPlanet);
-      drawGlyphs(t);
-      stars.forEach(s => {
-        const alpha = 0.22 + 0.4 * Math.pow(Math.sin(t * s.speed + s.phase), 2);
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${s.c},${alpha.toFixed(2)})`;
-        ctx.fill();
-      });
-      requestAnimationFrame(tick);
-    }
-    tick();
+    requestAnimationFrame(frame);
   })();
 
   // Built-in FAQ assistant — static keyword matching against her actual resume/site
@@ -1356,4 +1268,61 @@
       document.body.classList.remove('intro-playing');
       setTimeout(() => { overlay.remove(); document.dispatchEvent(new Event('intro:done')); }, 1000);
     }, 3900);
+  })();
+
+  // Project map: zoom with the buttons or Ctrl/Cmd and the scroll wheel, and a time ruler that
+  // shows only the places that were active in the months you pick. Changing the range scrolls
+  // the map to where the range starts.
+  (function(){
+    const scroller = document.querySelector('.gmap-scroll');
+    const svg = scroller && scroller.querySelector('svg');
+    const from = document.getElementById('timeFrom');
+    const to = document.getElementById('timeTo');
+    if (!scroller || !svg || !from || !to) return;
+    const BASE_W = 2440, PAD_L = 190, MW = 110, LAST = 18;
+    const MONTHS = ['Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026'];
+    const pins = [...svg.querySelectorAll('.gpin')];
+    const chips = [...document.querySelectorAll('.gmap-chips li')];
+    const brush = document.getElementById('timeBrush');
+    const readout = document.getElementById('timeReadout');
+    const zoomReadout = document.getElementById('zoomReadout');
+    let zoom = 1;
+
+    function setZoom(z, focus = 0.5){
+      const before = zoom;
+      zoom = Math.min(2.4, Math.max(0.6, z));
+      const anchor = (scroller.scrollLeft + scroller.clientWidth * focus) / before;
+      svg.style.width = (BASE_W * zoom) + 'px';
+      scroller.scrollLeft = anchor * zoom - scroller.clientWidth * focus;
+      zoomReadout.textContent = Math.round(zoom * 100) + '%';
+    }
+    scroller.addEventListener('wheel', e => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      e.preventDefault();
+      const r = scroller.getBoundingClientRect();
+      setZoom(zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15), (e.clientX - r.left) / r.width);
+    }, { passive: false });
+    document.getElementById('zoomIn')?.addEventListener('click', () => setZoom(zoom * 1.25));
+    document.getElementById('zoomOut')?.addEventListener('click', () => setZoom(zoom / 1.25));
+    document.getElementById('zoomReset')?.addEventListener('click', () => setZoom(1));
+
+    function applyRange(scrollToStart){
+      let a = +from.value, b = +to.value;
+      if (a > b) [a, b] = [b, a];
+      let shown = 0;
+      pins.forEach(pin => {
+        const on = +pin.dataset.start <= b && +pin.dataset.end >= a;
+        pin.classList.toggle('is-off', !on);
+        if (on) shown++;
+      });
+      chips.forEach(li => { li.hidden = !(+li.dataset.start <= b && +li.dataset.end >= a); });
+      brush.style.left = (a / LAST * 100) + '%';
+      brush.style.width = ((b - a) / LAST * 100) + '%';
+      readout.textContent = `${MONTHS[a]} to ${MONTHS[b]} · ${shown} of ${pins.length} places`;
+      if (scrollToStart) scroller.scrollTo({ left: Math.max(0, (PAD_L + a * MW) * zoom - 120), behavior: 'smooth' });
+    }
+    from.addEventListener('input', () => applyRange(true));
+    to.addEventListener('input', () => applyRange(true));
+    document.getElementById('timeReset')?.addEventListener('click', () => { from.value = 0; to.value = LAST; applyRange(true); });
+    applyRange(false);
   })();
