@@ -1397,11 +1397,11 @@
   // "no fixed date yet" badge instead.
   (function(){
     const list = document.getElementById('projectList');
-    const pins = document.querySelectorAll('.gpin[href^="#proj-"]');
+    const pins = document.querySelectorAll('.gpin[data-href^="#proj-"]');
     if (!list) return;
     const dates = new Map();
     pins.forEach(pin => {
-      const id = pin.getAttribute('href').slice(1);
+      const id = pin.dataset.href.slice(1);
       const label = pin.getAttribute('aria-label') || '';
       const when = label.split(',').slice(1).join(',').trim();
       if (when) dates.set(id, when);
@@ -1438,7 +1438,9 @@
     const readout = document.getElementById('timeReadout');
     const zoomReadout = document.getElementById('zoomReadout');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let zoom = 1;
+    let zoom = 0.42;
+    svg.style.width = (BASE_W * zoom) + 'px';
+    document.getElementById('zoomReadout').textContent = Math.round(zoom * 100) + '%';
     let query = '';
 
     function pinName(pin){
@@ -1451,7 +1453,7 @@
 
     function setZoom(z, focus = 0.5){
       const before = zoom;
-      zoom = Math.min(2.4, Math.max(0.6, z));
+      zoom = Math.min(2.4, Math.max(0.35, z));
       const anchor = (scroller.scrollLeft + scroller.clientWidth * focus) / before;
       svg.style.width = (BASE_W * zoom) + 'px';
       scroller.scrollLeft = anchor * zoom - scroller.clientWidth * focus;
@@ -1481,7 +1483,7 @@
       pin.classList.add('gpin-highlight');
       setTimeout(() => pin.classList.remove('gpin-highlight'), 1400);
       if (opts && opts.thenFollow) {
-        setTimeout(() => { window.location.hash = pin.getAttribute('href'); }, reduced ? 0 : 650);
+        setTimeout(() => { window.location.hash = pin.dataset.href; }, reduced ? 0 : 650);
       }
     }
     // Any click on a place (map pin or sidebar chip) pans + highlights first,
@@ -1495,7 +1497,7 @@
     // Pins are handled by the place selector below: a click selects the pin and keeps the map open.
     chips.forEach(li => {
       const a = li.querySelector('a');
-      const pin = pins.find(p => p.getAttribute('href') === a?.getAttribute('href'));
+      const pin = pins.find(p => p.dataset.href === a?.getAttribute('href'));
       if (a && pin) wireNavigate(a, pin);
     });
 
@@ -1562,7 +1564,7 @@
     const countEl = document.getElementById('placeCount');
     const prev = document.getElementById('placePrev');
     const next = document.getElementById('placeNext');
-    const LANE_CLASS = { cloud: 'sel-cloud', web: 'sel-web', design: 'sel-design' };
+    const LANE_CLASS = { cloud: 'sel-cloud', web: 'sel-web', design: 'sel-design', interest: 'sel-interest' };
     const BASE_W = 2440, MONTH_W = 110, PAD_L = 190;
     let selected = null;
 
@@ -1575,7 +1577,7 @@
       ring.setAttribute('class', 'gpin-ring');
       ring.setAttribute('cx', '0'); ring.setAttribute('cy', '-33'); ring.setAttribute('r', '14');
       g.insertBefore(ring, g.firstChild);
-      pin.dataset.lane = (body.getAttribute('class').match(/gpin-(cloud|web|design)/) || [])[1] || '';
+      pin.dataset.lane = (body.getAttribute('class').match(/gpin-(cloud|web|design|interest)/) || [])[1] || '';
     });
 
     // Places currently shown (not hidden by the time filter), in build order.
@@ -1601,7 +1603,8 @@
       nameEl.textContent = name || label;
       datesEl.textContent = dates || '';
       dot.className = 'gmap-selected-dot ' + (LANE_CLASS[selected.dataset.lane] || '');
-      link.href = selected.getAttribute('href');
+      link.href = selected.dataset.href;
+      document.getElementById('placeAbout').textContent = selected.dataset.about || '';
       link.hidden = false;
       const list = visible();
       countEl.textContent = (list.indexOf(selected) + 1) + ' of ' + list.length;
@@ -1618,7 +1621,10 @@
       select(list[n]);
     }
 
-    pins.forEach(pin => pin.addEventListener('click', e => { e.preventDefault(); select(pin); }));
+    pins.forEach(pin => {
+      pin.addEventListener('click', e => { e.preventDefault(); select(pin); });
+      pin.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(pin); } });
+    });
     prev.addEventListener('click', () => step(-1));
     next.addEventListener('click', () => step(1));
     scroller.addEventListener('keydown', e => {

@@ -21,6 +21,7 @@
     --map-cloud:#2DD4BF;
     --map-web:#FF6F5E;
     --map-design:#F5A623;
+    --map-interest:#B9A6F0;
     --map-land:#17132A;
     --map-road:#2C2542;
     --map-water:#15223D;
@@ -49,6 +50,7 @@
     --map-cloud:#0E8C7A;
     --map-web:#C9473A;
     --map-design:#B87100;
+    --map-interest:#6B4FB8;
     --map-land:#EEF2EC;
     --map-road:#FFFFFF;
     --map-water:#CFE3F0;
@@ -1180,3 +1182,26 @@
   .gpin.is-selected .gpill-name{fill:var(--ink);}
   .gpin.is-selected .gpill-date{fill:var(--ink);}
   @keyframes gpinPulse{0%{r:14; opacity:.9;} 100%{r:34; opacity:0;}}
+  /* Grid colours: each area has its own tinted band, a coloured label, and a matching legend swatch. */
+  .gm-band{opacity:.09;}
+  .gm-band-cloud{fill:var(--map-cloud);} .gm-band-web{fill:var(--map-web);}
+  .gm-band-design{fill:var(--map-design);} .gm-band-interest{fill:var(--map-interest);}
+  .gm-area-cloud{fill:var(--map-cloud); opacity:1;} .gm-area-web{fill:var(--map-web); opacity:1;}
+  .gm-area-design{fill:var(--map-design); opacity:1;} .gm-area-interest{fill:var(--map-interest); opacity:1;}
+  .gpin-interest{fill:var(--map-interest);}
+  .gpin-body{transition:filter .15s ease;}
+  /* The "i" badge on each pin: tap it, or the pin, for a short description. */
+  .gi{cursor:pointer;}
+  .gi circle{fill:var(--paper); stroke:var(--bg); stroke-width:2;}
+  .gi text{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; fill:var(--ink); pointer-events:none;}
+  .gpin:hover .gi circle, .gpin:focus-visible .gi circle, .gpin.is-selected .gi circle{fill:var(--amber);}
+  .gpin.is-selected .gi circle{stroke:var(--paper);}
+  .place-about{font-size:14px; color:var(--ink-soft); margin:8px 0 0; line-height:1.55; flex-basis:100%;}
+  .map-legend{display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft); margin:0 0 12px;}
+  .map-legend > span{display:inline-flex; align-items:center; gap:7px;}
+  .sw{width:12px; height:12px; border-radius:3px; display:inline-block;}
+  .sw-cloud{background:var(--map-cloud);} .sw-web{background:var(--map-web);}
+  .sw-design{background:var(--map-design);} .sw-interest{background:var(--map-interest);}
+  .gi-key{display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:var(--paper); color:var(--ink); font-weight:600; font-size:11px;}
+  .legend-tip{color:var(--slate);}
+  .gmap-selected-dot.sel-interest{background:var(--map-interest);}
