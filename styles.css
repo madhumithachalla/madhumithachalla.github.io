@@ -1225,3 +1225,12 @@
     .map-walker{transition:none;}
     .map-walker.walking .walker-leg-a, .map-walker.walking .walker-leg-b, .map-walker.walking .walker-arm-a, .map-walker.walking .walker-arm-b, .map-walker.walking .walker-bob{animation:none;}
   }
+  /* Ruler: the drag handles are custom and use a grab cursor; the native range inputs stay for keyboard use only. */
+  .time-ruler{cursor:pointer; touch-action:none;}
+  .time-ruler input[type=range]{opacity:0; pointer-events:none;}
+  .time-handle{position:absolute; top:8px; width:18px; height:30px; margin-left:-9px; border-radius:6px; background:var(--amber); border:2px solid var(--bg); cursor:grab; box-shadow:0 2px 8px rgba(0,0,0,.4); z-index:2;}
+  .time-handle:hover{filter:brightness(1.1);}
+  .time-ruler.dragging, .time-ruler.dragging .time-handle{cursor:grabbing;}
+  /* A selected place lights up its project card and its chip. */
+  .project.project-focus{box-shadow:0 0 0 2px var(--amber), 0 0 30px rgba(255,197,107,.35); transition:box-shadow .3s ease;}
+  .gmap-chips li.chip-focus a{border-color:var(--amber); color:var(--amber);}

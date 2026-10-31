@@ -1670,6 +1670,32 @@
       if (a && pin) wireNavigate(a, pin);
     });
 
+    const ruler = document.querySelector('.time-ruler');
+    const handleFrom = document.getElementById('handleFrom');
+    const handleTo = document.getElementById('handleTo');
+    let activeHandle = null;
+    function monthAt(clientX){
+      const r = ruler.getBoundingClientRect();
+      return Math.round(Math.min(1, Math.max(0, (clientX - r.left) / r.width)) * LAST);
+    }
+    function moveHandle(which, m){
+      const input = which === 'from' ? from : to;
+      if (+input.value === m) return;
+      input.value = m;
+      input.dispatchEvent(new Event('input'));
+    }
+    ruler.addEventListener('pointerdown', e => {
+      const m = monthAt(e.clientX);
+      activeHandle = Math.abs(m - +from.value) <= Math.abs(m - +to.value) ? 'from' : 'to';
+      ruler.setPointerCapture(e.pointerId);
+      ruler.classList.add('dragging');
+      moveHandle(activeHandle, m);
+    });
+    ruler.addEventListener('pointermove', e => { if (activeHandle) moveHandle(activeHandle, monthAt(e.clientX)); });
+    const endDrag = () => { activeHandle = null; ruler.classList.remove('dragging'); };
+    ruler.addEventListener('pointerup', endDrag);
+    ruler.addEventListener('pointercancel', endDrag);
+
     function applyRange(scrollToStart){
       let a = +from.value, b = +to.value;
       if (a > b) [a, b] = [b, a];
@@ -1698,6 +1724,8 @@
       });
       brush.style.left = (a / LAST * 100) + '%';
       brush.style.width = ((b - a) / LAST * 100) + '%';
+      handleFrom.style.left = (+from.value / LAST * 100) + '%';
+      handleTo.style.left = (+to.value / LAST * 100) + '%';
       readout.textContent = `${MONTHS[a]} to ${MONTHS[b]} · ${shown} of ${pins.length} places`;
       if (scrollToStart) scroller.scrollTo({ left: Math.max(0, (PAD_L + a * MW) * zoom - 120), behavior: reduced ? 'auto' : 'smooth' });
     }
@@ -1781,6 +1809,15 @@
     function select(pin){
       if (selected) selected.classList.remove('is-selected');
       selected = pin || null;
+      // The project card and its chip stay highlighted for as long as the place is selected.
+      document.querySelectorAll('.project-focus').forEach(el => el.classList.remove('project-focus'));
+      document.querySelectorAll('.gmap-chips li.chip-focus').forEach(li => li.classList.remove('chip-focus'));
+      if (selected){
+        document.getElementById(selected.dataset.href.slice(1))?.classList.add('project-focus');
+        document.querySelectorAll('.gmap-chips li').forEach(li => {
+          if (li.querySelector('a')?.getAttribute('href') === selected.dataset.href) li.classList.add('chip-focus');
+        });
+      }
       if (!selected) {
         nameEl.textContent = 'Choose a pin on the map';
         datesEl.textContent = 'Click a pin, or use Previous and Next.';
