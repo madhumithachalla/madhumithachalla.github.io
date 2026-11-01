@@ -1105,48 +1105,39 @@
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
   }
 
-  /* Hero scene: a small animated illustration. A visitor walks up, asks what I do, and I answer. */
-  .hero-scene{margin:0 0 18px; max-width:520px;}
-  .scene-svg{display:block; width:100%; height:auto; overflow:visible;}
-  .scene-svg text{font-family:'IBM Plex Mono',monospace; font-size:12.5px; fill:var(--ink);}
-  .scene-caption{font-size:11px; color:var(--slate); margin-top:4px;}
-  .day-avatar{transform-box:view-box; animation:dayWalk 24s ease-in-out infinite;}
-  .avatar-arm{transform-box:view-box; transform-origin:150px 106px; animation:avatarWave 24s ease-in-out infinite;}
-  .day-caption-wrap{position:relative; height:16px; margin-top:4px;}
-  .day-caption{
-    position:absolute; left:0; top:0; font-size:13px; color:var(--paper); font-weight:500;
-    font-family:'Inter'; opacity:0; white-space:nowrap;
+  /* Hero scene: "A Day In My World" — a small looping illustrated routine, not a literal schedule. */
+  .hero-scene{margin:0 0 18px; max-width:320px;}
+  .scene-svg{display:block; width:100%; height:auto; overflow:visible; border-radius:12px;}
+  .scene-svg text.prop-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; fill:var(--ink);}
+  .scene-caption{font-size:11px; color:var(--slate); margin-top:6px;}
+  .scene-prop{opacity:0; transition:opacity 900ms ease;}
+  .scene-prop.show{opacity:1;}
+  #dayCharacter{transition:transform 600ms ease;}
+  #dayArm{animation:dayArmNod 5s ease-in-out infinite;}
+  #dayMouth{animation:dayBlinkMouth 6s ease-in-out infinite;}
+  #dayPhoton{transition:cx 900ms ease, cy 900ms ease, opacity 600ms ease;}
+  #creatingGlow{transition:opacity 1200ms ease;}
+  #opsCheck{transition:opacity 500ms ease;}
+  @keyframes dayArmNod{0%,85%,100%{transform:rotate(0);} 90%{transform:rotate(-10deg);} 95%{transform:rotate(0);}}
+  @keyframes dayBlinkMouth{0%,92%,100%{d:path('M-7,65 C-3,69 3,69 7,65');} 96%{d:path('M-7,66 C-3,67 3,67 7,66');}}
+  /* Fixed-size caption area outside the moving artwork: scene changes never shift page layout. */
+  .day-caption-wrap{position:relative; height:34px; margin-top:8px; display:flex; align-items:center;}
+  .day-caption{font-size:13px; color:var(--ink); font-weight:500; font-family:'Inter'; line-height:1.3;}
+  .day-controls{display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;}
+  .day-ctrl-btn{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; padding:5px 12px; border-radius:16px;
+    border:1px solid var(--line-dark); background:var(--bg-panel); color:var(--ink); cursor:pointer;
   }
-  .day-cap-1{animation:dayCap1 24s linear infinite;}
-  .day-cap-2{animation:dayCap2 24s linear infinite;}
-  .day-cap-3{animation:dayCap3 24s linear infinite;}
-  .day-cap-4{animation:dayCap4 24s linear infinite;}
-  .day-cap-5{animation:dayCap5 24s linear infinite;}
-  .day-cap-6{animation:dayCap6 24s linear infinite;}
-  @keyframes dayWalk{
-    0%,12%{transform:translateX(40px); opacity:1;}
-    15%,27%{transform:translateX(126px); opacity:1;}
-    30%,42%{transform:translateX(212px); opacity:1;}
-    45%,57%{transform:translateX(298px); opacity:1;}
-    60%,72%{transform:translateX(384px); opacity:1;}
-    75%,90%{transform:translateX(470px); opacity:1;}
-    93%{transform:translateX(470px); opacity:0;}
-    96%{transform:translateX(40px); opacity:0;}
-    100%{transform:translateX(40px); opacity:1;}
+  .day-ctrl-btn:hover{border-color:var(--amber);}
+  .day-ctrl-btn:focus-visible, .day-scene-dot:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+  .day-scene-dots{display:flex; gap:6px;}
+  .day-scene-dot{
+    width:9px; height:9px; border-radius:50%; border:1px solid var(--line-dark); background:transparent;
+    cursor:pointer; padding:0;
   }
-  @keyframes avatarWave{
-    0%,13%{transform:rotate(0);} 16%{transform:rotate(-18deg);} 19%{transform:rotate(0);} 100%{transform:rotate(0);}
-  }
-  @keyframes dayCap1{0%,100%{opacity:1;} 12%{opacity:1;} 15%{opacity:0;} 93%{opacity:0;} 96%{opacity:0;}}
-  @keyframes dayCap2{0%,13%{opacity:0;} 16%,26%{opacity:1;} 29%,100%{opacity:0;}}
-  @keyframes dayCap3{0%,28%{opacity:0;} 31%,41%{opacity:1;} 44%,100%{opacity:0;}}
-  @keyframes dayCap4{0%,43%{opacity:0;} 46%,56%{opacity:1;} 59%,100%{opacity:0;}}
-  @keyframes dayCap5{0%,58%{opacity:0;} 61%,71%{opacity:1;} 74%,100%{opacity:0;}}
-  @keyframes dayCap6{0%,73%{opacity:0;} 76%,89%{opacity:1;} 92%,100%{opacity:0;}}
+  .day-scene-dot.active{background:var(--amber); border-color:var(--amber);}
   @media (prefers-reduced-motion: reduce){
-    .day-avatar,.avatar-arm,.day-cap-1,.day-cap-2,.day-cap-3,.day-cap-4,.day-cap-5,.day-cap-6{animation:none;}
-    .day-avatar{transform:translateX(40px); opacity:1;}
-    .day-cap-1{opacity:1;}
+    #dayArm, #dayMouth{animation:none;}
   }
 
   /* Map controls and the time ruler */

@@ -1,6 +1,22 @@
 // © 2026 Madhumitha Challa. All rights reserved.
 // This code is hers; shared publicly to be read, not reused as someone else's own.
 
+// Shared "is this experience.json entry still current" check, in Australia/Melbourne
+// time, so the right-now cards and the hero illustration can never disagree about
+// which roles are active. A month-only end date (e.g. "2026-12") is inclusive of
+// that whole month — it only drops off once Melbourne's calendar turns to the next one.
+function isExperienceEntryLive(item, melbourneYm){
+  if (!item || !item.end) return true;
+  const [y, m] = item.end.split('-').map(Number);
+  return y * 12 + (m - 1) >= melbourneYm;
+}
+function currentMelbourneYm(){
+  const parts = new Intl.DateTimeFormat('en-AU', { year: 'numeric', month: 'numeric', timeZone: 'Australia/Melbourne' }).formatToParts(new Date());
+  const y = Number(parts.find(p => p.type === 'year').value);
+  const m = Number(parts.find(p => p.type === 'month').value);
+  return y * 12 + (m - 1);
+}
+
 // Count up any number on the page marked with data-target, once it scrolls
   // into view — leadership and project metrics, so numbers throughout the
   // site feel alive rather than static. Each element observes and animates
@@ -253,13 +269,8 @@
       .then(r => (r.ok ? r.json() : null))
       .then(items => {
         if (!Array.isArray(items)) return;
-        const now = new Date();
-        const currentYm = now.getFullYear() * 12 + now.getMonth();
-        const live = items.filter(item => {
-          if (!item.end) return true;
-          const [y, m] = item.end.split('-').map(Number);
-          return y * 12 + (m - 1) >= currentYm;
-        });
+        const currentYm = currentMelbourneYm();
+        const live = items.filter(item => isExperienceEntryLive(item, currentYm));
         grid.replaceChildren(...live.map((item, i) => {
           const card = document.createElement('div');
           card.className = 'juggle-card in';
@@ -277,6 +288,182 @@
         if (statusSub) statusSub.textContent = `${live.length} roles running at once — see the cards →`;
       })
       .catch(() => {});
+  })();
+
+  // "A Day In My World" — the hero illustration's state machine. Scenes and their
+  // order/duration are editorial decisions (data/routine.json); which scenes are
+  // eligible to run is a portfolio fact (data/experience.json), checked with the
+  // same Melbourne-time helper the juggle board uses, so the two can't disagree.
+  (function(){
+    const root = document.getElementById('dayScene');
+    if (!root || !window.fetch) return;
+    const caption = document.getElementById('dayCaptionText');
+    const playPauseBtn = document.getElementById('dayPlayPause');
+    const dotsWrap = document.getElementById('daySceneDots');
+    const photon = document.getElementById('dayPhoton');
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const PROP_EL = {
+      study: document.getElementById('propLearning'),
+      build: document.getElementById('propBuilding'),
+      operations: document.getElementById('propOps'),
+      mentor: document.getElementById('propMentor'),
+      poetry: document.getElementById('propCreating')
+    };
+    const PHOTON_POS = {
+      study: { cx: 118, cy: 136 },
+      build: { cx: 166, cy: 144 },
+      operations: { cx: 106, cy: 148 },
+      mentor: { cx: 90, cy: 176 },
+      poetry: { cx: 80, cy: 154 }
+    };
+    const DEFAULT_CAPTIONS = {
+      study: 'Learning — studying toward the Master of IT',
+      build: 'Building',
+      operations: 'IT operations — keeping a connection running',
+      mentor: 'Mentoring',
+      poetry: 'Creating — writing, as "Female Photon"'
+    };
+
+    Promise.all([
+      fetch('data/routine.json', { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null),
+      fetch('data/experience.json', { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null)
+    ]).then(([routine, experience]) => {
+      if (!routine || !Array.isArray(routine.scenes)) { showStaticFallback(); return; }
+      const expById = {};
+      (experience || []).forEach(e => { expById[e.id] = e; });
+
+      function sourceActive(id){
+        const e = expById[id];
+        if (!e) return false;
+        return isExperienceEntryLive(e, currentMelbourneYm());
+      }
+      function resolveScene(scene){
+        if (!scene.enabled) return null;
+        const refs = (scene.sourceRefs || []).filter(r => r !== 'currentProject');
+        const usesCurrentProject = (scene.sourceRefs || []).includes('currentProject');
+        switch (scene.inclusionRule) {
+          case 'always': break;
+          case 'currentProjectSet':
+            if (!routine.currentProject || !routine.currentProject.title) return null;
+            break;
+          case 'sourceActive':
+            if (!refs.length || !sourceActive(refs[0])) return null;
+            break;
+          case 'anySourceActive':
+            if (!refs.some(sourceActive)) return null;
+            break;
+          default: break;
+        }
+        let label = scene.captionOverride || DEFAULT_CAPTIONS[scene.type] || scene.id;
+        if (usesCurrentProject && !scene.captionOverride) {
+          label = `Building — ${routine.currentProject.title}`;
+        }
+        return { id: scene.id, type: scene.type, order: scene.order, duration: scene.duration || 5000,
+          destinationLink: scene.destinationLink, label };
+      }
+
+      const active = routine.scenes.map(resolveScene).filter(Boolean).sort((a, b) => a.order - b.order);
+      const buildLabelEl = document.getElementById('buildLabel');
+      if (buildLabelEl && routine.currentProject) buildLabelEl.textContent = routine.currentProject.title;
+
+      if (!active.length) { showStaticFallback(); return; }
+      runMachine(active);
+    }).catch(() => showStaticFallback());
+
+    function showStaticFallback(){
+      caption.textContent = 'Learning — studying toward the Master of IT';
+      const prop = PROP_EL.study;
+      if (prop) prop.classList.add('show');
+      if (playPauseBtn) playPauseBtn.hidden = true;
+    }
+
+    function runMachine(scenes){
+      let idx = 0;
+      let timer = null;
+      let userPaused = false;
+      let offscreenOrHidden = false;
+      const singleScene = scenes.length === 1;
+
+      // Scene-select dots.
+      scenes.forEach((s, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'day-scene-dot';
+        dot.setAttribute('aria-label', `Show scene: ${s.label}`);
+        dot.addEventListener('click', () => {
+          userPaused = true;
+          setPlayPauseUI();
+          show(i);
+        });
+        dotsWrap.appendChild(dot);
+      });
+      const dots = Array.from(dotsWrap.children);
+
+      function show(i){
+        idx = i;
+        const scene = scenes[idx];
+        Object.values(PROP_EL).forEach(el => el && el.classList.remove('show'));
+        const el = PROP_EL[scene.type];
+        if (el) el.classList.add('show');
+        const glow = document.getElementById('creatingGlow');
+        if (glow) glow.style.opacity = scene.type === 'poetry' ? '0.08' : '0';
+        const opsCheck = document.getElementById('opsCheck');
+        if (opsCheck) opsCheck.style.opacity = scene.type === 'operations' ? '1' : '0';
+        const pos = PHOTON_POS[scene.type];
+        if (photon && pos) { photon.setAttribute('cx', pos.cx); photon.setAttribute('cy', pos.cy); }
+        caption.textContent = scene.label;
+        if (scene.destinationLink) {
+          caption.setAttribute('role', 'link');
+          caption.setAttribute('tabindex', '0');
+          caption.style.cursor = 'pointer';
+          caption.onclick = () => { document.querySelector(scene.destinationLink)?.scrollIntoView({ behavior: 'smooth' }); };
+          caption.onkeydown = (e) => { if (e.key === 'Enter') caption.onclick(); };
+        } else {
+          caption.removeAttribute('role'); caption.removeAttribute('tabindex');
+          caption.style.cursor = ''; caption.onclick = null; caption.onkeydown = null;
+        }
+        dots.forEach((d, i2) => d.classList.toggle('active', i2 === idx));
+      }
+
+      function advance(){
+        if (singleScene) return;
+        show((idx + 1) % scenes.length);
+      }
+
+      function schedule(){
+        clearTimeout(timer);
+        if (userPaused || offscreenOrHidden || mql.matches || singleScene) return;
+        timer = setTimeout(() => { advance(); schedule(); }, scenes[idx].duration);
+      }
+
+      function setPlayPauseUI(){
+        const playing = !userPaused && !mql.matches;
+        playPauseBtn.textContent = playing ? 'Pause' : 'Play';
+        playPauseBtn.setAttribute('aria-pressed', String(!playing));
+      }
+
+      show(0);
+      if (!mql.matches) schedule();
+      setPlayPauseUI();
+
+      playPauseBtn.addEventListener('click', () => {
+        userPaused = !userPaused;
+        setPlayPauseUI();
+        if (!userPaused) schedule(); else clearTimeout(timer);
+      });
+
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => {
+          offscreenOrHidden = !entries[0].isIntersecting || document.hidden;
+          if (offscreenOrHidden) clearTimeout(timer); else if (!userPaused) schedule();
+        }, { threshold: 0.2 }).observe(root);
+      }
+      document.addEventListener('visibilitychange', () => {
+        offscreenOrHidden = document.hidden;
+        if (offscreenOrHidden) clearTimeout(timer); else if (!userPaused) schedule();
+      });
+    }
   })();
 
   // "Right now" status readout: a live Melbourne clock plus a ticker that
