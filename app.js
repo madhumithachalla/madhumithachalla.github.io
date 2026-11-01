@@ -271,6 +271,10 @@
           }
           return card;
         }));
+        // Count the status readout's "N roles running at once" off the same
+        // live list, so it can't drift out of sync with the cards again.
+        const statusSub = document.querySelector('.status-sub');
+        if (statusSub) statusSub.textContent = `${live.length} roles running at once — see the cards →`;
       })
       .catch(() => {});
   })();
@@ -887,7 +891,7 @@
       const expanded = !grid.classList.contains('show-minor');
       grid.classList.toggle('show-minor', expanded);
       btn.setAttribute('aria-expanded', String(expanded));
-      if (label) label.textContent = expanded ? 'Show fewer roles' : 'Show 3 more roles';
+      if (label) label.textContent = expanded ? 'Show fewer roles' : 'Show 4 more roles';
     });
   })();
 
@@ -1122,7 +1126,7 @@
       { keys: ['fit5120','industry experience','bio-datascope details','biodatascope details'], a: "Bio-DataScope is her FIT5120 Industry Experience Studio team project: a platform that maps where a species' occurrence records cluster, flags survey \"data gaps,\" and predicts habitat suitability from trained models (NestJS/PostGIS backend, React/Leaflet frontend, Python/XGBoost models). Her contributions: access control on the data-quality dashboard (plus fixing a spoofable-access bug), account sign-up/login, the Density & Gaps live API integration, the predictive habitat-suitability report with PDF export, the species sighting timeline chart, and several accessibility and UX fixes (colour-blind-safe suitability scale, off-window tooltip, unreachable modal button)." },
       { keys: ['education','degree','university','monash','study','gpa','wam'], a: "She's finishing a Master of Information Technology at Monash University (graduating Dec 2026, 65.7 WAM) and holds a Bachelor of Computer Applications from the University of Madras (First Class)." },
       { keys: ['experience','background','cognizant','work history','career'], a: "3+ years at Cognizant Technology Solutions supporting healthcare platforms for EmblemHealth & ConnectiCare (3.2M members): production support and incident management across multiple countries, plus a contact center transition from Avaya to Genesys Cloud CX. Full timeline is in the Experience section below." },
-      { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from September to November 2026, supporting digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
+      { keys: ['baazar','fund\'ex','fundex','digital innovation'], a: "She was a Technology & Digital Innovation Intern at Baazar (a Fund'ex venture) from September to October 2026 — that role has ended. It covered digital platform research, software and user testing, data organisation and CRM documentation, and cybersecurity-aware process documentation for an upcoming venture." },
       { keys: ['hr administrative','hew','coo','senior vp','clayton'], a: "She was also a casual HR Administrative Officer (HEW 4, ~10 hrs/week, August to October 2026, now ended) with the HR Projects team in Monash's Office of the COO & Senior VP at Clayton Campus." },
       { keys: ['mentor','leadership','volunteer','student adviser','advis'], a: "She mentored 40+ postgraduate IT students at Monash (Jan–Oct 2026), works as a Student Adviser through Monash Student Communities advising 45+ students, and volunteers as Microsoft 365 Administrator for Basava Samiti of Asia Pacific. She also previously ran IT infrastructure for the Monash Data & AI Society (1,600+ members) for a committee term." },
       { keys: ['australia','open to','available','job','role','opportunit','internship'], a: "Yes — she's open to IT roles across the board at the grad and entry level (cloud, systems, data, software, support), available part-time now and full-time from December 2026. She's on a Student Visa (Subclass 500) now, moving to a 485 Temporary Graduate Visa after graduating, and open to relocating anywhere across Australia." },
@@ -1283,12 +1287,12 @@
     const TREE = [
       { label: 'Experience', children: [
         { label: 'Current roles', children: [
-          { label: 'Baazar internship', a: "Technology & Digital Innovation Intern at Baazar (a Fund'ex venture), September to November 2026. Work covered digital platform research, software and user testing, bug reporting, CRM and process documentation, and user guides." },
           { label: 'Monash peer mentor', a: 'IT Postgraduate Peer Mentor at Monash University since January 2026, mentoring 40+ postgraduate IT students through one-on-one catch-ups and workshops.' },
           { label: 'Volunteer Microsoft 365 admin', a: 'Microsoft 365 Administrator (volunteer) for Basava Samiti of Asia Pacific since October 2025, across 8 APAC chapters and 100+ users. Wrote 3 SOPs that cut ticket volume by 30 to 40%.' },
           { label: 'Student Adviser', a: 'Student Adviser at Monash Student Communities since July 2025: one-on-one check-ins and cohort catch-ups for students.' },
         ]},
         { label: 'Past roles', children: [
+          { label: 'Baazar internship', a: "Technology & Digital Innovation Intern at Baazar (a Fund'ex venture), September to October 2026. That role has ended. Work covered digital platform research, software and user testing, bug reporting, CRM and process documentation, and user guides." },
           { label: 'Monash HR Projects', a: 'Casual HR Administrative Officer (HEW 4, about 10 hours a week) in Monash\'s HR Projects team, August to October 2026. That role has ended.' },
           { label: 'Cognizant, 2021 to 2024', children: [
             { label: 'What the work was', a: 'Production support for EmblemHealth and ConnectiCare (3.2M members) at Cognizant, from Programmer Analyst Trainee in May 2021 to Programmer in July 2024. Netcool alert handling, incident management, SLA work, and a contact-centre migration from Avaya to Genesys Cloud CX.' },
