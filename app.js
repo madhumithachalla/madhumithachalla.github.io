@@ -1608,7 +1608,6 @@
     const BASE_W = 2440, PAD_L = 190, MW = 110, LAST = 18;
     const MONTHS = ['Apr 2025','May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026','Jul 2026','Aug 2026','Sep 2026','Oct 2026'];
     const pins = [...svg.querySelectorAll('.gpin')];
-    const chips = [...document.querySelectorAll('.gmap-chips li')];
     const brush = document.getElementById('timeBrush');
     const readout = document.getElementById('timeReadout');
     const zoomReadout = document.getElementById('zoomReadout');
@@ -1661,20 +1660,6 @@
         setTimeout(() => { window.location.hash = pin.dataset.href; }, reduced ? 0 : 650);
       }
     }
-    // Any click on a place (map pin or sidebar chip) pans + highlights first,
-    // then still follows the link down to the full project card.
-    function wireNavigate(el, pin){
-      el.addEventListener('click', e => {
-        e.preventDefault();
-        panToPin(pin, { thenFollow: true });
-      });
-    }
-    // Pins are handled by the place selector below: a click selects the pin and keeps the map open.
-    chips.forEach(li => {
-      const a = li.querySelector('a');
-      const pin = pins.find(p => p.dataset.href === a?.getAttribute('href'));
-      if (a && pin) wireNavigate(a, pin);
-    });
 
     const ruler = document.querySelector('.time-ruler');
     const handleFrom = document.getElementById('handleFrom');
@@ -1722,11 +1707,6 @@
           setTimeout(() => pin.classList.remove('gpin-highlight'), 1400);
         }
         if (on) shown++;
-      });
-      chips.forEach(li => {
-        const a2 = li.querySelector('a');
-        const name = a2 ? a2.textContent.split(',')[0].trim() : '';
-        li.hidden = !((+li.dataset.start <= b && +li.dataset.end >= a) && matchesQuery(name));
       });
       brush.style.left = (a / LAST * 100) + '%';
       brush.style.width = ((b - a) / LAST * 100) + '%';
@@ -1790,8 +1770,12 @@
     }
 
     // The walking figure: glides from its current spot to the selected place, legs and arms swinging, then stops.
+    // On arrival, a soft "stage light" spotlight fades in over the destination pin and a brief
+    // "✓ Reached" badge confirms it, instead of the figure just silently stopping.
     const walker = svg.querySelector('#mapWalker');
-    let walkTimer = null;
+    const spotlight = svg.querySelector('#mapSpotlight');
+    const reached = svg.querySelector('#mapReached');
+    let walkTimer = null, reachedTimer = null;
     function pinPoint(pin){
       const g = pin.querySelector(':scope > g');
       const m = g && g.getAttribute('transform').match(/translate\(([\d.]+),([\d.]+)\)/);
@@ -1809,20 +1793,36 @@
       walker.dataset.x = p.x; walker.dataset.y = p.y;
       walker.classList.toggle('walking', dur > 0);
       clearTimeout(walkTimer);
-      walkTimer = setTimeout(() => walker.classList.remove('walking'), dur * 1000);
+      clearTimeout(reachedTimer);
+      if (spotlight) { spotlight.style.setProperty('--walk-dur', dur + 's'); spotlight.classList.remove('show'); }
+      if (reached) reached.classList.remove('show');
+      walkTimer = setTimeout(() => {
+        walker.classList.remove('walking');
+        if (spotlight) {
+          spotlight.style.transform = `translate(${p.x}px, ${p.y - 28}px)`;
+          spotlight.classList.add('show');
+        }
+        if (reached) {
+          reached.style.transform = `translate(${p.x}px, ${p.y - 72}px)`;
+          reached.classList.add('show');
+          reachedTimer = setTimeout(() => reached.classList.remove('show'), 1700);
+        }
+      }, dur * 1000);
+    }
+    function clearArrival(){
+      clearTimeout(walkTimer);
+      clearTimeout(reachedTimer);
+      spotlight?.classList.remove('show');
+      reached?.classList.remove('show');
     }
 
     function select(pin){
       if (selected) selected.classList.remove('is-selected');
       selected = pin || null;
-      // The project card and its chip stay highlighted for as long as the place is selected.
+      // The project card stays highlighted for as long as the place is selected.
       document.querySelectorAll('.project-focus').forEach(el => el.classList.remove('project-focus'));
-      document.querySelectorAll('.gmap-chips li.chip-focus').forEach(li => li.classList.remove('chip-focus'));
       if (selected){
         document.getElementById(selected.dataset.href.slice(1))?.classList.add('project-focus');
-        document.querySelectorAll('.gmap-chips li').forEach(li => {
-          if (li.querySelector('a')?.getAttribute('href') === selected.dataset.href) li.classList.add('chip-focus');
-        });
       }
       if (!selected) {
         nameEl.textContent = 'Choose a pin on the map';
@@ -1830,6 +1830,7 @@
         dot.className = 'gmap-selected-dot';
         link.hidden = true;
         countEl.textContent = 'Select a place';
+        clearArrival();
         return;
       }
       selected.classList.add('is-selected');

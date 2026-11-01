@@ -75,7 +75,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="styles.css?v=19">
+<link rel="stylesheet" href="styles.css?v=20">
 </head>
 <body>
 
@@ -896,6 +896,21 @@
       </ul>
     </div>
   </div>
+  <div class="wrap about-grid" style="margin-top:36px;">
+    <div>
+      <h3 style="font-family:'Fraunces',serif; font-size:1.5rem; margin:0 0 12px;">Issues I actually ran into</h3>
+      <p style="color:var(--ink-soft); margin:0 0 14px;">Not a polished list written after the fact — these are real bugs I found and fixed while building this, the kind that only show up once something is live and you're clicking through it yourself.</p>
+    </div>
+    <div>
+      <ul style="margin:0; padding-left:20px; color:var(--ink-soft);">
+        <li style="margin-bottom:10px;">The opening comet animation fired on a fixed timer, so it sometimes streaked in while the intro splash still covered the whole screen — invisible. Fixed by making it wait for the splash's own completion event instead of a guessed delay, with a safety-net timeout in case that event never fires.</li>
+        <li style="margin-bottom:10px;">A CSS rule meant to hide the real nav logo during the intro (<code>.nav-logo-badge{opacity:0}</code>) was scoped too broadly and also hid the splash's own cloned copy of that logo, since the clone carried the same class. Scoped the selector to <code>header.nav .nav-logo-badge</code> specifically to fix it.</li>
+        <li style="margin-bottom:10px;">The horizontal project timeline used <code>scrollIntoView()</code> to keep the active item visible, which on mobile also dragged the whole page's vertical scroll — a genuinely confusing bug to use. Replaced it with manual <code>scrollLeft</code> math scoped to just that ruler.</li>
+        <li style="margin-bottom:10px;">The chatbot assistant matched FAQ answers by "first keyword found," so a short generic word like "hire" could win over a more specific entry written later in the list. Rewrote the matcher to pick the longest (most specific) keyword match instead of the first one.</li>
+        <li style="margin-bottom:10px;">The "N roles running at once" line on the current-roles card was a hand-typed number, and it quietly went stale the moment a role actually ended. Now it counts the live card list itself, so it can't drift out of sync again.</li>
+      </ul>
+    </div>
+  </div>
 </section>
 
 <section id="skills">
@@ -1468,6 +1483,20 @@
   <text class="gm-scale-label" x="1840" y="1015" text-anchor="middle">Jul 2026</text>
   <line class="gm-scale" x1="2170" y1="977" x2="2170" y2="993"/>
   <text class="gm-scale-label" x="2170" y="1015" text-anchor="middle">Oct 2026</text>
+  <defs>
+    <radialGradient id="spotlightGrad" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FFC56B" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#FFC56B" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FFC56B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g id="mapSpotlight" class="map-spotlight" aria-hidden="true" style="transform:translate(260px,272px)">
+    <ellipse cx="0" cy="0" rx="78" ry="30" fill="url(#spotlightGrad)"/>
+  </g>
+  <g id="mapReached" class="map-reached" aria-hidden="true" style="transform:translate(260px,230px)">
+    <rect x="-44" y="-15" width="88" height="26" rx="13" fill="#1B1130" stroke="#FFC56B" stroke-width="1.2"/>
+    <text x="0" y="3" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" fill="#FFC56B">✓ Reached</text>
+  </g>
   <g id="mapWalker" class="map-walker" style="transform:translate(260px,300px)" aria-hidden="true">
     <g class="walker-flip">
       <g class="walker-bob">
@@ -1511,24 +1540,7 @@
       <div><b id="placeName">Choose a pin on the map</b><div class="mono" id="placeDates">Click a pin, or use Previous and Next.</div><p id="placeAbout" class="place-about"></p></div>
       <a class="gmap-btn" id="placeLink" href="#projects" hidden>Open the project</a>
     </div>
-    <ol class="gmap-chips" aria-label="Places on the map, oldest to newest">
-          <li data-start="0" data-end="2"><a href="#proj-birdtag"><span class="chip-dot gpin-cloud"></span>BirdTag, Apr – Jun 2025</a></li>
-          <li data-start="0" data-end="1"><a href="#proj-cloudpose"><span class="chip-dot gpin-cloud"></span>CloudPose, Apr – May 2025</a></li>
-          <li data-start="2" data-end="7"><a href="#proj-spotify"><span class="chip-dot gpin-cloud"></span>Spotify analysis, Jun – Nov 2025</a></li>
-          <li data-start="10" data-end="14"><a href="#proj-esaver"><span class="chip-dot gpin-web"></span>ESaver, Feb – Jun 2026</a></li>
-          <li data-start="14" data-end="15"><a href="#proj-ocr"><span class="chip-dot gpin-cloud"></span>Document pipeline, Jun – Jul 2026</a></li>
-          <li data-start="14" data-end="16"><a href="#proj-banner"><span class="chip-dot gpin-design"></span>LinkedIn banner, Jun – Aug 2026</a></li>
-          <li data-start="15" data-end="18"><a href="#proj-portfolio"><span class="chip-dot gpin-web"></span>Portfolio site, Jul 2026 – present</a></li>
-          <li data-start="17" data-end="17"><a href="#proj-contact-icons"><span class="chip-dot gpin-web"></span>Contact icons, Sep 2026</a></li>
-          <li data-start="17" data-end="17"><a href="#proj-logo"><span class="chip-dot gpin-design"></span>Logo mark, Sep 2026</a></li>
-          <li data-start="17" data-end="18"><a href="#proj-climaze"><span class="chip-dot gpin-web"></span>CliMaze (ShelfShift), Sep – Oct 2026</a></li>
-          <li data-start="18" data-end="18"><a href="#proj-focuslens"><span class="chip-dot gpin-web"></span>FocusLens, Oct 2026</a></li>
-          <li data-start="18" data-end="18"><a href="#proj-colorcompass"><span class="chip-dot gpin-web"></span>ColorCompass, Oct 2026</a></li>
-          <li data-start="18" data-end="18"><a href="#proj-stuplying"><span class="chip-dot gpin-web"></span>Stuplying, Oct 2026</a></li>
-          <li data-start="18" data-end="18"><a href="#proj-activeclimate"><span class="chip-dot gpin-web"></span>ActiveClimate Melbourne, Oct 2026</a></li>
-          <li data-start="17" data-end="18"><a href="#proj-biodatascope"><span class="chip-dot gpin-web"></span>Bio-DataScope, Sep – Oct 2026</a></li>
-    </ol>
-    <p class="map-note">Each pin is a project, dropped at the months it was built. Pins are grouped by area, the dashed line runs in build order, and the scale at the bottom is time. Select a pin to jump to its project.</p>
+    <p class="map-note">Each pin is a project, dropped at the months it was built. Pins are grouped by area, the dashed line runs in build order, and the scale at the bottom is time. Click a pin, or use Previous/Next, to select one.</p>
 
     <div class="project-filters" id="projectFilters" role="group" aria-label="Filter projects by category">
       <button type="button" class="project-filter active" data-filter="all">All</button>
@@ -2542,7 +2554,7 @@
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-<script src="app.js?v=26"></script>
+<script src="app.js?v=27"></script>
 <script src="portfolio-sync.js?v=1"></script>
 
 </body>
