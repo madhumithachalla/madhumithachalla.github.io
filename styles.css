@@ -130,7 +130,6 @@
   }
   .nav-chat-btn:hover, .nav-chat-btn:focus-visible{ transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(255,111,94,0.6); }
   .nav-chat-btn svg{width:14px; height:14px; flex:none;}
-  @media(max-width:900px) and (min-width:761px){ .nav-chat-btn span{display:none;} .nav-chat-btn{padding:8px;} }
   .theme-toggle .icon-moon{display:block;}
   .theme-toggle .icon-sun{display:none;}
   :root[data-theme="light"] .theme-toggle .icon-moon{display:none;}
@@ -294,7 +293,7 @@
     border-bottom:none !important;
   }
   .nav-dropdown-menu a:hover{background:rgba(255,111,94,0.12); color:var(--coral) !important;}
-  @media(max-width:1120px){
+  @media(max-width:1400px){
     .nav-toggle{display:flex;}
     .nav-links{
       position:fixed; top:60px; left:0; right:0; height:calc(100vh - 60px); height:calc(100dvh - 60px);
@@ -312,6 +311,24 @@
     }
     .nav-dropdown.open .nav-dropdown-menu{display:flex;}
     .nav-dropdown.open .caret{transform:rotate(180deg);}
+  }
+  /* On laptop/tablet widths the hamburger panel has plenty of room, so it
+     opens as a roomier two-column flyout with bigger type and tap targets
+     instead of the cramped single-column phone layout. */
+  @media(max-width:1400px) and (min-width:761px){
+    .nav-links{
+      left:auto; right:28px; top:68px; width:420px; max-width:calc(100vw - 56px);
+      height:auto; max-height:calc(100vh - 100px); max-height:calc(100dvh - 100px);
+      background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:0 24px 48px -20px rgba(0,0,0,0.55);
+      padding:18px 22px 22px;
+      display:grid; grid-template-columns:1fr 1fr; align-content:start; gap:0 18px;
+    }
+    .nav-links > a, .nav-dropdown{font-size:16px; padding:15px 0;}
+    .nav-links .nav-dropdown{grid-column:1 / -1;}
+    .nav-chat-btn{grid-column:1 / -1; width:100%; justify-content:flex-start; margin-top:10px;}
+    .nav-chat-btn span{display:inline;}
+    #theme-toggle, #device-view-btn{margin-top:4px;}
   }
 
   /* ---------- HERO (console) ---------- */

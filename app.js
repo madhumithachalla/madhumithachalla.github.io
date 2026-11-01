@@ -444,8 +444,10 @@
 
     if (trigger && dropdown) {
       trigger.addEventListener('click', (e) => {
-        // On small screens, tapping the trigger opens the submenu instead of jumping straight down
-        if (window.innerWidth <= 760) {
+        // Whenever the nav is in its hamburger/panel form (matches the CSS
+        // breakpoint below), tapping the trigger opens the submenu instead
+        // of jumping straight down.
+        if (window.innerWidth <= 1400) {
           e.preventDefault();
           dropdown.classList.toggle('open');
         }
@@ -455,7 +457,7 @@
     // Close mobile menu after tapping any nav link that actually navigates
     document.querySelectorAll('#nav-links a').forEach(a => {
       a.addEventListener('click', () => {
-        if (a === trigger && window.innerWidth <= 760) return;
+        if (a === trigger && window.innerWidth <= 1400) return;
         links.classList.remove('open');
         toggle?.classList.remove('open');
         toggle?.setAttribute('aria-expanded', 'false');
