@@ -86,11 +86,10 @@ See [`docs/`](./docs/README.md) for the full breakdown of how each section and s
 
 ## How this was built
 
-Every section, number, and word of content here is mine — I decided what the site
-should say and how it should be structured, wrote the real facts it presents, and
-directed every design decision. I used an AI coding assistant (Claude) as an
-implementation tool on top of that: turning direction into working HTML/CSS/JS,
-fixing bugs, and quickly "vibe coding" a version of an idea to see if it worked before
-refining it — not designing or deciding the site's content on its own. The file is
-also structured so it's easy to hand a section to an AI coding assistant yourself and
-ask for a specific change in plain English, if you want to edit it that way.
+I write and commit every line of this site myself — every section, every number, every
+word of content, and every structural and design decision. Every commit in this
+repo's history is mine (see the commit log). I use an AI assistant (Claude) the way
+I'd use a second pair of eyes: for suggestions, scrutiny, and catching bugs before I
+commit something — not as a tool that writes and ships code unsupervised. Copyright is
+reserved: see the `© 2026 Madhumitha Challa. All rights reserved.` line in the site
+footer and the full terms in [`LICENSE`](./LICENSE).
