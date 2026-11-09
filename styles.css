@@ -261,6 +261,16 @@
   .nav-links a.nav-c-green, .nav-links .nav-c-green > a{color:var(--green);}
   .nav-links a.nav-c-blue, .nav-links .nav-c-blue > a{color:var(--blue);}
   .nav-links a.nav-c-pink, .nav-links .nav-c-pink > a{color:var(--pink);}
+  /* A couple of top links stay visible in the bar itself even once the hamburger takes over
+     the rest — not an all-or-nothing menu. Hidden at full width (nav-links already shows
+     everything inline there) and hidden again once the screen is too narrow for logo + these
+     + the hamburger to fit on one row without wrapping/overflowing. */
+  .nav-quick{display:none; align-items:center; gap:16px; font-family:'Inter'; font-weight:500; font-size:13px; flex:none; margin-left:auto; margin-right:14px;}
+  .nav-quick a{text-decoration:none; border-bottom:1px solid transparent; padding-bottom:2px; transition:filter .15s, border-color .15s;}
+  .nav-quick a:hover, .nav-quick a:focus-visible{filter:brightness(1.25); border-color:currentColor;}
+  .nav-quick a:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+  @media(max-width:1400px){ .nav-quick{display:flex;} }
+  @media(max-width:560px){ .nav-quick{display:none;} }
   .nav-toggle{
     display:none; flex-direction:column; justify-content:center; gap:5px;
     width:34px; height:34px; background:none; border:none; cursor:pointer; padding:0;
