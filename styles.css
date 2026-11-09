@@ -121,7 +121,6 @@
     width:120px; height:18px; background:var(--bg-panel); border-radius:0 0 14px 14px; z-index:2;
   }
   .device-preview-frame iframe{width:100%; height:100%; border:0; display:block;}
-  @media(max-width:480px){ #device-view-btn{display:none;} }
   .nav-chat-btn{
     display:flex; align-items:center; gap:6px; flex:none; cursor:pointer;
     font-family:'Inter'; font-weight:600; font-size:12.5px; color:var(--ink);
@@ -655,6 +654,11 @@
   .gmap-search::placeholder{color:var(--slate);}
   .map-status-note{font-size:12px; color:var(--slate); margin:10px 14px 0; padding-bottom:4px;}
   .map-status-note a{color:var(--teal);}
+  /* The map is wider than a phone screen even at its smallest legible zoom, so on narrow
+     screens it genuinely has to be scrolled to see every pin — this says so, instead of it
+     just looking cut off with no explanation. */
+  .map-scroll-hint{display:none;}
+  @media(max-width:700px){ .map-scroll-hint{display:block; font-size:11px; color:var(--amber); margin:8px 14px 0; text-align:center;} }
   .gpin.gpin-highlight .gpin-body{animation:gpinHighlight 1.4s ease-out;}
   @keyframes gpinHighlight{
     0%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,197,107,0));}

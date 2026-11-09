@@ -1799,7 +1799,13 @@ function currentMelbourneYm(){
     const readout = document.getElementById('timeReadout');
     const zoomReadout = document.getElementById('zoomReadout');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let zoom = 0.42;
+    // 0.42 was a flat default sized for a desktop-width container (~1025px at that zoom) — on
+    // a phone-width scroller that's nearly 3x too wide, so only a narrow clipped slice of the
+    // map was ever visible, with no way to tell the rest existed. Fit the starting zoom to
+    // whatever width the map actually has on this screen instead, capped at the old 0.42 so
+    // desktop is unchanged.
+    const fitZoom = scroller.clientWidth > 0 ? (scroller.clientWidth - 4) / BASE_W : 0.42;
+    let zoom = Math.min(0.42, Math.max(0.35, fitZoom));
     svg.style.width = (BASE_W * zoom) + 'px';
     document.getElementById('zoomReadout').textContent = Math.round(zoom * 100) + '%';
     let query = '';
