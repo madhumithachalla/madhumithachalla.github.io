@@ -75,7 +75,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="styles.css?v=23">
+<link rel="stylesheet" href="styles.css?v=24">
 </head>
 <body>
 
@@ -720,6 +720,24 @@
         <svg viewBox="0 0 320 220" aria-hidden="true" class="scene-svg day-scene" id="dayCharSvg">
           <defs>
             <clipPath id="deskClip"><rect x="0" y="0" width="320" height="220" rx="12"/></clipPath>
+            <radialGradient id="skinGrad" cx="35%" cy="28%" r="80%">
+              <stop offset="0%" stop-color="#F0B88A"/>
+              <stop offset="55%" stop-color="#C6875C"/>
+              <stop offset="100%" stop-color="#A3673F"/>
+            </radialGradient>
+            <linearGradient id="hairGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+              <stop offset="0%" stop-color="#4E3322"/>
+              <stop offset="45%" stop-color="#2A1810"/>
+              <stop offset="100%" stop-color="#180D06"/>
+            </linearGradient>
+            <linearGradient id="topGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFE39B"/>
+              <stop offset="100%" stop-color="#E6A422"/>
+            </linearGradient>
+            <linearGradient id="skirtGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#BBA4EE"/>
+              <stop offset="100%" stop-color="#7C5BC4"/>
+            </linearGradient>
           </defs>
           <g clip-path="url(#deskClip)">
             <rect x="0" y="0" width="320" height="220" fill="var(--bg-panel)"/>
@@ -767,24 +785,31 @@
 
             <!-- The persistent, consistently-illustrated character. Never swapped between scenes. -->
             <g id="dayCharacter" transform="translate(60,96)">
-              <ellipse cx="0" cy="98" rx="30" ry="6" fill="#000" opacity="0.08"/>
-              <path d="M-24,66 C-30,30 -8,14 0,14 C20,14 32,32 25,68 L30,108 C18,116 8,114 0,106 C-8,114 -18,116 -28,108 Z" fill="#2A1810"/>
-              <circle cx="0" cy="56" r="21" fill="#C6875C"/>
-              <path d="M-20,46 C-22,24 -4,10 0,10 C22,10 32,26 22,48 C20,34 10,30 0,30 C-10,30 -18,36 -20,46 Z" fill="#2A1810"/>
-              <circle cx="-8" cy="56" r="2.4" fill="#2A1810"/>
-              <circle cx="8" cy="56" r="2.4" fill="#2A1810"/>
+              <ellipse cx="0" cy="98" rx="30" ry="6" fill="#000" opacity="0.1"/>
+              <path d="M-24,66 C-30,30 -8,14 0,14 C20,14 32,32 25,68 L30,108 C18,116 8,114 0,106 C-8,114 -18,116 -28,108 Z" fill="url(#hairGrad)"/>
+              <path d="M-18,40 C-14,26 2,18 10,22" fill="none" stroke="#6E4A33" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+              <circle cx="0" cy="56" r="21" fill="url(#skinGrad)"/>
+              <path d="M-20,46 C-22,24 -4,10 0,10 C22,10 32,26 22,48 C20,34 10,30 0,30 C-10,30 -18,36 -20,46 Z" fill="url(#hairGrad)"/>
+              <ellipse cx="-8" cy="56" rx="3.6" ry="4.1" fill="#FFFDF8"/>
+              <ellipse cx="8" cy="56" rx="3.6" ry="4.1" fill="#FFFDF8"/>
+              <circle cx="-8" cy="56.6" r="2.1" fill="#2A1810"/>
+              <circle cx="8" cy="56.6" r="2.1" fill="#2A1810"/>
+              <circle cx="-8.8" cy="55" r="0.9" fill="#fff"/>
+              <circle cx="7.2" cy="55" r="0.9" fill="#fff"/>
+              <ellipse id="dayEyelidL" cx="-8" cy="56" rx="3.8" ry="4.3" fill="url(#skinGrad)"/>
+              <ellipse id="dayEyelidR" cx="8" cy="56" rx="3.8" ry="4.3" fill="url(#skinGrad)"/>
               <path d="M-12,51 C-10,49 -6,49 -4,51" fill="none" stroke="#1B1208" stroke-width="1.4" stroke-linecap="round"/>
               <path d="M4,51 C6,49 10,49 12,51" fill="none" stroke="#1B1208" stroke-width="1.4" stroke-linecap="round"/>
               <path d="M-1,58 C0,61 2,61 1,58" fill="none" stroke="#9C5B33" stroke-width="1.2" stroke-linecap="round"/>
               <path id="dayMouth" d="M-7,65 C-3,69 3,69 7,65" fill="none" stroke="#7A3B2E" stroke-width="1.8" stroke-linecap="round"/>
-              <ellipse cx="-13" cy="61" rx="3" ry="2" fill="#E89B7A" opacity="0.55"/>
-              <ellipse cx="13" cy="61" rx="3" ry="2" fill="#E89B7A" opacity="0.55"/>
+              <ellipse cx="-13" cy="61" rx="3.2" ry="2.1" fill="#E89B7A" opacity="0.6"/>
+              <ellipse cx="13" cy="61" rx="3.2" ry="2.1" fill="#E89B7A" opacity="0.6"/>
               <circle cx="-19" cy="58" r="1.6" fill="var(--amber)"/><circle cx="19" cy="58" r="1.6" fill="var(--amber)"/>
-              <path d="M-9,80 C-3,76 3,76 9,80 L11,108 L-11,108 Z" fill="#F5C451"/>
-              <path d="M-11,108 L11,108 L10,138 L3,138 L0,118 L-3,138 L-10,138 Z" fill="#9B7EDE"/>
+              <path d="M-9,80 C-3,76 3,76 9,80 L11,108 L-11,108 Z" fill="url(#topGrad)"/>
+              <path d="M-11,108 L11,108 L10,138 L3,138 L0,118 L-3,138 L-10,138 Z" fill="url(#skirtGrad)"/>
               <g id="dayArm" transform-origin="-9 84">
-                <path d="M-9,84 L-26,70" fill="none" stroke="#F5C451" stroke-width="9" stroke-linecap="round"/>
-                <circle cx="-28" cy="66" r="5.5" fill="#C6875C"/>
+                <path d="M-9,84 L-26,70" fill="none" stroke="url(#topGrad)" stroke-width="9" stroke-linecap="round"/>
+                <circle cx="-28" cy="66" r="5.5" fill="url(#skinGrad)"/>
               </g>
             </g>
 
